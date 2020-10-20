@@ -57,6 +57,8 @@ int main(void)
     // Create movement physics body
     PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 50, 50, 1);
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
+    
+    Texture2D soinc = LoadTexture("../res/soinc.png");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -91,6 +93,8 @@ int main(void)
             ClearBackground(BLACK);
 
             DrawFPS(screenWidth - 90, screenHeight - 30);
+            
+            DrawTextureEx(soinc, (Vector2){ body -> position.x, body -> position.y }, 0.0f, 0.2f, WHITE);
 
             // Draw created physics bodies
             int bodiesCount = GetPhysicsBodiesCount();
