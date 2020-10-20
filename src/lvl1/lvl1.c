@@ -9,7 +9,7 @@
 *
 ********************************************************************************************/
 
-#include "../../lib/raylib/raylib.h"
+#include "raylib.h"
 #define PLAYER_JUMP_SPD 350.0f
 #define G 400
 
