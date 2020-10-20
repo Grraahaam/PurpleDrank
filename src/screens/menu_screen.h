@@ -1,0 +1,2 @@
+void MenuRead();
+void MenuDraw();
