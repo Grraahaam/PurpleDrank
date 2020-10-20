@@ -21,7 +21,7 @@
 #define PHYSAC_NO_THREADS
 #include "../lib/raylib/physac.h"
 
-#define VELOCITY    0.5f
+#define VELOCITY 0.5f
 
 int main(void)
 {
@@ -29,7 +29,10 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
-    float rotate = 0.0f;
+    Image image = LoadImage("../res/soinc.png");
+    Image image2 = LoadImage("../res/boule.png");
+    float vitesse = VELOCITY*0.4;
+    bool boule = true;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "Physac [raylib] - Physics movement");
@@ -58,9 +61,8 @@ int main(void)
     // Create movement physics body
     PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 50, 70, 1);
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
-    body->orient = rotate;
     
-    Texture2D soinc = LoadTexture("../res/soinc.png");
+    Texture2D soinc = LoadTextureFromImage(image);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -82,8 +84,15 @@ int main(void)
 
 
         // Horizontal movement input
-        if (IsKeyDown(KEY_RIGHT)) body->velocity.x = VELOCITY;
-        else if (IsKeyDown(KEY_LEFT)) body->velocity.x = -VELOCITY;
+        if (IsKeyDown(KEY_RIGHT)) body->velocity.x = vel;
+        
+        else if (IsKeyDown(KEY_LEFT)) body->velocity.x = -vel;
+        
+        if (IsKeyDown(KEY_DOWN) && boule) {
+        soinc = LoadTextureFromImage(image2);
+        vitesse = vitesse*3;
+        boule = false;
+        }
 
         // Vertical movement input checking if player physics body is grounded
         if (IsKeyDown(KEY_UP) && body->isGrounded) body->velocity.y = -VELOCITY*4;
@@ -97,7 +106,7 @@ int main(void)
 
             DrawFPS(screenWidth - 90, screenHeight - 30);
             
-            DrawTextureEx(soinc, (Vector2){ body -> position.x - 50, body -> position.y - 50}, rotate, 0.2f, WHITE);
+            DrawTextureEx(soinc, (Vector2){ body -> position.x - 50, body -> position.y - 50}, 0.0f, 0.2f, WHITE);
 
             // Draw created physics bodies
             int bodiesCount = GetPhysicsBodiesCount();
