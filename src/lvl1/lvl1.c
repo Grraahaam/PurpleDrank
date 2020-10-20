@@ -46,7 +46,7 @@ int main(void)
 
     Player soinc = { 0 };
     soinc.position = (Vector2){ (float)screenWidth/2, (float)screenHeight/1.8 };
-    soinc.player = LoadTexture("../../res/soinc.png");
+    soinc.player = LoadTexture("res/soinc.png");
     soinc.canJump = true;
     soinc.sol = true;
 
@@ -54,9 +54,9 @@ int main(void)
     // if not, texture should be draw more than two times for scrolling effect
 
     Decor decor = { 0 };
-    decor.background = LoadTexture("../../res/lvl1/1.png");
-    decor.midground = LoadTexture("../../res/lvl1/2.png");
-    decor.foreground = LoadTexture("../../res/lvl1/3.png");
+    decor.background = LoadTexture("res/lvl1/1.png");
+    decor.midground = LoadTexture("res/lvl1/2.png");
+    decor.foreground = LoadTexture("res/lvl1/3.png");
     decor.scrollingBack = 0.0f;
     decor.scrollingMid = 0.0f;
     decor.scrollingFore = 0.0f;
