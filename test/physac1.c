@@ -84,9 +84,9 @@ int main(void)
 
 
         // Horizontal movement input
-        if (IsKeyDown(KEY_RIGHT)) body->velocity.x = vel;
+        if (IsKeyDown(KEY_RIGHT)) body->velocity.x = vitesse;
         
-        else if (IsKeyDown(KEY_LEFT)) body->velocity.x = -vel;
+        else if (IsKeyDown(KEY_LEFT)) body->velocity.x = -vitesse;
         
         if (IsKeyDown(KEY_DOWN) && boule) {
         soinc = LoadTextureFromImage(image2);
