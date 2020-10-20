@@ -29,6 +29,7 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
+    float rotate = 0.0f;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "Physac [raylib] - Physics movement");
@@ -42,7 +43,7 @@ int main(void)
 
     // Create floor and walls rectangle physics body
     PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
-    PhysicsBody platformLeft = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.25f, screenHeight*0.6f }, screenWidth*0.25f, 10, 10);
+    PhysicsBody platformLeft = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.15f, screenHeight*0.6f }, screenWidth*0.55f, 20, 10);
     PhysicsBody platformRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.75f, screenHeight*0.6f }, screenWidth*0.25f, 10, 10);
     PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
     PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
@@ -55,8 +56,9 @@ int main(void)
     wallRight->enabled = false;
 
     // Create movement physics body
-    PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 50, 50, 1);
+    PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 50, 70, 1);
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
+    body->orient = rotate;
     
     Texture2D soinc = LoadTexture("../res/soinc.png");
 
@@ -78,6 +80,7 @@ int main(void)
             SetPhysicsBodyRotation(body, 0);
         }
 
+
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) body->velocity.x = VELOCITY;
         else if (IsKeyDown(KEY_LEFT)) body->velocity.x = -VELOCITY;
@@ -94,7 +97,7 @@ int main(void)
 
             DrawFPS(screenWidth - 90, screenHeight - 30);
             
-            DrawTextureEx(soinc, (Vector2){ body -> position.x, body -> position.y }, 0.0f, 0.2f, WHITE);
+            DrawTextureEx(soinc, (Vector2){ body -> position.x - 50, body -> position.y - 50}, rotate, 0.2f, WHITE);
 
             // Draw created physics bodies
             int bodiesCount = GetPhysicsBodiesCount();
@@ -112,7 +115,7 @@ int main(void)
                     int jj = (((j + 1) < vertexCount) ? (j + 1) : 0);   // Get next vertex or first to close the shape
                     Vector2 vertexB = GetPhysicsShapeVertex(body, jj);
 
-                    DrawLineV(vertexA, vertexB, GREEN);     // Draw a line between two vertex positions
+                    DrawLineV(vertexA, vertexB, BLUE);     // Draw a line between two vertex positions
                 }
             }
 
