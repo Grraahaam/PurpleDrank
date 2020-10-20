@@ -9,7 +9,7 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
+#include "../../lib/raylib/raylib.h"
 #define PLAYER_JUMP_SPD 350.0f
 #define G 400
 
@@ -41,13 +41,12 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
-    
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - background scrolling");
 
     Player soinc = { 0 };
     soinc.position = (Vector2){ (float)screenWidth/2, (float)screenHeight/1.8 };
-    soinc.player = LoadTexture("../../assets/game/soinc.png");
+    soinc.player = LoadTexture("../../res/soinc.png");
     soinc.canJump = true;
     soinc.sol = true;
 
@@ -55,20 +54,18 @@ int main(void)
     // if not, texture should be draw more than two times for scrolling effect
 
     Decor decor = { 0 };
-    decor.background = LoadTexture("../../assets/lvl1/1.png");
-    decor.midground = LoadTexture("../../assets/lvl1/2.png");
-    decor.foreground = LoadTexture("../../assets/lvl1/3.png");
+    decor.background = LoadTexture("../../res/lvl1/1.png");
+    decor.midground = LoadTexture("../../res/lvl1/2.png");
+    decor.foreground = LoadTexture("../../res/lvl1/3.png");
     decor.scrollingBack = 0.0f;
     decor.scrollingMid = 0.0f;
     decor.scrollingFore = 0.0f;
-    
+
     Camera2D camera = { 0 };
     camera.target = (Vector2){ soinc.position.x + 20, soinc.position.y + 20 };
     camera.offset = (Vector2){ screenWidth/2, screenHeight/1.5 };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
-    
-    
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -80,24 +77,22 @@ int main(void)
         //----------------------------------------------------------------------------------
 
         float deltaTime = GetFrameTime();
-        
+
         decor.scrollingBack -= 0.2f;
-        
+
         UpdatePlayer(&soinc,&decor, deltaTime);
-        
+
         camera.target = (Vector2){ soinc.position.x + 20, soinc.position.y + 20 };
-        
+
         if(decor.scrollingBack <= -decor.background.width*1) decor.scrollingBack = 0;
     	if(decor.scrollingMid <= -decor.midground.width*1) decor.scrollingMid = 0;
     	if(decor.scrollingFore <= -decor.foreground.width*1) decor.scrollingFore = 0;
-        
 
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
             ClearBackground(GetColor(0x052c46ff));
-            
             BeginMode2D(camera);
 
             // Draw background image twice
@@ -113,7 +108,7 @@ int main(void)
             DrawTextureEx(decor.foreground, (Vector2){ decor.scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
             DrawTextureEx(decor.foreground, (Vector2){ decor.foreground.width*2 + decor.scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
 
-            DrawTextureEx(soinc.player, soinc.position, 0.0f, 0.2f, WHITE);  
+            DrawTextureEx(soinc.player, soinc.position, 0.0f, 0.2f, WHITE);
             DrawText(TextFormat("Position y : %f \n Position x : %f",soinc.position.y,soinc.position.x), 10, 180,15, WHITE);
 
 
@@ -125,7 +120,6 @@ int main(void)
     // De-Initialization
     //--------------------------------------------------------------------------------------
     Unload(&decor);
-    
 
     CloseWindow();              // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
@@ -150,17 +144,14 @@ void UpdatePlayer(Player *player,Decor *decor, float delta)
         player->position.y -= 100.0f;
         player->speed = -PLAYER_JUMP_SPD;
         player->canJump = false;
-        
     }
 
     if(player->position.y <= 250)
     {
         player->position.y -= player->speed*delta;
     }
-    else 
+    else
     {
         player->canJump = true;
     }
-    
-
 }
