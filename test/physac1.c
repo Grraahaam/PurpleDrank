@@ -31,6 +31,7 @@ int main(void)
     const int screenHeight = 450;
     Image image = LoadImage("../res/soinc.png");
     Image image2 = LoadImage("../res/boule.png");
+    Image image3 = LoadImage("../res/soinc_reverse.png");
     Image platform = LoadImage("../res/lvl1/platform.png");
     float vitesse = VELOCITY*0.4;
     bool boule = true;
@@ -91,14 +92,29 @@ int main(void)
 
 
         // Horizontal movement input
-        if (IsKeyDown(KEY_RIGHT)) body->velocity.x = vitesse;
+        if (IsKeyDown(KEY_RIGHT)) {
+        body->velocity.x = vitesse;
+        if (boule){
+        soinc = LoadTextureFromImage(image);
+        }
+        }        
+        else if (IsKeyDown(KEY_LEFT)) {
+        body->velocity.x = -vitesse;
+        if (boule){
+        soinc = LoadTextureFromImage(image3);
+        }
+        }
         
-        else if (IsKeyDown(KEY_LEFT)) body->velocity.x = -vitesse;
-        
-        if (IsKeyDown(KEY_DOWN) && boule) {
+        else if (IsKeyDown(KEY_DOWN) && boule) {
         soinc = LoadTextureFromImage(image2);
         vitesse = vitesse*3;
         boule = false;
+        }
+        
+        else if (IsKeyDown(KEY_DOWN) && !boule && vitesse > 0.5 ) {
+        soinc = LoadTextureFromImage(image);
+        vitesse = vitesse/3;
+        boule = true;
         }
 
         // Vertical movement input checking if player physics body is grounded
@@ -106,8 +122,6 @@ int main(void)
         //----------------------------------------------------------------------------------
 
 	collision = CheckCollisionRecs(rect_soinc, rect_platLeft);
-	
-	if(collision) vitesse = vitesse*0.9;
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -120,6 +134,8 @@ int main(void)
             DrawTextureEx(soinc, (Vector2){ body -> position.x - 50, body -> position.y - 50}, 0.0f, 0.2f, WHITE);
             
             DrawTextureEx(leftPlat, (Vector2){ 90, 220}, 0.0f, 0.08f, WHITE);
+            
+            if(collision) DrawText("COLLISION", screenWidth/2, screenHeight/2, 20, WHITE);
             
             //DrawRectangleRec(rect_soinc, WHITE);
             //DrawRectangleRec(rect_platLeft, GOLD);
