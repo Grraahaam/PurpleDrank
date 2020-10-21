@@ -31,8 +31,10 @@ int main(void)
     const int screenHeight = 450;
     Image image = LoadImage("../res/soinc.png");
     Image image2 = LoadImage("../res/boule.png");
+    Image platform = LoadImage("../res/lvl1/platform.png");
     float vitesse = VELOCITY*0.4;
     bool boule = true;
+    bool collision = false;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "Physac [raylib] - Physics movement");
@@ -46,7 +48,7 @@ int main(void)
 
     // Create floor and walls rectangle physics body
     PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
-    PhysicsBody platformLeft = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.15f, screenHeight*0.6f }, screenWidth*0.55f, 20, 10);
+    PhysicsBody platformLeft = CreatePhysicsBodyRectangle((Vector2){ 170, 270 }, 100, 40, 10);
     PhysicsBody platformRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth*0.75f, screenHeight*0.6f }, screenWidth*0.25f, 10, 10);
     PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
     PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
@@ -63,6 +65,9 @@ int main(void)
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
     
     Texture2D soinc = LoadTextureFromImage(image);
+    Texture2D leftPlat = LoadTexture("../res/lvl1/platform.png");
+    
+    Rectangle rect_platLeft = { 120, 250, 100, 40 };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -73,6 +78,8 @@ int main(void)
         // Update
         //----------------------------------------------------------------------------------
         RunPhysicsStep();
+        
+        Rectangle rect_soinc = { body -> position.x - 35, body -> position.y - 45, 70, 80 };
 
         if (IsKeyPressed('R'))    // Reset physics input
         {
@@ -98,6 +105,10 @@ int main(void)
         if (IsKeyDown(KEY_UP) && body->isGrounded) body->velocity.y = -VELOCITY*4;
         //----------------------------------------------------------------------------------
 
+	collision = CheckCollisionRecs(rect_soinc, rect_platLeft);
+	
+	if(collision) vitesse = vitesse*0.9;
+
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -107,6 +118,11 @@ int main(void)
             DrawFPS(screenWidth - 90, screenHeight - 30);
             
             DrawTextureEx(soinc, (Vector2){ body -> position.x - 50, body -> position.y - 50}, 0.0f, 0.2f, WHITE);
+            
+            DrawTextureEx(leftPlat, (Vector2){ 90, 220}, 0.0f, 0.08f, WHITE);
+            
+            //DrawRectangleRec(rect_soinc, WHITE);
+            //DrawRectangleRec(rect_platLeft, GOLD);
 
             // Draw created physics bodies
             int bodiesCount = GetPhysicsBodiesCount();
