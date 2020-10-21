@@ -39,6 +39,7 @@ int main(void)
     float carY = 310;
     bool boule = true;
     bool collision = false;
+    bool right = true;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "Physac [raylib] - Physics movement");
@@ -100,15 +101,17 @@ int main(void)
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
         body->velocity.x = vitesse;
-        if (boule){
+        if (boule && !right){
         soinc = LoadTextureFromImage(image);
         }
+        right = true;
         }        
         else if (IsKeyDown(KEY_LEFT)) {
         body->velocity.x = -vitesse;
-        if (boule){
+        if (boule && right){
         soinc = LoadTextureFromImage(image3);
         }
+        right = false;
         }
         
         else if (IsKeyDown(KEY_DOWN) && boule) {
