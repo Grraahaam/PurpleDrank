@@ -33,7 +33,10 @@ int main(void)
     Image image2 = LoadImage("../res/boule.png");
     Image image3 = LoadImage("../res/soinc_reverse.png");
     Image platform = LoadImage("../res/lvl1/platform.png");
+    Image car = LoadImage("../res/lvl1/car.png");
     float vitesse = VELOCITY*0.4;
+    float carX = 900;
+    float carY = 310;
     bool boule = true;
     bool collision = false;
 
@@ -67,6 +70,7 @@ int main(void)
     
     Texture2D soinc = LoadTextureFromImage(image);
     Texture2D leftPlat = LoadTexture("../res/lvl1/platform.png");
+    Texture2D car_ennemy = LoadTextureFromImage(car);
     
     Rectangle rect_platLeft = { 120, 250, 100, 40 };
 
@@ -81,6 +85,8 @@ int main(void)
         RunPhysicsStep();
         
         Rectangle rect_soinc = { body -> position.x - 35, body -> position.y - 45, 70, 80 };
+        
+        carX -= 0.3f;
 
         if (IsKeyPressed('R'))    // Reset physics input
         {
@@ -134,6 +140,8 @@ int main(void)
             DrawTextureEx(soinc, (Vector2){ body -> position.x - 50, body -> position.y - 50}, 0.0f, 0.2f, WHITE);
             
             DrawTextureEx(leftPlat, (Vector2){ 90, 220}, 0.0f, 0.08f, WHITE);
+            
+            DrawTextureEx(car_ennemy, (Vector2){ carX, carY }, 0.0f, 0.4f, WHITE );
             
             if(collision) DrawText("COLLISION", screenWidth/2, screenHeight/2, 20, WHITE);
             
