@@ -39,12 +39,15 @@ int main(void)
     float vitesse = VELOCITY*0.4;
     float carX = 900;
     float carY = 310;
+    float leanX;
+    float leanY;
     bool boule = true;
     bool collision = false;
     bool col_lean1 = false, col_lean2 = false, col_lean3 = false;
     bool l1 = false, l2 = false, l3 = false;
     bool right = true;
     int nb_lean = 0;
+    bool lancer = false;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "Physac [raylib] - Physics movement");
@@ -100,6 +103,9 @@ int main(void)
         Rectangle rect_soinc = { body -> position.x - 35, body -> position.y - 45, 70, 80 };
         
         carX -= 0.3f;
+        if(lancer){
+        leanX += 3.0f;
+        }
 
         if (IsKeyPressed('R'))    // Reset physics input
         {
@@ -180,6 +186,20 @@ int main(void)
             lean3 = LoadTextureFromImage(empty);
             l3 = true;
             }
+            
+            if (IsKeyDown(KEY_SPACE) && nb_lean > 0){
+            leanX = body -> position.x;
+            leanY = body -> position.y;
+            nb_lean = nb_lean - 1;
+            lancer = true;
+
+            }
+            
+            if(lancer){
+            DrawTextureEx(lean, (Vector2){leanX, leanY - 20}, 0.0f, 0.08f, WHITE);
+            }
+            
+            if(leanX == carX) lancer = false;
             
             //DrawRectangleRec(rect_soinc, WHITE);
             //DrawRectangleRec(rect_platLeft, GOLD);
