@@ -34,12 +34,17 @@ int main(void)
     Image image3 = LoadImage("../res/soinc_reverse.png");
     Image platform = LoadImage("../res/lvl1/platform.png");
     Image car = LoadImage("../res/lvl1/car.png");
+    Image gob_lean = LoadImage("../res/lean.png");
+    Image empty = LoadImage("../res/lvl1/empty.png");
     float vitesse = VELOCITY*0.4;
     float carX = 900;
     float carY = 310;
     bool boule = true;
     bool collision = false;
+    bool col_lean1 = false, col_lean2 = false, col_lean3 = false;
+    bool l1 = false, l2 = false, l3 = false;
     bool right = true;
+    int nb_lean = 0;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "Physac [raylib] - Physics movement");
@@ -72,8 +77,15 @@ int main(void)
     Texture2D soinc = LoadTextureFromImage(image);
     Texture2D leftPlat = LoadTexture("../res/lvl1/platform.png");
     Texture2D car_ennemy = LoadTextureFromImage(car);
+    Texture2D lean = LoadTextureFromImage(gob_lean);
+    Texture2D lean1 = LoadTextureFromImage(gob_lean);
+    Texture2D lean2 = LoadTextureFromImage(gob_lean);
+    Texture2D lean3 = LoadTextureFromImage(gob_lean);
     
     Rectangle rect_platLeft = { 120, 250, 100, 40 };
+    Rectangle rect_lean1 = { 600, 220, 25, 40 };
+    Rectangle rect_lean2 = { 500, 360, 25, 40 };
+    Rectangle rect_lean3 = { 150, 200, 25, 40 };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -131,6 +143,9 @@ int main(void)
         //----------------------------------------------------------------------------------
 
 	collision = CheckCollisionRecs(rect_soinc, rect_platLeft);
+	col_lean1 = CheckCollisionRecs(rect_soinc, rect_lean1);
+	col_lean2 = CheckCollisionRecs(rect_soinc, rect_lean2);
+	col_lean3 = CheckCollisionRecs(rect_soinc, rect_lean3);
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -147,6 +162,24 @@ int main(void)
             DrawTextureEx(car_ennemy, (Vector2){ carX, carY }, 0.0f, 0.4f, WHITE );
             
             if(collision) DrawText("COLLISION", screenWidth/2, screenHeight/2, 20, WHITE);
+            
+            if(col_lean1 && !l1){ 
+            nb_lean ++;
+            lean1 = LoadTextureFromImage(empty);
+            l1 = true;
+            }
+            
+            if(col_lean2 && !l2){
+            nb_lean ++;
+            lean2 = LoadTextureFromImage(empty);
+            l2 = true;
+            }
+            
+            if(col_lean3 && !l3){
+            nb_lean ++;
+            lean3 = LoadTextureFromImage(empty);
+            l3 = true;
+            }
             
             //DrawRectangleRec(rect_soinc, WHITE);
             //DrawRectangleRec(rect_platLeft, GOLD);
@@ -170,12 +203,13 @@ int main(void)
                     DrawLineV(vertexA, vertexB, BLUE);     // Draw a line between two vertex positions
                 }
             }
+            
+            DrawTextureEx(lean, (Vector2){10, 10}, 0.0f, 0.08f, WHITE);
+            DrawTextureEx(lean1, (Vector2){600, 220}, 0.0f, 0.08f, WHITE);
+            DrawTextureEx(lean2, (Vector2){500, 360}, 0.0f, 0.08f, WHITE);
+            DrawTextureEx(lean3, (Vector2){150, 200}, 0.0f, 0.08f, WHITE);
 
-            DrawText("Use 'ARROWS' to move player", 10, 10, 10, WHITE);
-            DrawText("Press 'R' to reset example", 10, 30, 10, WHITE);
-
-            DrawText("Physac", logoX, logoY, 30, WHITE);
-            DrawText("Powered by", logoX + 50, logoY - 7, 10, WHITE);
+            DrawText(TextFormat("%d", nb_lean), 60, 25, 30, BLUE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
