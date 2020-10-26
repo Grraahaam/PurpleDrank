@@ -132,13 +132,13 @@ int main(void)
         right = false;
         }
         
-        else if (IsKeyDown(KEY_DOWN) && boule) {
+        else if (IsKeyPressed(KEY_DOWN) && boule) {
         soinc = LoadTextureFromImage(image2);
         vitesse = vitesse*3;
         boule = false;
         }
         
-        else if (IsKeyDown(KEY_DOWN) && !boule && vitesse > 0.5 ) {
+        else if (IsKeyPressed(KEY_DOWN) && !boule && vitesse > 0.5 ) {
         soinc = LoadTextureFromImage(image);
         vitesse = vitesse/3;
         boule = true;
@@ -187,10 +187,10 @@ int main(void)
             l3 = true;
             }
             
-            if (IsKeyDown(KEY_SPACE) && nb_lean > 0){
+            if (IsKeyPressed(KEY_B) && nb_lean > 0){
             leanX = body -> position.x;
             leanY = body -> position.y;
-            nb_lean = nb_lean - 1;
+            nb_lean --;
             lancer = true;
 
             }
