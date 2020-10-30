@@ -14,8 +14,9 @@ int main(void)
     const int screenHeight = 450;
     Image image = LoadImage("../../res/soinc.png");
     Image image3 = LoadImage("../../res/soinc_reverse.png");
-    Image back = LoadImage("../../res/Level1/ECRAN1V.png");
+    Image back = LoadImage("../../res/Level1/ECRAN2V.png");
     Image soinc_head = LoadImage("../../res/soinc_head.png");
+    Image img_spikes = LoadImage("../../res/Level1/spikes.png");
     float vitesse = VELOCITY*0.4;
     bool boule = true;
     bool right = true;
@@ -31,26 +32,46 @@ int main(void)
     InitPhysics();
 
     // Create floor and walls rectangle physics body
-    PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 220, 370 }, 445, 170, 10);
-    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 565, 360 }, 110, 70, 10);
-    PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 750, 380 }, 100, 150, 10);
+    PhysicsBody floor1 = CreatePhysicsBodyRectangle((Vector2){ 35, 360 }, 70, 190, 10);
+    PhysicsBody floor2 = CreatePhysicsBodyRectangle((Vector2){ 115, 405 }, 90, 50, 10);
+    PhysicsBody floor3 = CreatePhysicsBodyRectangle((Vector2){ 218, 390 }, 116, 70, 10);
+    PhysicsBody floor4 = CreatePhysicsBodyRectangle((Vector2){ 341, 402 }, 130, 50, 10);
+    PhysicsBody floor5 = CreatePhysicsBodyPolygon((Vector2){ 462, 420 }, 70.0f, 5, 10); 
+    PhysicsBody floor6 = CreatePhysicsBodyRectangle((Vector2){ 520, 388.5 }, 70, 70, 10); 
+    PhysicsBody floor7 = CreatePhysicsBodyPolygon((Vector2){ 552, 427 }, 75.0f, 8, 10);   
+    PhysicsBody floor8 = CreatePhysicsBodyRectangle((Vector2){ 702, 409 }, 196, 70, 10);   
+    PhysicsBody platform11 = CreatePhysicsBodyRectangle((Vector2){ 225 , 55 }, 150, 110, 10);
+    PhysicsBody platform12 = CreatePhysicsBodyRectangle((Vector2){ 335, 43 }, 70, 86, 10);
+    PhysicsBody platform13 = CreatePhysicsBodyPolygon((Vector2){ 370, 10 }, 75.0f, 4, 10);   
+    PhysicsBody platform2 = CreatePhysicsBodyRectangle((Vector2){ 705, 140 }, 180, 140, 10);
     PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
     PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
 
     // Disable dynamics to floor and walls physics bodies
-    floorLeft->enabled = false;
-    floorRight->enabled=false;
-    platform->enabled = false;
+    floor1->enabled = false;
+    floor2->enabled = false;
+    floor3->enabled = false;
+    floor4->enabled = false;
+    floor5->enabled = false;
+    floor6->enabled = false;
+    floor7->enabled = false;
+    floor8->enabled = false;
+    platform11->enabled = false;
+    platform12->enabled = false;
+    platform13->enabled = false;
+    platform2->enabled = false;
     wallLeft->enabled = false;
     wallRight->enabled = false;
 
     // Create movement physics body
-    PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 80, screenHeight/2 }, 50, 60, 1);
+    PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 40, screenHeight/2 }, 50, 60, 1);
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
+        
     
     Texture2D soinc = LoadTextureFromImage(image);
     Texture2D background = LoadTextureFromImage(back);
     Texture2D lives = LoadTextureFromImage(soinc_head);
+    Texture2D spikes = LoadTextureFromImage(img_spikes);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -81,7 +102,7 @@ int main(void)
         right = false;
         }
         
-        col_trou = CheckCollisionRecs(rect_soinc, trou);
+        //col_trou = CheckCollisionRecs(rect_soinc, trou);
 	
 	if(col_trou){
 	body->position.x = 80;
@@ -103,20 +124,22 @@ int main(void)
 
             DrawFPS(screenWidth - 90, screenHeight - 30);
             
-            DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.9f, WHITE);
+            DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
             
             DrawTextureEx(soinc, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
             
-            DrawTextureEx(lives, (Vector2){680, 20}, 0.0f, 0.25f, WHITE);
-            DrawText(TextFormat("%d", nb_lives), 750, 25, 30, WHITE);
+            DrawTextureEx(lives, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
+            DrawText(TextFormat("%d", nb_lives), 90, 25, 30, WHITE);
+            
+            DrawTextureEx(spikes, (Vector2){70, 370}, 0.0f, 0.13f, WHITE);
             
             if(fall>1) DrawText("Utilisez la plateforme pour arriver de l'autre côté", 150, 100, 20, RED);
             
             //DrawRectangleRec(rect_soinc, WHITE);
             //DrawRectangleRec(trou, GOLD);
 
-            // Draw created physics bodies
-            /*int bodiesCount = GetPhysicsBodiesCount();
+            //Draw created physics bodies
+            int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
                 PhysicsBody body = GetPhysicsBody(i);
@@ -133,7 +156,7 @@ int main(void)
 
                     DrawLineV(vertexA, vertexB, BLUE);     // Draw a line between two vertex positions
                 }
-            }*/
+            }
             
 
         EndDrawing();

@@ -31,9 +31,9 @@ int main(void)
     InitPhysics();
 
     // Create floor and walls rectangle physics body
-    PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 220, 370 }, 445, 170, 10);
-    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 565, 360 }, 110, 70, 10);
-    PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 750, 380 }, 100, 150, 10);
+    PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10);
+    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 110, 70, 10);
+    PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10);
     PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
     PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
 
@@ -63,7 +63,7 @@ int main(void)
         RunPhysicsStep();
         
         Rectangle rect_soinc = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
-        Rectangle trou = { 445, 700, 255, 10};
+        Rectangle trou = { 415, 700, 245, 10};
         
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
@@ -103,7 +103,7 @@ int main(void)
 
             DrawFPS(screenWidth - 90, screenHeight - 30);
             
-            DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.9f, WHITE);
+            DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
             
             DrawTextureEx(soinc, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
             
@@ -115,7 +115,7 @@ int main(void)
             //DrawRectangleRec(rect_soinc, WHITE);
             //DrawRectangleRec(trou, GOLD);
 
-            // Draw created physics bodies
+            //Draw created physics bodies
             /*int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
