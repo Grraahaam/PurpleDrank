@@ -16,13 +16,17 @@ int main(void)
     Image image3 = LoadImage("../../res/soinc_reverse.png");
     Image back = LoadImage("../../res/Level1/ECRAN2V.png");
     Image soinc_head = LoadImage("../../res/soinc_head.png");
+    Image soinc_dead = LoadImage("../../res/soinc_dead.png");
     Image img_spikes = LoadImage("../../res/Level1/spikes.png");
     float vitesse = VELOCITY*0.4;
     bool boule = true;
     bool right = true;
-    bool col_trou = false;
+    bool col_piques = false;
     int fall = 0;
     int nb_lives = 5;
+    int time_spikes = 0;
+    bool canMove = true;
+    bool double_saut = false;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "soinc à la recherche du lean");
@@ -84,17 +88,17 @@ int main(void)
         RunPhysicsStep();
         
         Rectangle rect_soinc = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
-        Rectangle trou = { 445, 700, 255, 10};
+        Rectangle piques = { 70, 370, 80, 20 };
         
         // Horizontal movement input
-        if (IsKeyDown(KEY_RIGHT)) {
+        if (IsKeyDown(KEY_RIGHT) && canMove) {
         body->velocity.x = vitesse;
         if (boule && !right){
         soinc = LoadTextureFromImage(image);
         }
         right = true;
         }        
-        else if (IsKeyDown(KEY_LEFT)) {
+        else if (IsKeyDown(KEY_LEFT) && canMove) {
         body->velocity.x = -vitesse;
         if (boule && right){
         soinc = LoadTextureFromImage(image3);
@@ -102,18 +106,34 @@ int main(void)
         right = false;
         }
         
-        //col_trou = CheckCollisionRecs(rect_soinc, trou);
+        col_piques = CheckCollisionRecs(rect_soinc, piques);
 	
-	if(col_trou){
-	body->position.x = 80;
+	if(col_piques){
+		if(time_spikes == 0){
+			soinc = LoadTextureFromImage(soinc_dead);
+			canMove = false;
+			time_spikes++;
+		}
+		else{
+			time_spikes++;
+		}
+	}
+	
+	
+	if(time_spikes> 30){
+	body->position.x = 40;
 	body->position.y = screenHeight/2;
-	fall++;
 	nb_lives--;
+	time_spikes = 0;
+	soinc = LoadTextureFromImage(image);
+	canMove = true;
 	}
         
 
         // Vertical movement input checking if player physics body is grounded
-        if (IsKeyDown(KEY_UP) && body->isGrounded) body->velocity.y = -VELOCITY*3;
+        if (IsKeyDown(KEY_UP) && body->isGrounded && canMove) {
+        body->velocity.y = -VELOCITY*3;
+        }
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -136,7 +156,7 @@ int main(void)
             if(fall>1) DrawText("Utilisez la plateforme pour arriver de l'autre côté", 150, 100, 20, RED);
             
             //DrawRectangleRec(rect_soinc, WHITE);
-            //DrawRectangleRec(trou, GOLD);
+            //DrawRectangleRec(piques, GOLD);
 
             //Draw created physics bodies
             int bodiesCount = GetPhysicsBodiesCount();
