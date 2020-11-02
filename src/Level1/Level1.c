@@ -32,7 +32,7 @@ int main(void)
 
     // Create floor and walls rectangle physics body
     PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10);
-    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 110, 70, 10);
+    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10);
     PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10);
     PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
     PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
@@ -116,7 +116,7 @@ int main(void)
             //DrawRectangleRec(trou, GOLD);
 
             //Draw created physics bodies
-            /*int bodiesCount = GetPhysicsBodiesCount();
+            int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
                 PhysicsBody body = GetPhysicsBody(i);
@@ -133,7 +133,7 @@ int main(void)
 
                     DrawLineV(vertexA, vertexB, BLUE);     // Draw a line between two vertex positions
                 }
-            }*/
+            }
             
 
         EndDrawing();
