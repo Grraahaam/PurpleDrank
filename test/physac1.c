@@ -103,6 +103,7 @@ int main(void)
         Rectangle rect_soinc = { body -> position.x - 35, body -> position.y - 45, 70, 80 };
         
         carX -= 0.3f;
+        
         if(lancer){
         leanX += 3.0f;
         }
