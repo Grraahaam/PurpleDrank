@@ -20,6 +20,8 @@ int main(void)
     bool boule = true;
     bool right = true;
     bool col_trou = false;
+    bool col_wall_right = false;
+    bool victory = false;
     int fall = 0;
     int nb_lives = 5;
 
@@ -51,6 +53,9 @@ int main(void)
     Texture2D soinc = LoadTextureFromImage(image);
     Texture2D background = LoadTextureFromImage(back);
     Texture2D lives = LoadTextureFromImage(soinc_head);
+    
+    Rectangle trou = { 415, 700, 245, 10};
+    Rectangle wall_right = { 800, 200, 10, 200};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -63,7 +68,6 @@ int main(void)
         RunPhysicsStep();
         
         Rectangle rect_soinc = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
-        Rectangle trou = { 415, 700, 245, 10};
         
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
@@ -89,6 +93,10 @@ int main(void)
 	fall++;
 	nb_lives--;
 	}
+	
+	col_wall_right = CheckCollisionRecs(rect_soinc, wall_right);
+        
+        if(col_wall_right) victory = true;
         
 
         // Vertical movement input checking if player physics body is grounded
@@ -107,8 +115,8 @@ int main(void)
             
             DrawTextureEx(soinc, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
             
-            DrawTextureEx(lives, (Vector2){680, 20}, 0.0f, 0.25f, WHITE);
-            DrawText(TextFormat("%d", nb_lives), 750, 25, 30, WHITE);
+            DrawTextureEx(lives, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
+            DrawText(TextFormat("%d", nb_lives), 90, 25, 30, WHITE);
             
             if(fall>1) DrawText("Utilisez la plateforme pour arriver de l'autre côté", 150, 100, 20, RED);
             
@@ -116,7 +124,7 @@ int main(void)
             //DrawRectangleRec(trou, GOLD);
 
             //Draw created physics bodies
-            int bodiesCount = GetPhysicsBodiesCount();
+            /*int bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
             {
                 PhysicsBody body = GetPhysicsBody(i);
@@ -133,7 +141,7 @@ int main(void)
 
                     DrawLineV(vertexA, vertexB, BLUE);     // Draw a line between two vertex positions
                 }
-            }
+            }*/
             
 
         EndDrawing();

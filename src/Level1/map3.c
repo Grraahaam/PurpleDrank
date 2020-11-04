@@ -12,8 +12,9 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
-    Image image = LoadImage("../../res/soinc.png");
-    Image image3 = LoadImage("../../res/soinc_reverse.png");
+    Image soinc_right = LoadImage("../../res/soinc.png");
+    Image soinc_left = LoadImage("../../res/soinc_reverse.png");
+    Image soinc_ball = LoadImage("../../res/boule.png");
     Image back = LoadImage("../../res/Level1/ECRAN3V.png");
     Image soinc_head = LoadImage("../../res/soinc_head.png");
     Image soinc_dead = LoadImage("../../res/soinc_dead.png");
@@ -25,11 +26,11 @@ int main(void)
     Image empty = LoadImage("../../res/Level1/empty.png");
     Image img_car = LoadImage("../../res/Level1/carV2.png");
     float vitesse = VELOCITY*0.4;
-    bool boule = true, right = true, col_piques = false, canMove = false, saut_tremplin = false, col_lean1 = false, col_lean2 = false, col_lean3 = false, l1 = false, l2 = false, l3 = false, col_tp = false, activate = false, desactivate = false, victory = false, start = true, lancer = false, lean_right = false, lean_left = false, destroy = true, col_car_left = false, col_car_right = false, col_car_top = false, col_lean_car_left = false, col_lean_car_right = false;
+    bool boule = false, right = true, col_piques = false, canMove = false, saut_tremplin = false, col_lean1 = false, col_lean2 = false, col_lean3 = false, l1 = false, l2 = false, l3 = false, col_tp = false, activate = false, desactivate = false, victory = false, start = true, lancer = false, lean_right = false, lean_left = false, destroy = true, col_car_left = false, col_car_right = false, col_car_top = false, col_lean_car_left = false, col_lean_car_right = false, lean_activate = false;
     int fall = 0;
     int nb_lives = 5;
     int time_spikes = 0;
-    int nb_lean = 5;
+    int nb_lean = 3;
     int time_tp = 0;
     int time_killed = 0, time_kill = 0;
     float leanX, leanY;
@@ -42,13 +43,15 @@ int main(void)
     InitPhysics();
 
     // Create floor and walls rectangle physics body
-    PhysicsBody floor1 = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, 380 }, screenWidth, 190, 10);
+    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ 435, 380 }, 730, 190, 10);
+    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 35, 330 }, 70, 240, 10);
     PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight*2, 10);
     PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight*2, 10);
     PhysicsBody car = CreatePhysicsBodyRectangle((Vector2){ 600, 260}, 140, 50, 10);
 
     // Disable dynamics to floor and walls physics bodies
-    floor1->enabled = false;
+    floor->enabled = false;
+    platform->enabled = false;
     wallLeft->enabled = false;
     wallRight->enabled = false;
     car-> enabled = false;
@@ -58,7 +61,7 @@ int main(void)
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
         
     
-    Texture2D soinc = LoadTextureFromImage(image);
+    Texture2D soinc = LoadTextureFromImage(soinc_right);
     Texture2D lives = LoadTextureFromImage(soinc_head);
     Texture2D background = LoadTextureFromImage(back);
     Texture2D teleportation = LoadTextureFromImage(img_teleportation);
@@ -67,7 +70,7 @@ int main(void)
     Texture2D car_ennemy = LoadTextureFromImage(img_car);
 
     
-    Rectangle rect_tp = { 30, 220, 10, 70};
+    Rectangle rect_tp = { 15, 140, 10, 70};
         
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -81,10 +84,8 @@ int main(void)
         RunPhysicsStep();
         
         if(lean_right) leanX += 5.0f;
-        else if (!lean_right) leanX = body-> position.x;
         
         if(lean_left) leanX -= 5.0f;
-        else if(!lean_left) leanX = body-> position.x;
         
         car -> position.x -= 0.9f;
         
@@ -92,31 +93,44 @@ int main(void)
         
         Rectangle rect_lean = { leanX, leanY - 20, 25, 40 };
         
-        Rectangle rect_car_top = { car-> position.x - 70, car-> position.y - 30, 140, 10 };  
+        Rectangle rect_car_top = { car-> position.x - 60, car-> position.y - 30, 120, 10 };  
         Rectangle rect_car_left = { car-> position.x - 80, car-> position.y, 10, 20 };      
         Rectangle rect_car_right = { car-> position.x + 70, car-> position.y, 10, 20 };      
         
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT) && canMove) {
         body->velocity.x = vitesse;
-        if (boule && !right){
-        soinc = LoadTextureFromImage(image);
+        if (!boule && !right){
+        soinc = LoadTextureFromImage(soinc_right);
         }
         right = true;
         }        
         else if (IsKeyDown(KEY_LEFT) && canMove) {
         body->velocity.x = -vitesse;
-        if (boule && right){
-        soinc = LoadTextureFromImage(image3);
+        if (!boule && right){
+        soinc = LoadTextureFromImage(soinc_left);
         }
         right = false;
         }
         
-        if (IsKeyPressed(KEY_B) && nb_lean > 0 && !lean_right && !lean_left){
+        else if (IsKeyPressed(KEY_DOWN) && !boule) {
+        soinc = LoadTextureFromImage(soinc_ball);
+        vitesse = vitesse*3;
+        boule = true;
+        }
+        
+        else if (IsKeyPressed(KEY_DOWN) && boule && vitesse > 0.5 ) {
+        soinc = LoadTextureFromImage(soinc_right);
+        vitesse = vitesse/3;
+        boule = false;
+        }
+        
+        if (IsKeyPressed(KEY_B) && nb_lean > 0 && destroy && !lean_activate){
         leanX = body -> position.x;
         leanY = body -> position.y;
         lean = LoadTextureFromImage(img_lean);
         nb_lean --;
+        lean_activate = true;
 	if(right) lean_right = true;
 	if(!right) lean_left = true;
         }        
@@ -148,28 +162,45 @@ int main(void)
 	if(col_car_left || col_car_right) time_killed++;
 	
 	if(time_killed > 10){
-	body->position.x = 80;
+	body->position.x = 40;
 	body->position.y = screenHeight/2;
 	nb_lives--;	
 	time_killed = 0;
 	time_kill = 0;
 	}
 	
-	if(col_car_top ) time_kill++;
+	if((col_car_left || col_car_right) && boule){
+	car-> position.x = 1000;
+	time_kill = 0;
+	time_killed = 0;
+	}	
 	
-	if(time_kill > 10){
+	if(col_car_top) time_kill++;
+	
+	if(time_kill > 5){
 	car-> position.x = 1000;
 	time_kill = 0;
 	time_killed = 0;
 	}
 	
-	if(col_lean_car_left || col_lean_car_right){
+	if((col_lean_car_left || col_lean_car_right) && lean_activate){
 	car-> position.x = 1000;
 	time_kill = 0;
 	time_killed = 0;
 	lean = LoadTextureFromImage(empty);
 	lean_left = false;
 	lean_right = false;
+	lean_activate = false;
+	destroy = true;
+	}
+	
+	if(car-> position.x < -50) car -> position.x = 1000;
+	
+	if((leanX < -50) || (leanX > 850)) {
+	lean_left = false;
+	lean_right = false;
+	lean_activate = false;
+	destroy = true;
 	}
         //----------------------------------------------------------------------------------
 
@@ -187,7 +218,7 @@ int main(void)
             DrawTextureEx(lives, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
             DrawText(TextFormat("%d", nb_lives), 90, 25, 30, WHITE);
             
-            DrawTextureEx(teleportation, (Vector2){20, 200}, 0.0f, 0.1f, WHITE);
+            DrawTextureEx(teleportation, (Vector2){5, 125}, 0.0f, 0.1f, WHITE);
             
             DrawTextureEx(inventory_lean, (Vector2){30, 60}, 0.0f, 0.08f, WHITE);
             DrawText(TextFormat("%d", nb_lean), 90, 70, 30, WHITE);

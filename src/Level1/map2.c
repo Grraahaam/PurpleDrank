@@ -12,9 +12,9 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
-    Image image = LoadImage("../../res/soinc.png");
-    Image image3 = LoadImage("../../res/soinc_reverse.png");
-    Image back = LoadImage("../../res/Level1/ECRAN2V.png");
+    Image soinc_right = LoadImage("../../res/soinc.png");
+    Image soinc_left = LoadImage("../../res/soinc_reverse.png");
+    Image back2 = LoadImage("../../res/Level1/ECRAN2V.png");
     Image soinc_head = LoadImage("../../res/soinc_head.png");
     Image soinc_dead = LoadImage("../../res/soinc_dead.png");
     Image img_spikes = LoadImage("../../res/Level1/spikes.png");
@@ -73,8 +73,8 @@ int main(void)
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
         
     
-    Texture2D soinc = LoadTextureFromImage(image);
-    Texture2D background = LoadTextureFromImage(back);
+    Texture2D soinc = LoadTextureFromImage(soinc_right);
+    Texture2D background = LoadTextureFromImage(back2);
     Texture2D lives = LoadTextureFromImage(soinc_head);
     Texture2D spikes = LoadTextureFromImage(img_spikes);
     Texture2D tremplin = LoadTextureFromImage(img_tremplin);
@@ -118,14 +118,14 @@ int main(void)
         if (IsKeyDown(KEY_RIGHT) && canMove) {
         body->velocity.x = vitesse;
         if (boule && !right){
-        soinc = LoadTextureFromImage(image);
+        soinc = LoadTextureFromImage(soinc_right);
         }
         right = true;
         }        
         else if (IsKeyDown(KEY_LEFT) && canMove) {
         body->velocity.x = -vitesse;
         if (boule && right){
-        soinc = LoadTextureFromImage(image3);
+        soinc = LoadTextureFromImage(soinc_left);
         }
         right = false;
         }
@@ -149,7 +149,7 @@ int main(void)
 	body->position.y = screenHeight/2;
 	nb_lives--;
 	time_spikes = 0;
-	soinc = LoadTextureFromImage(image);
+	soinc = LoadTextureFromImage(soinc_right);
 	canMove = true;
 	reset_lean();
 	}
