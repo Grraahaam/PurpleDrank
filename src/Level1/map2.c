@@ -92,7 +92,7 @@ int main(void)
     Rectangle piques = { 70, 370, 80, 20 };
     Rectangle rect_tp = { 600, 300, 10, 70};
         
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(20);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop

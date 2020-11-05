@@ -27,10 +27,12 @@ int main(void)
     Image img_car = LoadImage("../../res/Level1/carV2.png");
     Image img_goblean = LoadImage("../../res/Level1/goblean.png");
     Image goblean_dead = LoadImage("../../res/Level1/goblean_dead.png");
+    Image img_mainD = LoadImage("../../res/Level1/main_droite.png");
+    Image img_mainG = LoadImage("../../res/Level1/main_gauche.png");
     float vitesse = VELOCITY*0.4;
-    bool boule = false, right = true, col_piques = false, canMove = false, saut_tremplin = false, col_lean1 = false, col_lean2 = false, col_lean3 = false, l1 = false, l2 = false, l3 = false, col_tp = false, activate = false, desactivate = false, victory = false, start = true, lancer = false, lean_right = false, lean_left = false, destroy = true, col_car_left = false, col_car_right = false, col_car_top = false, col_lean_car_left = false, col_lean_car_right = false, lean_activate = false, col_goblean_lean = false, col_goblean_solin = false, col_skate_solin = false, col_skate_lean = false, end = false;
+    bool boule = false, right = true, col_piques = false, canMove = false, saut_tremplin = false, col_lean1 = false, col_lean2 = false, col_lean3 = false, l1 = false, l2 = false, l3 = false, col_tp = false, activate = false, desactivate = false, victory = false, start = true, lancer = false, lean_right = false, lean_left = false, destroy = true, col_car_left = false, col_car_right = false, col_car_top = false, col_lean_car_left = false, col_lean_car_right = false, lean_activate = false, col_goblean_lean = false, col_goblean_solin = false, col_skate_solin = false, col_skate_lean = false, end = false, lance_mainD = true, lance_mainG = true;
     int nb_lives = 5, time_spikes = 0, nb_lean = 3, time_tp = 0, time_killed = 0, time_kill = 0, car_killed = 0, goblean_hurt = 0;
-    float leanX, leanY;
+    float leanX, leanY, mainGx, mainGy, mainDx, mainDy;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "s/o'lin à la recherche du lean");
@@ -68,6 +70,8 @@ int main(void)
     Texture2D lean = LoadTextureFromImage(empty);
     Texture2D car_ennemy = LoadTextureFromImage(img_car);
     Texture2D goblean_boss = LoadTextureFromImage(img_goblean);
+    Texture2D goblean_mainD = LoadTextureFromImage(empty);
+    Texture2D goblean_mainG = LoadTextureFromImage(empty);
 
     
     Rectangle rect_tp = { 15, 140, 10, 70};
@@ -83,6 +87,16 @@ int main(void)
         
         RunPhysicsStep();
         
+        if(lance_mainD){
+        mainDx -= 5.0f;
+        mainDy += 0.8f;
+        }
+        
+        if(lance_mainG) {
+        mainGx -= 5.0f;
+        mainGy += 0.8f;
+        }
+        
         if(lean_right) leanX += 5.0f;
         
         if(lean_left) leanX -= 5.0f;
@@ -92,8 +106,22 @@ int main(void)
         if(car_killed >= 4){
         car -> position.x = 1500;
         if(goblean -> position.x > 500 && !victory){
-        goblean -> position.x -= 0.9f;
+        goblean -> position.x -= 1.0f;
         }
+        }
+        
+        if(goblean -> position.x == 600 && !victory){
+        mainDx = goblean -> position.x;
+        mainDy = goblean -> position.y;
+        goblean_mainD = LoadTextureFromImage(img_mainD);
+        lance_mainD = true;
+        }
+        
+        if(goblean -> position.x == 550 && !victory){
+        mainGx = goblean -> position.x;
+        mainGy = goblean -> position.y;
+        goblean_mainG = LoadTextureFromImage(img_mainG);
+        lance_mainG = true;
         }
         
         Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
@@ -286,6 +314,9 @@ int main(void)
             DrawTextureEx(car_ennemy, (Vector2){ car-> position.x - 75, car-> position.y - 40 }, 0.0f, 0.1f, WHITE );  
             
             DrawTextureEx(goblean_boss, (Vector2){ goblean-> position.x - 115, goblean-> position.y - 110 }, 0.0f, 0.2f, WHITE );   
+            
+            DrawTextureEx(goblean_mainD, (Vector2){mainDx - 80, mainDy - 40}, 0.0f, 0.2f, WHITE);
+            DrawTextureEx(goblean_mainG, (Vector2){mainGx + 20, mainGy - 40}, 0.0f, 0.2f, WHITE); 
             
             if(victory){
             DrawText("VICTOIRE!!!", 300, 100, 20, RED);   
