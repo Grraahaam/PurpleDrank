@@ -12,11 +12,11 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
-    Image soinc_right = LoadImage("../../res/soinc.png");
-    Image soinc_left = LoadImage("../../res/soinc_reverse.png");
+    Image solin_right = LoadImage("../../res/solin.png");
+    Image solin_left = LoadImage("../../res/solin_reverse.png");
     Image back2 = LoadImage("../../res/Level1/ECRAN2V.png");
-    Image soinc_head = LoadImage("../../res/soinc_head.png");
-    Image soinc_dead = LoadImage("../../res/soinc_dead.png");
+    Image solin_head = LoadImage("../../res/solin_head.png");
+    Image solin_dead = LoadImage("../../res/solin_dead.png");
     Image img_spikes = LoadImage("../../res/Level1/spikes.png");
     Image img_tremplin = LoadImage("../../res/Level1/tremplin.png");
     Image img_teleportation = LoadImage("../../res/Level1/tp.png");
@@ -32,7 +32,7 @@ int main(void)
     int time_tp = 0;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(screenWidth, screenHeight, "soinc à la recherche du lean");
+    InitWindow(screenWidth, screenHeight, "s/o'lin à la recherche du lean");
 
 
     // Initialize physics and default physics bodies
@@ -73,9 +73,9 @@ int main(void)
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
         
     
-    Texture2D soinc = LoadTextureFromImage(soinc_right);
+    Texture2D solin = LoadTextureFromImage(solin_right);
     Texture2D background = LoadTextureFromImage(back2);
-    Texture2D lives = LoadTextureFromImage(soinc_head);
+    Texture2D lives = LoadTextureFromImage(solin_head);
     Texture2D spikes = LoadTextureFromImage(img_spikes);
     Texture2D tremplin = LoadTextureFromImage(img_tremplin);
     Texture2D teleportation = LoadTextureFromImage(img_tp_desac);
@@ -112,29 +112,29 @@ int main(void)
         
         RunPhysicsStep();
         
-        Rectangle rect_soinc = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
+        Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
         
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT) && canMove) {
         body->velocity.x = vitesse;
         if (boule && !right){
-        soinc = LoadTextureFromImage(soinc_right);
+        solin = LoadTextureFromImage(solin_right);
         }
         right = true;
         }        
         else if (IsKeyDown(KEY_LEFT) && canMove) {
         body->velocity.x = -vitesse;
         if (boule && right){
-        soinc = LoadTextureFromImage(soinc_left);
+        solin = LoadTextureFromImage(solin_left);
         }
         right = false;
         }
         
-        col_piques = CheckCollisionRecs(rect_soinc, piques);
+        col_piques = CheckCollisionRecs(rect_solin, piques);
 	
 	if(col_piques){
 		if(time_spikes == 0){
-			soinc = LoadTextureFromImage(soinc_dead);
+			solin = LoadTextureFromImage(solin_dead);
 			canMove = false;
 			time_spikes++;
 		}
@@ -149,12 +149,12 @@ int main(void)
 	body->position.y = screenHeight/2;
 	nb_lives--;
 	time_spikes = 0;
-	soinc = LoadTextureFromImage(soinc_right);
+	solin = LoadTextureFromImage(solin_right);
 	canMove = true;
 	reset_lean();
 	}
 	
-	saut_tremplin = CheckCollisionRecs(rect_soinc, rect_tremplin);
+	saut_tremplin = CheckCollisionRecs(rect_solin, rect_tremplin);
 	
 	if(saut_tremplin && IsKeyDown(KEY_SPACE)){
 	body->velocity.y = -VELOCITY*5.5;
@@ -167,9 +167,9 @@ int main(void)
         body->velocity.y = -VELOCITY*3;
         }
         
-        col_lean1 = CheckCollisionRecs(rect_soinc, rect_lean1);
-	col_lean2 = CheckCollisionRecs(rect_soinc, rect_lean2);
-	col_lean3 = CheckCollisionRecs(rect_soinc, rect_lean3);
+        col_lean1 = CheckCollisionRecs(rect_solin, rect_lean1);
+	col_lean2 = CheckCollisionRecs(rect_solin, rect_lean2);
+	col_lean3 = CheckCollisionRecs(rect_solin, rect_lean3);
             
             if(col_lean1 && !l1){ 
             nb_lean ++;
@@ -189,7 +189,7 @@ int main(void)
             l3 = true;
             }
             
-            col_tp = CheckCollisionRecs(rect_soinc, rect_tp);
+            col_tp = CheckCollisionRecs(rect_solin, rect_tp);
 	
 	if(col_tp) time_tp++;
 	
@@ -205,7 +205,7 @@ int main(void)
             
             DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
             
-            DrawTextureEx(soinc, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+            DrawTextureEx(solin, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
             
             DrawTextureEx(lives, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
             DrawText(TextFormat("%d", nb_lives), 90, 25, 30, WHITE);
@@ -225,7 +225,7 @@ int main(void)
             
             if(fall>1) DrawText("Utilisez la plateforme pour arriver de l'autre côté", 150, 100, 20, RED);
             
-            //DrawRectangleRec(rect_soinc, WHITE);
+            //DrawRectangleRec(rect_solin, WHITE);
             //DrawRectangleRec(piques, GOLD);
             //DrawRectangleRec(rect_tremplin, WHITE);
 

@@ -12,12 +12,12 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
-    Image soinc_right = LoadImage("../../res/soinc.png");
-    Image soinc_left = LoadImage("../../res/soinc_reverse.png");
-    Image soinc_ball = LoadImage("../../res/boule.png");
+    Image solin_right = LoadImage("../../res/solin.png");
+    Image solin_left = LoadImage("../../res/solin_reverse.png");
+    Image solin_ball = LoadImage("../../res/boule.png");
     Image back = LoadImage("../../res/Level1/ECRAN3V.png");
-    Image soinc_head = LoadImage("../../res/soinc_head.png");
-    Image soinc_dead = LoadImage("../../res/soinc_dead.png");
+    Image solin_head = LoadImage("../../res/solin_head.png");
+    Image solin_dead = LoadImage("../../res/solin_dead.png");
     Image img_spikes = LoadImage("../../res/Level1/spikes.png");
     Image img_tremplin = LoadImage("../../res/Level1/tremplin.png");
     Image img_teleportation = LoadImage("../../res/Level1/tp.png");
@@ -25,18 +25,15 @@ int main(void)
     Image img_lean = LoadImage("../../res/Level1/lean.png");
     Image empty = LoadImage("../../res/Level1/empty.png");
     Image img_car = LoadImage("../../res/Level1/carV2.png");
+    Image img_goblean = LoadImage("../../res/Level1/goblean.png");
+    Image goblean_dead = LoadImage("../../res/Level1/goblean_dead.png");
     float vitesse = VELOCITY*0.4;
-    bool boule = false, right = true, col_piques = false, canMove = false, saut_tremplin = false, col_lean1 = false, col_lean2 = false, col_lean3 = false, l1 = false, l2 = false, l3 = false, col_tp = false, activate = false, desactivate = false, victory = false, start = true, lancer = false, lean_right = false, lean_left = false, destroy = true, col_car_left = false, col_car_right = false, col_car_top = false, col_lean_car_left = false, col_lean_car_right = false, lean_activate = false;
-    int fall = 0;
-    int nb_lives = 5;
-    int time_spikes = 0;
-    int nb_lean = 3;
-    int time_tp = 0;
-    int time_killed = 0, time_kill = 0;
+    bool boule = false, right = true, col_piques = false, canMove = false, saut_tremplin = false, col_lean1 = false, col_lean2 = false, col_lean3 = false, l1 = false, l2 = false, l3 = false, col_tp = false, activate = false, desactivate = false, victory = false, start = true, lancer = false, lean_right = false, lean_left = false, destroy = true, col_car_left = false, col_car_right = false, col_car_top = false, col_lean_car_left = false, col_lean_car_right = false, lean_activate = false, col_goblean_lean = false, col_goblean_solin = false, col_skate_solin = false, col_skate_lean = false, end = false;
+    int nb_lives = 5, time_spikes = 0, nb_lean = 3, time_tp = 0, time_killed = 0, time_kill = 0, car_killed = 0, goblean_hurt = 0;
     float leanX, leanY;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(screenWidth, screenHeight, "soinc à la recherche du lean");
+    InitWindow(screenWidth, screenHeight, "s/o'lin à la recherche du lean");
 
 
     // Initialize physics and default physics bodies
@@ -47,7 +44,8 @@ int main(void)
     PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 35, 330 }, 70, 240, 10);
     PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight*2, 10);
     PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight*2, 10);
-    PhysicsBody car = CreatePhysicsBodyRectangle((Vector2){ 600, 260}, 140, 50, 10);
+    PhysicsBody car = CreatePhysicsBodyRectangle((Vector2){ 1000, 260}, 140, 50, 10);
+    PhysicsBody goblean = CreatePhysicsBodyRectangle((Vector2){ 1000, 180}, 120, 210, 10);
 
     // Disable dynamics to floor and walls physics bodies
     floor->enabled = false;
@@ -55,19 +53,21 @@ int main(void)
     wallLeft->enabled = false;
     wallRight->enabled = false;
     car-> enabled = false;
+    goblean -> enabled = false;
 
     // Create movement physics body
     PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 40, screenHeight/2 }, 50, 60, 1);
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
         
     
-    Texture2D soinc = LoadTextureFromImage(soinc_right);
-    Texture2D lives = LoadTextureFromImage(soinc_head);
+    Texture2D solin = LoadTextureFromImage(solin_right);
+    Texture2D lives = LoadTextureFromImage(solin_head);
     Texture2D background = LoadTextureFromImage(back);
     Texture2D teleportation = LoadTextureFromImage(img_teleportation);
     Texture2D inventory_lean = LoadTextureFromImage(img_lean);
     Texture2D lean = LoadTextureFromImage(empty);
     Texture2D car_ennemy = LoadTextureFromImage(img_car);
+    Texture2D goblean_boss = LoadTextureFromImage(img_goblean);
 
     
     Rectangle rect_tp = { 15, 140, 10, 70};
@@ -87,40 +87,50 @@ int main(void)
         
         if(lean_left) leanX -= 5.0f;
         
-        car -> position.x -= 0.9f;
+        if(car_killed < 4) car -> position.x -= 0.9f;
         
-        Rectangle rect_soinc = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
+        if(car_killed >= 4){
+        car -> position.x = 1500;
+        if(goblean -> position.x > 500 && !victory){
+        goblean -> position.x -= 0.9f;
+        }
+        }
+        
+        Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
         
         Rectangle rect_lean = { leanX, leanY - 20, 25, 40 };
         
         Rectangle rect_car_top = { car-> position.x - 60, car-> position.y - 30, 120, 10 };  
         Rectangle rect_car_left = { car-> position.x - 80, car-> position.y, 10, 20 };      
-        Rectangle rect_car_right = { car-> position.x + 70, car-> position.y, 10, 20 };      
+        Rectangle rect_car_right = { car-> position.x + 70, car-> position.y, 10, 20 }; 
+        
+        Rectangle rect_goblean = { goblean-> position.x - 60, goblean-> position.y - 100, 120, 160 };
+        Rectangle rect_skate = { goblean-> position.x - 95, goblean-> position.y + 62, 180, 40 };
         
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT) && canMove) {
         body->velocity.x = vitesse;
         if (!boule && !right){
-        soinc = LoadTextureFromImage(soinc_right);
+        solin = LoadTextureFromImage(solin_right);
         }
         right = true;
         }        
         else if (IsKeyDown(KEY_LEFT) && canMove) {
         body->velocity.x = -vitesse;
         if (!boule && right){
-        soinc = LoadTextureFromImage(soinc_left);
+        solin = LoadTextureFromImage(solin_left);
         }
         right = false;
         }
         
         else if (IsKeyPressed(KEY_DOWN) && !boule) {
-        soinc = LoadTextureFromImage(soinc_ball);
+        solin = LoadTextureFromImage(solin_ball);
         vitesse = vitesse*3;
         boule = true;
         }
         
         else if (IsKeyPressed(KEY_DOWN) && boule && vitesse > 0.5 ) {
-        soinc = LoadTextureFromImage(soinc_right);
+        solin = LoadTextureFromImage(solin_right);
         vitesse = vitesse/3;
         boule = false;
         }
@@ -143,7 +153,7 @@ int main(void)
         }
             
             
-       col_tp = CheckCollisionRecs(rect_soinc, rect_tp);
+       col_tp = CheckCollisionRecs(rect_solin, rect_tp);
 	
 	if(col_tp && start) time_tp++;
 	
@@ -153,9 +163,9 @@ int main(void)
 	start = false;
 	}
 	
-	col_car_left = CheckCollisionRecs(rect_soinc, rect_car_left);
-	col_car_right = CheckCollisionRecs(rect_soinc, rect_car_right);
-	col_car_top = CheckCollisionRecs(rect_soinc, rect_car_top);
+	col_car_left = CheckCollisionRecs(rect_solin, rect_car_left);
+	col_car_right = CheckCollisionRecs(rect_solin, rect_car_right);
+	col_car_top = CheckCollisionRecs(rect_solin, rect_car_top);
 	col_lean_car_left = CheckCollisionRecs(rect_lean, rect_car_left);
 	col_lean_car_right = CheckCollisionRecs(rect_lean, rect_car_right);
 	
@@ -171,6 +181,7 @@ int main(void)
 	
 	if((col_car_left || col_car_right) && boule){
 	car-> position.x = 1000;
+	car_killed ++;
 	time_kill = 0;
 	time_killed = 0;
 	}	
@@ -179,12 +190,14 @@ int main(void)
 	
 	if(time_kill > 5){
 	car-> position.x = 1000;
+	car_killed ++;
 	time_kill = 0;
 	time_killed = 0;
 	}
 	
 	if((col_lean_car_left || col_lean_car_right) && lean_activate){
 	car-> position.x = 1000;
+	car_killed ++;
 	time_kill = 0;
 	time_killed = 0;
 	lean = LoadTextureFromImage(empty);
@@ -202,6 +215,51 @@ int main(void)
 	lean_activate = false;
 	destroy = true;
 	}
+	
+	col_goblean_lean = CheckCollisionRecs(rect_lean, rect_goblean);
+	col_goblean_solin = CheckCollisionRecs(rect_solin, rect_goblean);
+	col_skate_lean = CheckCollisionRecs(rect_lean, rect_skate);
+	col_skate_solin = CheckCollisionRecs(rect_solin, rect_skate);
+	
+	if(!victory){
+	if(col_goblean_lean && lean_activate){
+	goblean_hurt += 2;
+	goblean -> position.x = 750;
+	lean = LoadTextureFromImage(empty);
+	lean_left = false;
+	lean_right = false;
+	lean_activate = false;
+	destroy = true;
+	}
+	
+	if((col_goblean_solin || col_skate_solin) && boule){
+	goblean_hurt += 1;
+	goblean -> position.x = 650;
+	body -> position.x -= 200;
+	}
+	
+	if((col_goblean_solin || col_skate_solin) && !boule) time_killed++;
+	
+	if(col_skate_lean && lean_activate){
+	lean = LoadTextureFromImage(empty);
+	lean_left = false;
+	lean_right = false;
+	lean_activate = false;
+	destroy = true;
+	}
+	}
+	
+	if(goblean_hurt == 6){
+	victory = true;
+	goblean -> position.x = 550;
+	goblean -> position.y = 270;
+	}
+	
+	if(victory && !end){
+	goblean_boss = LoadTextureFromImage(goblean_dead);
+	end = true;
+	}
+	
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -213,7 +271,7 @@ int main(void)
             
             DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
             
-            DrawTextureEx(soinc, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+            DrawTextureEx(solin, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
             
             DrawTextureEx(lives, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
             DrawText(TextFormat("%d", nb_lives), 90, 25, 30, WHITE);
@@ -225,9 +283,15 @@ int main(void)
             
             DrawTextureEx(lean, (Vector2){leanX, leanY - 20}, 0.0f, 0.08f, WHITE); 
             
-            DrawTextureEx(car_ennemy, (Vector2){ car-> position.x - 75, car-> position.y - 40 }, 0.0f, 0.1f, WHITE );       
+            DrawTextureEx(car_ennemy, (Vector2){ car-> position.x - 75, car-> position.y - 40 }, 0.0f, 0.1f, WHITE );  
             
-            //DrawRectangleRec(rect_soinc, WHITE);
+            DrawTextureEx(goblean_boss, (Vector2){ goblean-> position.x - 115, goblean-> position.y - 110 }, 0.0f, 0.2f, WHITE );   
+            
+            if(victory){
+            DrawText("VICTOIRE!!!", 300, 100, 20, RED);   
+            }
+            
+            //DrawRectangleRec(rect_solin, WHITE);
 	    
 	    //DrawRectangleRec(rect_tp, WHITE);
 	    
@@ -235,6 +299,9 @@ int main(void)
 	    //DrawRectangleRec(rect_car_left, GOLD);
 	    //DrawRectangleRec(rect_car_right, GOLD);	    
 	    //DrawRectangleRec(rect_lean, GOLD);
+	    
+	    //DrawRectangleRec(rect_goblean, RED);
+	    //DrawRectangleRec(rect_skate, GOLD);
 
             //Draw created physics bodies
             /*int bodiesCount = GetPhysicsBodiesCount();

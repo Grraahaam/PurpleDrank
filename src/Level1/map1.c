@@ -12,10 +12,10 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
-    Image image = LoadImage("../../res/soinc.png");
-    Image image3 = LoadImage("../../res/soinc_reverse.png");
+    Image image = LoadImage("../../res/solin.png");
+    Image image3 = LoadImage("../../res/solin_reverse.png");
     Image back = LoadImage("../../res/Level1/ECRAN1V.png");
-    Image soinc_head = LoadImage("../../res/soinc_head.png");
+    Image solin_head = LoadImage("../../res/solin_head.png");
     float vitesse = VELOCITY*0.4;
     bool boule = true;
     bool right = true;
@@ -26,7 +26,7 @@ int main(void)
     int nb_lives = 5;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(screenWidth, screenHeight, "soinc à la recherche du lean");
+    InitWindow(screenWidth, screenHeight, "s/o'lin à la recherche du lean");
 
 
     // Initialize physics and default physics bodies
@@ -50,9 +50,9 @@ int main(void)
     PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 80, screenHeight/2 }, 50, 60, 1);
     body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
     
-    Texture2D soinc = LoadTextureFromImage(image);
+    Texture2D solin = LoadTextureFromImage(image);
     Texture2D background = LoadTextureFromImage(back);
-    Texture2D lives = LoadTextureFromImage(soinc_head);
+    Texture2D lives = LoadTextureFromImage(solin_head);
     
     Rectangle trou = { 415, 700, 245, 10};
     Rectangle wall_right = { 800, 200, 10, 200};
@@ -67,25 +67,25 @@ int main(void)
         //----------------------------------------------------------------------------------
         RunPhysicsStep();
         
-        Rectangle rect_soinc = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
+        Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
         
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
         body->velocity.x = vitesse;
         if (boule && !right){
-        soinc = LoadTextureFromImage(image);
+        solin = LoadTextureFromImage(image);
         }
         right = true;
         }        
         else if (IsKeyDown(KEY_LEFT)) {
         body->velocity.x = -vitesse;
         if (boule && right){
-        soinc = LoadTextureFromImage(image3);
+        solin = LoadTextureFromImage(image3);
         }
         right = false;
         }
         
-        col_trou = CheckCollisionRecs(rect_soinc, trou);
+        col_trou = CheckCollisionRecs(rect_solin, trou);
 	
 	if(col_trou){
 	body->position.x = 80;
@@ -94,7 +94,7 @@ int main(void)
 	nb_lives--;
 	}
 	
-	col_wall_right = CheckCollisionRecs(rect_soinc, wall_right);
+	col_wall_right = CheckCollisionRecs(rect_solin, wall_right);
         
         if(col_wall_right) victory = true;
         
@@ -113,14 +113,14 @@ int main(void)
             
             DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
             
-            DrawTextureEx(soinc, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+            DrawTextureEx(solin, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
             
             DrawTextureEx(lives, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
             DrawText(TextFormat("%d", nb_lives), 90, 25, 30, WHITE);
             
             if(fall>1) DrawText("Utilisez la plateforme pour arriver de l'autre côté", 150, 100, 20, RED);
             
-            //DrawRectangleRec(rect_soinc, WHITE);
+            //DrawRectangleRec(rect_solin, WHITE);
             //DrawRectangleRec(trou, GOLD);
 
             //Draw created physics bodies
