@@ -7,7 +7,7 @@ MAP 2 : Il faut activer le téléporteur. Pour cela il faut 3 leans dans son inv
 
 Commandes : Barre espace -> utiliser le trampoline
 
-MAP 3 : Il faut éliminer 4 voitures ennemies puis éliminer le GobLean. Si S/o'lin se fait toucher par un ennemi il perd une vie et retourne à sa position de départ. Pour éliminer une voiture ennemie, S/o'lin peut soit leur sauter dessus, soit lancer du lean OU ALORS se transformer en boule pour aller plus vite et être plus fort. Attention! S/o'lin ne peut faire que 3 coups en étant en boule. Pour tuer le GobLean, il faut lui asséner 3 coups sachant qu'on ne peut pas lui sauter dessus.
+MAP 3 : Il faut éliminer 4 voitures ennemies puis éliminer le GobLean. Si S/o'lin se fait toucher par un ennemi il perd une vie et retourne à sa position de départ. Pour éliminer une voiture ennemie, S/o'lin peut soit leur sauter dessus, soit lancer du lean OU ALORS se transformer en boule pour aller plus vite et être plus fort. Attention! S/o'lin ne peut faire que 3 coups en étant en boule. Pour tuer le GobLean, il faut lui asséner l'équivalent de 6 coups sachant qu'on ne peut pas lui sauter dessus. Un Lean = 2 coups, saut en boule = 1 coup.
 
 Commandes : Flèche bas -> se transformer en boule
 	    Touche 'B' -> Lancer du lean
