@@ -110,17 +110,28 @@ int main(void)
         }
         }
         
-        if(goblean -> position.x == 600 && !victory){
+        if(goblean -> position.x == 650 && !victory){
         mainDx = goblean -> position.x;
         mainDy = goblean -> position.y;
         goblean_mainD = LoadTextureFromImage(img_mainD);
         lance_mainD = true;
         }
         
-        if(goblean -> position.x == 550 && !victory){
+        if(goblean -> position.x == 600 && !victory){
         mainGx = goblean -> position.x;
         mainGy = goblean -> position.y;
         goblean_mainG = LoadTextureFromImage(img_mainG);
+        lance_mainG = true;
+        }
+        
+        if(goblean -> position.x == 500 && (body -> position.x > 185 && body -> position.x < 285) && !victory){
+        mainDx = goblean -> position.x;
+        mainDy = goblean -> position.y;
+        mainGx = goblean -> position.x;
+        mainGy = goblean -> position.y;
+        goblean_mainD = LoadTextureFromImage(img_mainD);        
+        goblean_mainG = LoadTextureFromImage(img_mainG);
+        lance_mainD = true;
         lance_mainG = true;
         }
         
@@ -317,6 +328,7 @@ int main(void)
             
             DrawTextureEx(goblean_mainD, (Vector2){mainDx - 80, mainDy - 40}, 0.0f, 0.2f, WHITE);
             DrawTextureEx(goblean_mainG, (Vector2){mainGx + 20, mainGy - 40}, 0.0f, 0.2f, WHITE); 
+            DrawText(TextFormat("position x : %f", body -> position.x), 600, 25, 10, WHITE);
             
             if(victory){
             DrawText("VICTOIRE!!!", 300, 100, 20, RED);   
