@@ -6,12 +6,8 @@
 
 // Include the game libraries
 #include "globals.h" // Defines the variable types, structs and enums
-#include "screens/menu_screen.h"
-
-// Function declarations
-void UpdateScreen();
-void LoadRessources();
-void UnloadRessources();
+#include "main.h"
+#include "screens/menu.h"
 
 int main() {
 
@@ -71,6 +67,9 @@ void UpdateScreen() {
 	switch(game.gameScreen) {
 		case MENU: {
 			MenuDraw();
+		} break;
+		default : {
+			// Default action, if screen not handled
 		} break;
 	}
 }
