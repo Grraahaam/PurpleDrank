@@ -20,22 +20,19 @@ It will be found automatically, if it is in `src` or `src/screens` directories. 
 *The structure tries to follow git/dev best practices*
 
 * `/lib`
-    * Contains external libraries and our own header file (.h)
+    * Contains external libraries (e.g. raylib)
 
 * `/src`
-    * Contains our source code only (.c)
-
-* `/build`
-    * Contains the program's stable/debug binaries and compiled files
+    * Contains our source code and header file (*.c and *.h)
 
 * `/tests`
     * Contains ALL the tests, keep them separate HERE
 
 * `/scripts`
-    * Automatization scripts, for custom operations not including Makefile which is at the root level
+    * Automatization scripts, for custom operations not including Makefile which is at the project's root level
 
 * `/res`
-    * Contains all the static ressources, as images
+    * Contains all the static ressources, as images and sounds
 
 * `/doc`
     * Contains all the documentation and useful tips
