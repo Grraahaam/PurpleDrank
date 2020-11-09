@@ -1,8 +1,5 @@
-
-# Defining the compilation arguments
-CFLAGS=-Wall -I .
-CFLAGS=-std=c99 -Wall -Wextra -lm
-LIBS=-lraylib
+# Include the compiling flags and required libraries
+include ../conf/config
 
 #vpath %.h src:src/screens
 #vpath %.c src:src/screens
@@ -11,15 +8,16 @@ LIBS=-lraylib
 vpath %.h screens
 vpath %.c screens
 
-all: main
+all: soinc
 
-# Add the file you want to join, from screens/
+# Add the file you want to join, from screens/ ($^ takes all the dependencies, ../@ output the result in the project's root directory)
 #main: main.o menu.o level1.o level2.o level3.o gameover.o
-main: main.o menu.o
+soinc: main.o menu.o
+	$(CC) -o ../$@ $^ $(LIBS)
 
 # This satisfy all the above targets, with a single regex (compile the .c and .h to generate the .o compiled file)
-%.o: %.c %.h
-	$(CC) -c $< $(CFLAGS) $(LIBS) -o $@
+%.o: %.c
+	$(CC) -c $< $(CFLAGS) -o $@
 
 # Use "make clean" to remove all .o files in the current folder
 clean:

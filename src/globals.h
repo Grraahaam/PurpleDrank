@@ -1,4 +1,10 @@
 
+// Initialization
+const int screenWidth = 800;
+const int screenHeight = 450;
+
+const char PATH_RES[] = "../res";
+
 typedef enum GameScreen {
 	MENU,
 	LEVEL_1
@@ -7,6 +13,8 @@ typedef enum GameScreen {
 typedef struct Game {
 	GameScreen gameScreen;
 } Game;
+
+Game game;
 
 typedef struct Player {
 	Vector2 position;
@@ -26,8 +34,6 @@ typedef struct Decor {
 	foreground;*/
 } Decor;
 
-Game game;
-
 Texture2D background;
 Texture2D background_lvl1;
 Texture2D foreground_lvl1;
@@ -35,3 +41,4 @@ Texture2D midground_lvl1;
 Texture2D soincPlayer;
 
 Music soincSong;
+

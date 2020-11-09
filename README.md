@@ -6,20 +6,23 @@ Purple Drank documentation
 
 *The structure tries to follow git/dev best practices*
 
-* **/lib**
+* `/lib`
     * Contains external libraries and our own header file (.h)
 
-* **/src**
+* `/src`
     * Contains our source code only (.c)
 
-* **/build**
+* `/build`
     * Contains the program's stable/debug binaries and compiled files
 
-* **/tests**
+* `/tests`
     * Contains ALL the tests, keep them separate HERE
 
-* **/scripts**
+* `/scripts`
     * Automatization scripts, for custom operations not including Makefile which is at the root level
 
-* **/res**
+* `/res`
     * Contains all the static ressources, as images
+
+* `/doc`
+    * Contains all the documentation and useful tips

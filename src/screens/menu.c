@@ -1,10 +1,15 @@
 
+#include <stdio.h>
 #include "raylib.h"
+
+extern int screenWidth, screenHeight;
+extern Texture2D background;
 
 // Function reading user ENTER input
 void MenuRead() {
 	if (IsKeyPressed('ENTER')) {
-		LevelOneDraw();
+		puts("Pressed ENTER, starting level one!");
+		//LevelOneDraw();
 	}
 }
 

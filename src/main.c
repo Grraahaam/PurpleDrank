@@ -1,6 +1,9 @@
 
 // This is the main program file, that is compiled to get the stable executable
 
+#include <stdio.h>
+#include <unistd.h>
+
 // Include Raylib library
 #include "raylib.h"
 
@@ -9,22 +12,34 @@
 #include "main.h"
 #include "screens/menu.h"
 
+bool quit = false;
+
 int main() {
 
-	// Initialization
-	const int screenWidth = 800;
-	const int screenHeight = 450;
+	getdir();
+
+	puts("[DEBUG] Launching window!");
 
 	InitWindow(screenWidth, screenHeight, "PurpleDrank");
+
+	puts("[DEBUG] Init audio device!");
+
 	InitAudioDevice();
+
+	puts("[DEBUG] Load resources!");
+
 	LoadRessources();
 
+	puts("[DEBUG] Game window is starting!");
+
 	// Main game loop (Detect window close button or ESC key)
-	while (!WindowShouldClose()) {
+	while (!WindowShouldClose() && !quit) {
 
 		UpdateScreen();
 
 	}
+
+	puts("[DEBUG] Game window is closing!");
 
 	// De-Initialization
 	UnloadRessources();
@@ -38,10 +53,10 @@ int main() {
 void LoadRessources() {
 	// Textures MUST be loaded after Window initialization (OpenGL context is required)
 	background = LoadTexture("res/menu/background.png");
-	background_lvl1 = LoadTexture("res/lvl1/1.png");
-    	midground_lvl1 = LoadTexture("res/lvl1/2.png");
-	foreground_lvl1 = LoadTexture("res/lvl1/3.png");
-	soincPlayer = LoadTexture("res/soinc.png");
+	background_lvl1 = LoadTexture("res/lvl1/background.png");
+    	midground_lvl1 = LoadTexture("res/lvl1/midground.png");
+	foreground_lvl1 = LoadTexture("res/lvl1/foreground.png");
+	soincPlayer = LoadTexture("res/solin.png");
 	soincSong = LoadMusicStream("res/menu/smash.mp3");
 }
 
@@ -59,7 +74,7 @@ void UnloadRessources() {
 void UpdateScreen() {
 
 	// Play the song (loaded previously)
-	PlayMusicStream(soincSong);
+	//PlayMusicStream(soincSong);
 
 	game.gameScreen = MENU;
 
@@ -72,4 +87,15 @@ void UpdateScreen() {
 			// Default action, if screen not handled
 		} break;
 	}
+}
+
+int getdir() {
+   char cwd[255];
+   if (getcwd(cwd, sizeof(cwd)) != NULL) {
+       printf("[DEBUG] Current working directory : %s\n", cwd);
+   } else {
+       perror("getcwd() error");
+       return 1;
+   }
+   return 0;
 }
