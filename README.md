@@ -2,6 +2,16 @@
 
 Purple Drank documentation
 
+# Story
+
+*Solean et son Ekip*
+
+Le monde de Lealle est attaqué par un virus mortel, la fièvre Ebolean, causée par le Gob-Lean lorsqu'il se fit quitter par sa copean. Cette rage se fit ressenti lors d'orages violets, les purple rain, rendant le monde accroc à cette substance qu'est la lean.
+
+Dans le monde chaotique de Lealle, vous aiderez Solean et son Ekip, à vaincre leur ennemi juré, à travers une aventure et des mini-jeux d'enfer!
+
+**Récupérer un maximum de seaux de Cristalean afin de pouvoir vaincre le Gob-Lean!**
+
 # Build
 
 At the project's root level, type : `make`
@@ -20,22 +30,19 @@ It will be found automatically, if it is in `src` or `src/screens` directories. 
 *The structure tries to follow git/dev best practices*
 
 * `/lib`
-    * Contains external libraries and our own header file (.h)
+    * Contains external libraries (e.g. raylib)
 
 * `/src`
-    * Contains our source code only (.c)
+    * Contains our source code and header file (*.c and *.h)
 
-* `/build`
-    * Contains the program's stable/debug binaries and compiled files
-
-* `/tests`
+* `/test`
     * Contains ALL the tests, keep them separate HERE
 
 * `/scripts`
-    * Automatization scripts, for custom operations not including Makefile which is at the root level
+    * Automatization scripts, for custom operations not including Makefile which is at the project's root level
 
 * `/res`
-    * Contains all the static ressources, as images
+    * Contains all the static ressources, as images and sounds
 
 * `/doc`
     * Contains all the documentation and useful tips
