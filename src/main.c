@@ -50,7 +50,7 @@ int main() {
 }
 
 // Loading all the ressources (TODO organize it into a struct?)
-void LoadRessources() {
+void LoadResources() {
 	// Textures MUST be loaded after Window initialization (OpenGL context is required)
 	background = LoadTexture("res/menu/background.png");
 	background_lvl1 = LoadTexture("res/lvl1/background.png");
