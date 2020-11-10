@@ -1,27 +1,27 @@
 
 #include <stdio.h>
 #include "raylib.h"
+#include "../structure.h"
+#include "menu.h"
 
 extern int screenWidth, screenHeight;
-extern Texture2D background;
+extern Texture2D backgroundMenu;
 
 // Function reading user ENTER input
 void MenuRead() {
-	if (IsKeyPressed('ENTER')) {
+		
+	if (IsKeyDown(KEY_ENTER)) {
 		puts("Pressed ENTER, starting level one!");
-		//LevelOneDraw();
+		game.gameScreen = LEVEL_1;		
 	}
 }
 
 // Function drawing the menu screen
 void MenuDraw() {
 	BeginDrawing();
-
 	ClearBackground(RAYWHITE);
-
-	DrawTexture(background, screenWidth/2 - background.width/2, screenHeight/2 - background.height/2, WHITE);
+	DrawTexture(backgroundMenu, screenWidth/2 - backgroundMenu.width/2, screenHeight/2 - backgroundMenu.height/2, WHITE);
 	DrawText("PRESS ENTER TO PLAY", 220, 80, 30, WHITE);
-
 	EndDrawing();
-
+	MenuRead();
 }

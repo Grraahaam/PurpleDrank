@@ -5,14 +5,14 @@ include ../conf/config
 #vpath %.c src:src/screens
 
 # Including screens directory, for the files to be found
-vpath %.h screens
+vpath %.h screens 
 vpath %.c screens
 
 all: soinc
 
 # Add the file you want to join, from screens/ ($^ takes all the dependencies, ../@ output the result in the project's root directory)
 #main: main.o menu.o level1.o level2.o level3.o gameover.o
-soinc: main.o menu.o
+soinc: main.o menu.o level1.o
 	$(CC) -o ../$@ $^ $(LIBS)
 
 # This satisfy all the above targets, with a single regex (compile the .c and .h to generate the .o compiled file)

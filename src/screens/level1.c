@@ -1,83 +1,98 @@
 
+#include <stdio.h>
+#include "stdbool.h" // Allow bool variable 
 #include "raylib.h"
 
-#define PLAYER_JUMP_SPD 350.0f
-#define G 400
+#include "../../lib/raylib/raymath.h"
+#include "../../lib/raylib/physac.h"
+
+
+#include "../structure.h"
+#include "level1.h"
+
+extern int screenWidth, screenHeight;
+extern Texture2D background_lvl1, soincPlayer, solin_head, soincReverse;
+
+extern PhysicsBody body;  //Get the PhysicsBody (test)
+
+//Initialize and Default settings 
+//Needs to be defined in the main, but seems we can't extern a struct in C
+Player player = { (Vector2){20,300},10,true,true, 5};
+
+/*
+// Maybe load PhysicsBody in Struct decor per level (in the main)
+Decor decor_level1 = {   
+	CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10),
+    CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10),
+    CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10),
+    CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10),
+    CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10)
+};
+*/
+	
+
+//SetTargetFPS(60);  
 
 void LevelOneDraw() {
+	    
+	  //----------------------------------------------------------------------------------
+        BeginDrawing();
 
-	Player soinc = { 0 };
-	soinc.position = (Vector2){ (float)screenWidth/2, (float)screenHeight/1.8 };
-	soinc.canJump = true;
-	soinc.sol = true;
+            ClearBackground(BLACK);
 
-	// NOTE: Be careful, background width must be equal or bigger than screen width
-	// if not, texture should be draw more than two times for scrolling effect
+            DrawFPS(screenWidth - 90, screenHeight - 30);
+            
+            DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+            
+            //Next line does'nt work, 
+            //DrawTextureEx(soincPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+            //error message : 
+			//error: dereferencing pointer to incomplete type ‘struct PhysicsBodyData’
 
-	Decor decor = { 0 };
+            DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
+            DrawText(TextFormat("%d", player.health_point), 90, 25, 30, WHITE);
+            
 
-	decor.scrollingBack = 0.0f;
-	decor.scrollingMid = 0.0f;
-	decor.scrollingFore = 0.0f;
-
-	Camera2D camera = { 0 };
-	camera.target = (Vector2){ soinc.position.x + 20, soinc.position.y + 20 };
-	camera.offset = (Vector2){ screenWidth/2, screenHeight/1.5 };
-	camera.rotation = 0.0f;
-	camera.zoom = 1.0f;
-
-	float deltaTime = GetFrameTime();
-
-	decor.scrollingBack -= 0.2f;
-
-	UpdatePlayer(&soinc, &decor, deltaTime);
-
-	camera.target = (Vector2){ soinc.position.x + 20, soinc.position.y + 20 };
-
-	if(decor.scrollingBack <= -background_lvl1.width*1) decor.scrollingBack = 0;
-	if(decor.scrollingMid <= -midground_lvl1.width*1) decor.scrollingMid = 0;
-	if(decor.scrollingFore <= -foreground_lvl1.width*1) decor.scrollingFore = 0;
-
-	ClearBackground(GetColor(0x052c46ff));
-	BeginMode2D(camera);
-
-	// Draw background image twice
-	// NOTE: Texture is scaled twice its size
-	DrawTextureEx(background_lvl1, (Vector2){ decor.scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
-	DrawTextureEx(background_lvl1, (Vector2){ background_lvl1.width*2 + decor.scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
-
-	// Draw midground image twice
-	DrawTextureEx(midground_lvl1, (Vector2){ decor.scrollingMid, 20 }, 0.0f, 2.0f, WHITE);
-	DrawTextureEx(midground_lvl1, (Vector2){ midground_lvl1.width*2 + decor.scrollingMid, 20 }, 0.0f, 2.0f, WHITE);
-
-	// Draw foreground image twice
-	DrawTextureEx(foreground_lvl1, (Vector2){ decor.scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
-	DrawTextureEx(foreground_lvl1, (Vector2){ foreground_lvl1.width*2 + decor.scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
-
-	DrawTextureEx(soincPlayer, soinc.position, 0.0f, 0.2f, WHITE);
-	//DrawText(TextFormat("Position y : %f \n Position x : %f",soinc.position.y,soinc.position.x), 10, 180,15, WHITE);
-
-    }
+        EndDrawing();
 }
 
-void UpdatePlayer(Player *player,Decor *decor, float delta)
+
+/* 
+void LevelOneRead()
 {
-    if (IsKeyDown(KEY_RIGHT)) player -> position.x += 2;
-        else if (IsKeyDown(KEY_LEFT)) player-> position.x -= 2;
+	
+    if (IsKeyDown(KEY_RIGHT)) {
+        body->velocity.x = vitesse;
+        if (boule && !right){
+        	solin = soincPlayer;
+        }
+        right = true;
+    }        
+    else if (IsKeyDown(KEY_LEFT)) {
+        body->velocity.x = -vitesse;
+        if (boule && right){
+        	solin = soincReverse;
+        }
+        right = false;
+    }
+        
+    col_trou = CheckCollisionRecs(rect_solin, trou);
+	
+	if(col_trou){
+		body->position.x = 80;
+		body->position.y = screenHeight/2;
+		fall++;
+		nb_lives--;
+	}
+	
+	col_wall_right = CheckCollisionRecs(rect_solin, wall_right);
+        
+    if(col_wall_right) victory = true;
+        
 
-    if (IsKeyDown(KEY_SPACE) && player->canJump )
-    {
-        player->position.y -= 100.0f;
-        player->speed = -PLAYER_JUMP_SPD;
-        player->canJump = false;
-    }
-
-    if(player->position.y <= 250)
-    {
-        player->position.y -= player->speed*delta;
-    }
-    else
-    {
-        player->canJump = true;
-    }
+    // Vertical movement input checking if player physics body is grounded
+    if (IsKeyDown(KEY_UP) && body->isGrounded) body->velocity.y = -VELOCITY*3; 
 }
+*/
+
+
