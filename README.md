@@ -10,7 +10,7 @@ Le monde de Lealle est attaqué par un virus mortel, la fièvre Ebolean, causée
 
 Dans le monde chaotique de Lealle, vous aiderez Solean et son Ekip, à vaincre leur ennemi juré, à travers une aventure et des mini-jeux d'enfer!
 
-**Récupérer un maximum de sceaux de Cristalean afin de pouvoir vaincre le Gob-Lean!**
+**Récupérer un maximum de seaux de Cristalean afin de pouvoir vaincre le Gob-Lean!**
 
 # Build
 
