@@ -1,6 +1,3 @@
-
-#include "lib/physac.h"
-
 // Structures and variables definition (no values, values are defined in lib/defines.c)
 
 typedef enum GameScreen {
@@ -22,10 +19,13 @@ typedef struct Player {
 	int health_point;
 } Player;
 
+
+
+
 // Load them at game start in a similar struct
 // Main object with sub-object for level/screen, to access them anywhere, at anytime later
 typedef struct Decor {
-	PhysicsBody floorLeft, platform, floorRight, wallLeft, wallRight;	
+	//PhysicsBody floorLeft, platform, floorRight, wallLeft, wallRight;	
 } Decor;
 
 int screenWidth;
@@ -38,8 +38,7 @@ Texture2D background_lvl3;
 Texture2D soincReverse;
 Texture2D soincPlayer;
 Texture2D solin_head;
-
+Music soincSong;
 PhysicsBody body;
 
-Music soincSong;
 

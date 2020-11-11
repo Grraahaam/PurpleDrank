@@ -10,9 +10,6 @@
 #include "lib/physac.h"
 #include "lib/defines.c"
 
-#define PHYSAC_IMPLEMENTATION
-#define PHYSAC_NO_THREADS
-
 // Defines the global variables, structs and enums
 #include "globals.h"
 
@@ -41,7 +38,8 @@ int main() {
 	puts("[DEBUG] Load resources!");
 
 	// Initialize physics and default physics bodies
-    	InitPhysics();
+    InitPhysics();
+	
 	LoadResources();
 
 	// Set startup screen
