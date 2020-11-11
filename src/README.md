@@ -16,6 +16,7 @@
 `lib/defines.c`
 
 * Contains the game's constants, values that will never change (e.g. key identifiers, size, config, path)
+* **ALL** `#define` should be declared here (except for exceptions)
 
 # Create/Edit
 
