@@ -5,7 +5,7 @@ include ../conf/config
 #vpath %.c src:src/screens
 
 # Including screens directory, for the files to be found
-vpath %.h screens 
+vpath %.h screens
 vpath %.c screens
 
 all: solin
