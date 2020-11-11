@@ -1,61 +1,47 @@
 
 #include <stdio.h>
-#include "stdbool.h" // Allow bool variable 
-#include "raylib.h"
+#include <raylib.h>
 
-#include "../../lib/raylib/raymath.h"
-#include "../../lib/raylib/physac.h"
+#include "../lib/raymath.h"
+#include "../lib/physac.h"
 
-
-#include "../structure.h"
-#include "level1.h"
-
-extern int screenWidth, screenHeight;
-extern Texture2D background_lvl1, soincPlayer, solin_head, soincReverse;
-
-extern PhysicsBody body;  //Get the PhysicsBody (test)
+#include "../globals.h"
+#include "../lib/defines.c"
 
 //Initialize and Default settings 
 //Needs to be defined in the main, but seems we can't extern a struct in C
 Player player = { (Vector2){20,300},10,true,true, 5};
 
-/*
 // Maybe load PhysicsBody in Struct decor per level (in the main)
+/*
 Decor decor_level1 = {   
 	CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10),
-    CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10),
-    CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10),
-    CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10),
-    CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10)
+	CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10),
+	CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10),
+	CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10),
+	CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10)
 };
 */
-	
-
-//SetTargetFPS(60);  
 
 void LevelOneDraw() {
-	    
-	  //----------------------------------------------------------------------------------
-        BeginDrawing();
+	BeginDrawing();
 
-            ClearBackground(BLACK);
+	ClearBackground(BLACK);
 
-            DrawFPS(screenWidth - 90, screenHeight - 30);
-            
-            DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
-            
-            //Next line does'nt work, 
-            //DrawTextureEx(soincPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
-            //error message : 
-			//error: dereferencing pointer to incomplete type ‘struct PhysicsBodyData’
+	DrawFPS(screenWidth - 90, screenHeight - 30);
 
-            DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
-            DrawText(TextFormat("%d", player.health_point), 90, 25, 30, WHITE);
-            
+	DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
 
-        EndDrawing();
+	//Next line doesn't work, 
+	//DrawTextureEx(soincPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+	//error message : 
+	//error: dereferencing pointer to incomplete type ‘struct PhysicsBodyData’
+
+	DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
+	DrawText(TextFormat("%d", player.health_point), 90, 25, 30, WHITE);
+
+	EndDrawing();
 }
-
 
 /* 
 void LevelOneRead()

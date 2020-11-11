@@ -2,6 +2,8 @@
 
 Purple Drank documentation
 
+For contribution instructions, please read the README in `/src`
+
 # Story
 
 *Solean et son Ekip*
@@ -34,6 +36,9 @@ It will be found automatically, if it is in `src` or `src/screens` directories. 
 
 * `/src`
     * Contains our source code and header file (*.c and *.h)
+
+* `/src/lib`
+    * Contains library used for the game
 
 * `/test`
     * Contains ALL the tests, keep them separate HERE

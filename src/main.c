@@ -3,27 +3,30 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include "stdbool.h" // Allow bool variable 
 
-// Include Raylib library
+// Include Raylib library (copy specific ones from /lib/raylib to /src/lib)
 #include "raylib.h"
-#include "../lib/raylib/raymath.h"
+#include "lib/raymath.h"
+#include "lib/physac.h"
+#include "lib/defines.c"
+
 #define PHYSAC_IMPLEMENTATION
 #define PHYSAC_NO_THREADS
 
-#include "../lib/raylib/physac.h" 
-#include "globals.h" // Defines the variable types, structs and enums
-#include "structure.h"
+// Defines the global variables, structs and enums
+#include "globals.h"
 
 // Include the game libraries
 #include "main.h"
 #include "screens/menu.h"
 #include "screens/level1.h"
 
-bool quit = false;
-bool starting = true;
-
 int main() {
+
+	// Defining global variables values
+	bool quit = false;
+	screenWidth = SCREEN_WIDTH;
+	screenHeight = SCREEN_HEIGHT;
 
 	getdir();
 
@@ -38,8 +41,11 @@ int main() {
 	puts("[DEBUG] Load resources!");
 
 	// Initialize physics and default physics bodies
-    InitPhysics();
-	LoadRessources();
+    	InitPhysics();
+	LoadResources();
+
+	// Set startup screen
+	game.gameScreen = MENU;
 	
 
 	puts("[DEBUG] Game window is starting!");
@@ -47,18 +53,21 @@ int main() {
 
 	// Main game loop (Detect window close button or ESC key)
 	while (!WindowShouldClose() && !quit) {
-		
-		UpdateScreen();
 
+		UpdateScreen();
 	}
 
 	puts("[DEBUG] Game window is closing!");
 
 	// De-Initialization
-	ClosePhysics();       // Unitialize physics
-	UnloadRessources();
+	UnloadResources();
 	CloseAudioDevice();
-	CloseWindow(); //Close window and OpenGL context
+
+	// Unitialize physics
+	ClosePhysics();
+
+	//Close window and OpenGL context	
+	CloseWindow();
 
 	return 0;
 }
@@ -71,18 +80,18 @@ void LoadResources() {
 	background_lvl2 = LoadTexture("res/Level2/ECRAN2V.png");
 	background_lvl3 = LoadTexture("res/Level3/ECRAN3V.png");
 	soincReverse = LoadTexture("res/solin_reverse.png");
-    solin_head = LoadTexture("res/solin_head.png");
+   	solin_head = LoadTexture("res/solin_head.png");
 	soincPlayer = LoadTexture("res/solin.png");
 	soincSong = LoadMusicStream("res/menu/smash.mp3");
 
-	//trying to load a PhysicsBody, then using in level1.c
+	// Trying to load a PhysicsBody, then using in level1.c
 	body = CreatePhysicsBodyRectangle((Vector2){ 80, screenHeight/2 }, 50, 60, 1);
 	
 }
 
 // Unloading all the ressources (With the future struct, automatize Unload* function to dynamically unload ressources)
 // Load toutes les ressources avant 
-void UnloadRessources() {
+void UnloadResources() {
 	UnloadTexture(backgroundMenu);
 	UnloadTexture(background_lvl1);
 	UnloadTexture(background_lvl2);
@@ -98,11 +107,7 @@ void UpdateScreen() {
 	
 	// Play the song (loaded previously)
 	//PlayMusicStream(soincSong);
-	//game.gameScreen = MENU;
-	if (starting) {
-		game.gameScreen = MENU;
-		starting = false;
-	}
+
 	// Draw the corresponding screen
 	switch(game.gameScreen) {
 		case MENU: {
