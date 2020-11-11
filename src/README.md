@@ -33,7 +33,8 @@ This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide 
 
 * Please create a **new branch**, from the current one
 ** `git checkout -b [YOUR_BRANCH]`
-** e.g. `git checkout -b your_name`
+*** e.g. `git checkout -b your_name`
+*** `git branch` to see which branch you're working on`
 
 * Develop your feature, make your improvements
 
