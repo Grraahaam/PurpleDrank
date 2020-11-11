@@ -48,6 +48,7 @@ This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide 
 ** `git checkout master` (will take you back to the main branch)
 ** `git merge [YOUR_BRANCH]` (will merge your branch to the current (main) one)
 *** `git merge your_name`
+** `git push` to push the project back online (for others to pull it)
 
 * Then if you're happy with your changes, you can delete your branch (because all changes are on the main now)
 ** `git branch -d [YOUR_BRANCH]`
