@@ -7,7 +7,7 @@
 `globals.h`
 
 * Contains all the variables, struct, class, enum declarations
-* **NO VALUES SHOULD BE DEFINED HERE**
+* **NO VALUE SHOULD BE DEFINED HERE**
 
 `lib/`
 
@@ -32,9 +32,9 @@ Please try to keep consistency in the file structure, and not create test files 
 This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide any improvements and modifications, respect the following :
 
 * Please create a **new branch**, from the current one
-** `git checkout -b [YOUR_BRANCH]`
-*** e.g. `git checkout -b your_name`
-*** `git branch` to see which branch you're working on`
+	* `git checkout -b [YOUR_BRANCH]`
+		* e.g. `git checkout -b your_name`
+		* `git branch` to see which branch you're working on`
 
 * Develop your feature, make your improvements
 
@@ -43,13 +43,17 @@ This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide 
 * Type `make` and check that there's no errors, and that ./solin is working as expected
 
 * If everything's OK, you can commit your changes and merge your work to the main branch
-** `git commit -a -m "[COMMIT_MESSAGE]"` (`-a` will add all untracked modified files)
-*** e.g. `git commit -a -m "Feature: added physics to level1"`
-** `git checkout master` (will take you back to the main branch)
-** `git merge [YOUR_BRANCH]` (will merge your branch to the current (main) one)
-*** `git merge your_name`
-** `git push` to push the project back online (for others to pull it)
+	
+	* `git commit -a -m "[COMMIT_MESSAGE]"` (`-a` will add all untracked modified files)
+		* e.g. `git commit -a -m "Feature: added physics to level1"`
+	
+	* `git checkout master` (will take you back to the main branch)
+	
+	* `git merge [YOUR_BRANCH]` (will merge your branch to the current (main) one)
+		* `git merge your_name`
+
+	* `git push` to push the project back online (for others to pull it)
 
 * Then if you're happy with your changes, you can delete your branch (because all changes are on the main now)
-** `git branch -d [YOUR_BRANCH]`
-*** e.g. `git branch -d your_name`
+	* `git branch -d [YOUR_BRANCH]`
+		* e.g. `git branch -d your_name`
