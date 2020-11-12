@@ -1,16 +1,10 @@
 
 #include <stdio.h>
 #include <raylib.h>
-
 #define PHYSAC_IMPLEMENTATION
 #define PHYSAC_NO_THREADS
-#define VELOCITY 0.5f
-#include "../lib/raymath.h"
-#include "../lib/physac.h"
-
+#include "../lib/defines.h"
 #include "../globals.h"
-#include "../lib/defines.c"
-
 
 //Initialize and Default settings 
 //Needs to be defined in the main, but seems we can't extern a struct in C
@@ -27,7 +21,6 @@ int nb_lives = 5;
 
 bool Fallen_Hole(Rectangle trou, Rectangle rect_solin) {  // Return true si tombé dans le trou
 	return CheckCollisionRecs(rect_solin, trou);
-
 }
 
 bool End_Level(Rectangle wall_right, Rectangle rect_solin) { //Return true if leveld ended
@@ -39,7 +32,7 @@ void Check_Event(PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectang
 		body->position.x = 80;
 		body->position.y = screenHeight/2;
 		fall++;
-		nb_lives--;
+		player.health_point -= 1;
 	}
 	else if ( End_Level(wall_right, rect_solin) ) {
 		victory = true;	

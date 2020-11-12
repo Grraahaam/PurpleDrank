@@ -2,7 +2,8 @@
 
 typedef enum GameScreen {
 	MENU,
-	LEVEL_1
+	LEVEL_1,
+	LEVEL_2
 } GameScreen;
 
 typedef struct Game {

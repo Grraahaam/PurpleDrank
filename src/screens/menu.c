@@ -3,7 +3,7 @@
 #include <raylib.h>
 
 #include "../globals.h"
-#include "../lib/defines.c"
+#include "../lib/defines.h"
 
 // Function reading user ENTER input
 void MenuRead() {

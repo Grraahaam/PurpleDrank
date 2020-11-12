@@ -3,12 +3,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-
-// Include Raylib library (copy specific ones from /lib/raylib to /src/lib)
-#include "raylib.h"
-#include "lib/raymath.h"
-#include "lib/physac.h"
-#include "lib/defines.c"
+#include "lib/defines.h"
 
 // Defines the global variables, structs and enums
 #include "globals.h"
@@ -17,6 +12,7 @@
 #include "main.h"
 #include "screens/menu.h"
 #include "screens/level1.h"
+#include "screens/level2.h"
 
 int main() {
 
@@ -63,7 +59,6 @@ int main() {
 
 	// Unitialize physics
 	ClosePhysics();
-
 	//Close window and OpenGL context	
 	CloseWindow();
 
@@ -117,6 +112,10 @@ void UpdateScreen() {
 		} break;
 		case LEVEL_1: {
 			LevelOneDraw();
+		} break;
+		case LEVEL_2: {
+			//ResetPhysics();
+			//LevelTwoDraw();
 		} break;
 		default : {
 			// Default action, if screen not handled
