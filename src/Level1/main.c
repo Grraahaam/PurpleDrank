@@ -1,55 +1,40 @@
 #include "../../lib/raylib/raylib.h"
-
 #define PHYSAC_IMPLEMENTATION
 #define PHYSAC_NO_THREADS
 #include "../../lib/raylib/physac.h"
+#include "../../lib/raylib/physac.h"
+#include "variables.h"
+#include "MyPhysic.h"
 
-#define VELOCITY 0.5f
 
 int main(void)
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+
     Image image = LoadImage("../../res/solin.png");
     Image image3 = LoadImage("../../res/solin_reverse.png");
     Image back = LoadImage("../../res/Level1/ECRAN1V.png");
     Image solin_head = LoadImage("../../res/solin_head.png");
-    float vitesse = VELOCITY*0.4;
-    bool boule = true;
-    bool right = true;
-    bool col_trou = false;
-    bool col_wall_right = false;
-    bool victory = false;
-    int fall = 0;
-    int nb_lives = 5;
+
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
+
     InitWindow(screenWidth, screenHeight, "s/o'lin à la recherche du lean");
 
-
-    // Initialize physics and default physics bodies
-    InitPhysics();
-
-    // Create floor and walls rectangle physics body
-    PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10);
-    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10);
-    PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10);
-    PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10);
-    PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
+    
+    MyPhysic Maphysique;
 
     // Disable dynamics to floor and walls physics bodies
-    floorLeft->enabled = false;
-    floorRight->enabled=false;
-    platform->enabled = false;
-    wallLeft->enabled = false;
-    wallRight->enabled = false;
+    MaPhysique.floorLeft->enabled = false;
+    MaPhysique.floorRight->enabled=false;
+    MaPhysique.platform->enabled = false;
+    MaPhysique.wallLeft->enabled = false;
+    MaPhysique.wallRight->enabled = false;
 
-    // Create movement physics body
-    PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 80, screenHeight/2 }, 50, 60, 1);
-    body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
     
+    MaPhysique.body->freezeOrient = true;      // Constrain MaPhysique.body rotation to avoid little collision torque amounts
+    
+
+
     Texture2D solin = LoadTextureFromImage(image);
     Texture2D background = LoadTextureFromImage(back);
     Texture2D lives = LoadTextureFromImage(solin_head);
@@ -58,7 +43,7 @@ int main(void)
     Rectangle wall_right = { 800, 200, 10, 200};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -67,29 +52,29 @@ int main(void)
         //----------------------------------------------------------------------------------
         RunPhysicsStep();
         
-        Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
+        Rectangle rect_solin = { MaPhysique.body -> position.x - 30, MaPhysique.body -> position.y - 30, 60, 60 };
         
         // Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
-            body->position.x = vitesse;
-            if (boule && !right){
-                solin = LoadTextureFromImage(image);
-            }
-            right = true;
+        MaPhysique.body->velocity.x = vitesse;
+        if (boule && !right){
+        solin = LoadTextureFromImage(image);
+        }
+        right = true;
         }        
         else if (IsKeyDown(KEY_LEFT)) {
-            body->position.x = -vitesse;
-            if (boule && right){
-                solin = LoadTextureFromImage(image3);
-            }
-            right = false;
+        MaPhysique.body->velocity.x = -vitesse;
+        if (boule && right){
+        solin = LoadTextureFromImage(image3);
+        }
+        right = false;
         }
         
         col_trou = CheckCollisionRecs(rect_solin, trou);
 	
 	if(col_trou){
-	body->position.x = 80;
-	body->position.y = screenHeight/2;
+	MaPhysique.body->position.x = 80;
+	MaPhysique.body->position.y = screenHeight/2;
 	fall++;
 	nb_lives--;
 	}
@@ -100,7 +85,7 @@ int main(void)
         
 
         // Vertical movement input checking if player physics body is grounded
-        if (IsKeyDown(KEY_UP) && body->isGrounded) body->velocity.y = -VELOCITY*3;
+        if (IsKeyDown(KEY_UP) && MaPhysique.bod->isGrounded) MaPhysique.bod->velocity.y = -VELOCITY*3;
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -113,13 +98,14 @@ int main(void)
             
             DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
             
-            DrawTextureEx(solin, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+            DrawTextureEx(solin, (Vector2){ MaPhysique.bod -> position.x - 40, MaPhysique.body -> position.y - 30}, 0.0f, 0.15f, WHITE);
             
             DrawTextureEx(lives, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
             DrawText(TextFormat("%d", nb_lives), 90, 25, 30, WHITE);
             
             if(fall>1) DrawText("Utilisez la plateforme pour arriver de l'autre côté", 150, 100, 20, RED);
             
+         
             
 
         EndDrawing();
@@ -135,3 +121,6 @@ int main(void)
 
     return 0;
 }
+
+
+

@@ -38,7 +38,9 @@ Texture2D background_lvl3;
 Texture2D soincReverse;
 Texture2D soincPlayer;
 Texture2D solin_head;
+Texture2D imgPlayer;
 Music soincSong;
-PhysicsBody body;
-
+Image img_soincPlayer;
+Image img_Reverse;
+Image img_solin_head;
 

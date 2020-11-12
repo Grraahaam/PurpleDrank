@@ -47,7 +47,7 @@ int main() {
 	
 
 	puts("[DEBUG] Game window is starting!");
-	RunPhysicsStep();
+	SetTargetFPS(60);   
 
 	// Main game loop (Detect window close button or ESC key)
 	while (!WindowShouldClose() && !quit) {
@@ -73,18 +73,19 @@ int main() {
 // Loading all the ressources (TODO organize it into a struct?)
 void LoadResources() {
 	// Textures MUST be loaded after Window initialization (OpenGL context is required)
+	
+	Image img_soincPlayer = LoadImage("res/solin.png");
+    Image img_Reverse = LoadImage("res/solin_reverse.png");
+    Image img_solin_head = LoadImage("res/solin_head.png");
+
+	soincReverse = LoadTextureFromImage(img_Reverse);
+   	solin_head = LoadTextureFromImage(img_solin_head);
+	soincPlayer = LoadTextureFromImage(img_soincPlayer);
 	backgroundMenu = LoadTexture("res/menu/background.png");
 	background_lvl1 = LoadTexture("res/Level1/ECRAN1V.png");
 	background_lvl2 = LoadTexture("res/Level2/ECRAN2V.png");
 	background_lvl3 = LoadTexture("res/Level3/ECRAN3V.png");
-	soincReverse = LoadTexture("res/solin_reverse.png");
-   	solin_head = LoadTexture("res/solin_head.png");
-	soincPlayer = LoadTexture("res/solin.png");
 	soincSong = LoadMusicStream("res/menu/smash.mp3");
-
-	// Trying to load a PhysicsBody, then using in level1.c
-	body = CreatePhysicsBodyRectangle((Vector2){ 80, screenHeight/2 }, 50, 60, 1);
-	
 }
 
 // Unloading all the ressources (With the future struct, automatize Unload* function to dynamically unload ressources)
@@ -98,6 +99,9 @@ void UnloadResources() {
 	UnloadTexture(soincPlayer);
 	UnloadTexture(solin_head);
 	StopMusicStream(soincSong);
+	UnloadImage(img_soincPlayer);
+	UnloadImage(img_soincPlayer);
+    UnloadImage(img_solin_head);
 }
 
 // Function managing the screen
