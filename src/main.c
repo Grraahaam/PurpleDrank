@@ -14,12 +14,21 @@
 #include "screens/level1.h"
 #include "screens/level2.h"
 
+int healthPoint = 5;  //Settings player per default
+
+int* Adress_healthpoint() {
+	return &healthPoint;
+}
+
+void changeptr();
+
 int main() {
 
-	// Defining global variables values
+	// Defining  variables values
 	bool quit = false;
 	screenWidth = SCREEN_WIDTH;
 	screenHeight = SCREEN_HEIGHT;
+	
 
 	getdir();
 
@@ -43,6 +52,9 @@ int main() {
 	
 
 	puts("[DEBUG] Game window is starting!");
+
+
+
 	SetTargetFPS(60);   
 
 	// Main game loop (Detect window close button or ESC key)
@@ -64,6 +76,7 @@ int main() {
 
 	return 0;
 }
+
 
 // Loading all the ressources (TODO organize it into a struct?)
 void LoadResources() {
@@ -99,9 +112,15 @@ void UnloadResources() {
     UnloadImage(img_solin_head);
 }
 
+
+
 // Function managing the screen
 void UpdateScreen() {
-	
+	int *playerHealth;
+	playerHealth = Adress_healthpoint();
+	printf("\n avant : a= %d\n", healthPoint);
+
+
 	// Play the song (loaded previously)
 	//PlayMusicStream(soincSong);
 
@@ -111,7 +130,7 @@ void UpdateScreen() {
 			MenuDraw();
 		} break;
 		case LEVEL_1: {
-			LevelOneDraw();
+			LevelOneDraw(playerHealth);
 		} break;
 		case LEVEL_2: {
 			//ResetPhysics();
@@ -133,3 +152,4 @@ int getdir() {
    }
    return 0;
 }
+

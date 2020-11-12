@@ -5,6 +5,7 @@
 #include "../globals.h"
 #include "../lib/defines.h"
 
+
 // Function reading user ENTER input
 void MenuRead() {
 
@@ -16,6 +17,7 @@ void MenuRead() {
 
 // Function drawing the menu screen
 void MenuDraw() {
+
 	BeginDrawing();
 
 	ClearBackground(RAYWHITE);

@@ -27,12 +27,15 @@ bool End_Level(Rectangle wall_right, Rectangle rect_solin) { //Return true if le
 	return CheckCollisionRecs(rect_solin, wall_right); 
 }
 
-void Check_Event(PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin) {
+void Check_Event(int *player_health,PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin) {
+	//int health_point = 5;
+	//int *hp;
+	//hp = GlobalVarAdress();
 	if ( Fallen_Hole(trou, rect_solin) ) {
 		body->position.x = 80;
 		body->position.y = screenHeight/2;
 		fall++;
-		player.health_point -= 1;
+		*player_health -= 1 ;
 	}
 	else if ( End_Level(wall_right, rect_solin) ) {
 		victory = true;	
@@ -40,7 +43,7 @@ void Check_Event(PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectang
 }
 
 
-void LevelOneRead(PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin)
+void LevelOneRead(int *player_health,PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin)
 {
 	// Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
@@ -63,11 +66,11 @@ void LevelOneRead(PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectan
 		if (IsKeyDown(KEY_UP)) {
 			body->velocity.y = -VELOCITY*1.2;
 		} 
-		Check_Event(body, trou, wall_right, rect_solin);
+		Check_Event(player_health,body, trou, wall_right, rect_solin);
 }
 
 
-void LevelOneDraw() {
+void LevelOneDraw(int *player_health) {
 
  	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	
@@ -94,7 +97,7 @@ void LevelOneDraw() {
 		RunPhysicsStep();
 		Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
 		
-		LevelOneRead(body,trou,wall_right, rect_solin);
+		LevelOneRead(player_health,body,trou,wall_right, rect_solin);
 
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -106,10 +109,11 @@ void LevelOneDraw() {
 		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
 		DrawText(TextFormat("%f", body->position.y), 10, 85, 30, WHITE);
 		DrawText(TextFormat("%f", body->position.x), 10, 55, 30, RED);
-		DrawText(TextFormat("%d", player.health_point), 90, 35, 30, WHITE);
+		DrawText(TextFormat("%d", *player_health), 90, 35, 30, WHITE);
 		
 		EndDrawing();
 	}
+	
 }
 
 
