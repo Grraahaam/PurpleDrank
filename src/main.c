@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include "raylib.h"
+#include "lib/raymath.h"
+#include "lib/physac.h"
 #include "lib/defines.h"
 
 // Defines the global variables, structs and enums
@@ -14,13 +17,21 @@
 #include "screens/level1.h"
 #include "screens/level2.h"
 
-int healthPoint = 5;  //Settings player per default
 
+//Settings player 
+Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 6};
+
+
+/*
 int* Adress_healthpoint() {
 	return &healthPoint;
 }
+*/
 
-void changeptr();
+Player* Adress_struct_Player() {
+	return &player;
+}
+
 
 int main() {
 
@@ -29,7 +40,6 @@ int main() {
 	screenWidth = SCREEN_WIDTH;
 	screenHeight = SCREEN_HEIGHT;
 	
-
 	getdir();
 
 	puts("[DEBUG] Launching window!");
@@ -52,8 +62,6 @@ int main() {
 	
 
 	puts("[DEBUG] Game window is starting!");
-
-
 
 	SetTargetFPS(60);   
 
@@ -110,16 +118,19 @@ void UnloadResources() {
 	UnloadImage(img_soincPlayer);
 	UnloadImage(img_soincPlayer);
     UnloadImage(img_solin_head);
+
+	//printf("\n  : hp = %d\n", player.health_point);
 }
 
 
 
 // Function managing the screen
 void UpdateScreen() {
-	int *playerHealth;
-	playerHealth = Adress_healthpoint();
-	printf("\n avant : a= %d\n", healthPoint);
+	//int *playerHealth;
+	//playerHealth = Adress_healthpoint();
 
+	Player *player_adress;
+	player_adress = Adress_struct_Player();
 
 	// Play the song (loaded previously)
 	//PlayMusicStream(soincSong);
@@ -130,7 +141,7 @@ void UpdateScreen() {
 			MenuDraw();
 		} break;
 		case LEVEL_1: {
-			LevelOneDraw(playerHealth);
+			LevelOneDraw(player_adress);
 		} break;
 		case LEVEL_2: {
 			//ResetPhysics();

@@ -14,9 +14,9 @@ Game game;
 
 typedef struct Player {
 	Vector2 position; 
-	float speed;
-	bool canJump;
-	bool sol;
+	//float speed;
+	//bool canJump;
+	//bool sol;
 	int health_point;
 } Player;
 

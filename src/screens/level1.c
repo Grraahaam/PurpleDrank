@@ -1,14 +1,19 @@
 
+
 #include <stdio.h>
 #include <raylib.h>
 #define PHYSAC_IMPLEMENTATION
 #define PHYSAC_NO_THREADS
+#define PHYSAC_DEBUG
+
+#include "../lib/physac.h"
 #include "../lib/defines.h"
 #include "../globals.h"
 
+
 //Initialize and Default settings 
 //Needs to be defined in the main, but seems we can't extern a struct in C
-Player player = { (Vector2){20,300},10,true,true, 5};
+//Player player = { (Vector2){20,300},10,true,true, 5};
 
 float vitesse = VELOCITY*0.4;
 bool boule = true;
@@ -17,7 +22,7 @@ bool col_trou = false;
 bool col_wall_right = false;
 bool victory = false;
 int fall = 0;
-int nb_lives = 5;
+
 
 bool Fallen_Hole(Rectangle trou, Rectangle rect_solin) {  // Return true si tombé dans le trou
 	return CheckCollisionRecs(rect_solin, trou);
@@ -27,23 +32,22 @@ bool End_Level(Rectangle wall_right, Rectangle rect_solin) { //Return true if le
 	return CheckCollisionRecs(rect_solin, wall_right); 
 }
 
-void Check_Event(int *player_health,PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin) {
-	//int health_point = 5;
+void Check_Event(Player *player_Struct,PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin) {
+	
 	//int *hp;
 	//hp = GlobalVarAdress();
 	if ( Fallen_Hole(trou, rect_solin) ) {
 		body->position.x = 80;
 		body->position.y = screenHeight/2;
 		fall++;
-		*player_health -= 1 ;
+		player_Struct->health_point -= 1 ;
 	}
 	else if ( End_Level(wall_right, rect_solin) ) {
 		victory = true;	
 	}
 }
 
-
-void LevelOneRead(int *player_health,PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin)
+void LevelOneRead(Player *player_Struct,PhysicsBody body, Rectangle trou, Rectangle wall_right, Rectangle rect_solin)
 {
 	// Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
@@ -66,13 +70,13 @@ void LevelOneRead(int *player_health,PhysicsBody body, Rectangle trou, Rectangle
 		if (IsKeyDown(KEY_UP)) {
 			body->velocity.y = -VELOCITY*1.2;
 		} 
-		Check_Event(player_health,body, trou, wall_right, rect_solin);
+		Check_Event(player_Struct,body, trou, wall_right, rect_solin);
 }
 
-
-void LevelOneDraw(int *player_health) {
+void LevelOneDraw(Player *player_Struct) {
 
  	SetConfigFlags(FLAG_MSAA_4X_HINT);
+	//int player_health = player_Struct->health_point;
 	
 	// Create floor and walls rectangle physics body
 	PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 100, screenHeight/2 }, 50, 60, 10);
@@ -97,7 +101,7 @@ void LevelOneDraw(int *player_health) {
 		RunPhysicsStep();
 		Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
 		
-		LevelOneRead(player_health,body,trou,wall_right, rect_solin);
+		LevelOneRead(player_Struct,body,trou,wall_right, rect_solin);
 
 		BeginDrawing();
 		ClearBackground(BLACK);
@@ -109,12 +113,14 @@ void LevelOneDraw(int *player_health) {
 		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
 		DrawText(TextFormat("%f", body->position.y), 10, 85, 30, WHITE);
 		DrawText(TextFormat("%f", body->position.x), 10, 55, 30, RED);
-		DrawText(TextFormat("%d", *player_health), 90, 35, 30, WHITE);
+		//DrawText(TextFormat("%d", player_Struct->health_point), 10, 55, 30, RED);
+		DrawText(TextFormat("%d", player_Struct->health_point), 90, 35, 30, WHITE);
 		
 		EndDrawing();
 	}
 	
 }
+
 
 
 
