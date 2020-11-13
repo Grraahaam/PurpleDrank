@@ -117,6 +117,7 @@ void LevelOneDraw(Player *player_Struct) {
 		DrawText(TextFormat("%d", player_Struct->health_point), 90, 35, 30, WHITE);
 		
 		EndDrawing();
+		
 	}
 	
 }

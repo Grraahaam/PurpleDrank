@@ -1,6 +1,6 @@
 # Configuration for make
 CC=gcc
-CFLAGS=-std=gnu99 -Wall -Wextra -lraylib -lm -s -static -lraylib -lpthread -lopengl32 -lgdi32 -lwinmm 
+CFLAGS=-std=gnu99 -Wall -Wextra -lraylib -lm 
 
 LIBS= -lraylib -lm
 OS=Undef
