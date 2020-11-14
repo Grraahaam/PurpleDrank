@@ -4,6 +4,7 @@
 
 #include "../globals.h"
 #include "../lib/defines.c"
+#include "../screens/menu.h"
 
 
 // Function reading user ENTER input

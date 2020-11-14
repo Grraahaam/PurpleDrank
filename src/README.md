@@ -13,15 +13,16 @@
 
 * Contains the libraries we need in order to compile our code
 
-`lib/defines.h`
+`lib/defines.c`
 
 * Contains the game's constants, values that will never change (e.g. key identifiers, size, config, path)
+* **ALL** `#define` should be declared here (except for exceptions)
 
 # Create/Edit
 
 If you create new levels or screens, make sure to include at least the following two includes, at the top :
 * `#include "../globals.h"`
-* `#include "../lib/defines.h"`
+* `#include "../lib/defines.c"`
 
 Please try to keep your code clean and understanable, with correct identations and comments
 

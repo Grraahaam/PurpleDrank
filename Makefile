@@ -9,7 +9,7 @@ unix:
 	@echo "# Configuration for make" > conf/config
 	@echo "CC=gcc" >> conf/config
 	@echo "CFLAGS=-std=c99 -Wall -Wextra -lraylib -lm" >> conf/config
-	@echo "LIBS= -lraylib -lm" >> conf/config
+	@echo "LIBS=-lraylib -lm" >> conf/config
 	@echo "OS=`uname`" >> conf/config
 
 windows:
@@ -18,7 +18,7 @@ windows:
 	@echo "OS=Windows" >> conf/config
 	@echo "CC=gcc" >> conf/config
 	@echo "CFLAGS=-std=c99 -Wall -Wextra -lraylib -lm" >> conf/config
-	@echo "LIBS= -lraylib -lm" >> conf/config
+	@echo "LIBS=-lraylib -lm" >> conf/config
 
 clean:
 	@make -C src clean

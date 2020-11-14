@@ -1,5 +1,12 @@
+#ifndef MAIN_H_
+#define MAIN_H_
+
+
 // Function declarations
 void UpdateScreen();
+void MenuDraw();
+void LevelOneDraw(Player *player_Struct);
+void LevelTwoDraw(Player *player_Struct);
 void LoadResources();
 void UnloadResources();
 
@@ -8,4 +15,6 @@ char *getcwd(char *buf, size_t size);
 
 void PrintDebug(char *str);
 
-Player* Adress_struct_Player();
+
+#endif
+

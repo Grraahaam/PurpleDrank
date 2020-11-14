@@ -1,37 +1,22 @@
 
-// This is the main program file, that is compiled with screens files to get the stable executable
+// This is the main program file, that is compiled to get the stable executable
 
 #include <stdio.h>
 #include <unistd.h>
-
 #include "raylib.h"
-
 #include "lib/raymath.h"
-#include "lib/physac.h"
 
-// Defines the global variables, types, structs and enums
-#include "globals.h"
+#include "lib/physac.h"
 #include "lib/defines.c"
 
-// Include the game libraries
+// Defines the global variables, structs and enums
+#include "globals.h"
 #include "main.h"
-#include "screens/menu.h"
-#include "screens/level1.h"
-#include "screens/level2.h"
 
 
-//Settings player
+//Settings player 
 Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 6};
 
-/*
-int* Adress_healthpoint() {
-	return &healthPoint;
-}
-*/
-
-Player* Adress_struct_Player() {
-	return &player;
-}
 
 int main(int argc, char *argv[]) {
 
@@ -126,18 +111,12 @@ void UnloadResources() {
 	UnloadImage(img_soincPlayer);
 	UnloadImage(img_soincPlayer);
 	UnloadImage(img_solin_head);
-
-	//printf("\n  : hp = %d\n", player.health_point);
 }
 
 // Function managing the screen
 void UpdateScreen() {
-	//int *playerHealth;
-	//playerHealth = Adress_healthpoint();
 
-	Player *player_adress;
-	player_adress = Adress_struct_Player();
-
+	Player* player_adress = &player;
 	// Play the song (loaded previously)
 	//PlayMusicStream(soincSong);
 
@@ -150,8 +129,7 @@ void UpdateScreen() {
 			LevelOneDraw(player_adress);
 		} break;
 		case LEVEL_2: {
-			//ResetPhysics();
-			//LevelTwoDraw();
+			LevelTwoDraw(player_adress);
 		} break;
 		default : {
 			// Default action, if screen not handled
