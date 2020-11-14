@@ -38,7 +38,7 @@ This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide 
 
 * Develop your feature, make your improvements
 
-* Make a `make clean && rm solin`, at the project root directory
+* Make a `make purge`, at the project root directory
 
 * Type `make` and check that there's no errors, and that ./solin is working as expected
 

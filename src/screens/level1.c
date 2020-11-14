@@ -2,12 +2,13 @@
 
 #include <stdio.h>
 #include <raylib.h>
+
 #define PHYSAC_IMPLEMENTATION
 #define PHYSAC_NO_THREADS
 #define PHYSAC_DEBUG
 
 #include "../lib/physac.h"
-#include "../lib/defines.h"
+#include "../lib/defines.c"
 #include "../globals.h"
 
 

@@ -1,15 +1,17 @@
 
-// This is the main program file, that is compiled to get the stable executable
+// This is the main program file, that is compiled with screens files to get the stable executable
 
 #include <stdio.h>
 #include <unistd.h>
+
 #include "raylib.h"
+
 #include "lib/raymath.h"
 #include "lib/physac.h"
-#include "lib/defines.h"
 
-// Defines the global variables, structs and enums
+// Defines the global variables, types, structs and enums
 #include "globals.h"
+#include "lib/defines.c"
 
 // Include the game libraries
 #include "main.h"
@@ -18,9 +20,8 @@
 #include "screens/level2.h"
 
 
-//Settings player 
+//Settings player
 Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 6};
-
 
 /*
 int* Adress_healthpoint() {
@@ -32,38 +33,39 @@ Player* Adress_struct_Player() {
 	return &player;
 }
 
+int main(int argc, char *argv[]) {
 
-int main() {
+	// Switching ON/OFF the debug mode (./solin or ./solin debug)
+	if(argc == 2 && strcmp(argv[1], "debug") == 0) { DEBUG = true; }
+	else { DEBUG = false; }
 
-	// Defining  variables values
+	// Defining variables values
 	bool quit = false;
 	screenWidth = SCREEN_WIDTH;
 	screenHeight = SCREEN_HEIGHT;
-	
-	getdir();
 
-	puts("[DEBUG] Launching window!");
+	// Launching game start-up requirements
+	if(DEBUG) { getdir(); }
 
-	InitWindow(screenWidth, screenHeight, "PurpleDrank");
+	PrintDebug("Launching window!");
+	InitWindow(screenWidth, screenHeight, GAME_NAME);
 
-	puts("[DEBUG] Init audio device!");
-
+	PrintDebug("Init audio device!");
 	InitAudioDevice();
 
-	puts("[DEBUG] Load resources!");
+	PrintDebug("Init physics!");
+	InitPhysics();
 
-	// Initialize physics and default physics bodies
-    InitPhysics();
-	
+	PrintDebug("Load resources!");
 	LoadResources();
 
-	// Set startup screen
-	game.gameScreen = MENU;
-	
+	PrintDebug("Setting FPS!");
+	SetTargetFPS(60);
 
-	puts("[DEBUG] Game window is starting!");
+	// Set default screen
+	game.gameScreen = MENU;   
 
-	SetTargetFPS(60);   
+	PrintDebug("Game window is starting!");
 
 	// Main game loop (Detect window close button or ESC key)
 	while (!WindowShouldClose() && !quit) {
@@ -71,36 +73,40 @@ int main() {
 		UpdateScreen();
 	}
 
-	puts("[DEBUG] Game window is closing!");
-
-	// De-Initialization
+	PrintDebug("Unloading resources!");
 	UnloadResources();
+
+	PrintDebug("Closing audio device!");
 	CloseAudioDevice();
 
-	// Unitialize physics
+	PrintDebug("Unloading physics!");
 	ClosePhysics();
-	//Close window and OpenGL context	
+	
+	//Close window and OpenGL context
+	PrintDebug("Game window is closing!");
 	CloseWindow();
 
 	return 0;
 }
 
 
-// Loading all the ressources (TODO organize it into a struct?)
+// Loading all the ressources (TODO organize it into a struct, defined in globals.h?)
 void LoadResources() {
 	// Textures MUST be loaded after Window initialization (OpenGL context is required)
-	
+
 	Image img_soincPlayer = LoadImage("res/solin.png");
-    Image img_Reverse = LoadImage("res/solin_reverse.png");
-    Image img_solin_head = LoadImage("res/solin_head.png");
+	Image img_Reverse = LoadImage("res/solin_reverse.png");
+	Image img_solin_head = LoadImage("res/solin_head.png");
 
 	soincReverse = LoadTextureFromImage(img_Reverse);
    	solin_head = LoadTextureFromImage(img_solin_head);
 	soincPlayer = LoadTextureFromImage(img_soincPlayer);
+
 	backgroundMenu = LoadTexture("res/menu/background.png");
 	background_lvl1 = LoadTexture("res/Level1/ECRAN1V.png");
 	background_lvl2 = LoadTexture("res/Level2/ECRAN2V.png");
 	background_lvl3 = LoadTexture("res/Level3/ECRAN3V.png");
+
 	soincSong = LoadMusicStream("res/menu/smash.mp3");
 }
 
@@ -114,15 +120,15 @@ void UnloadResources() {
 	UnloadTexture(soincReverse);
 	UnloadTexture(soincPlayer);
 	UnloadTexture(solin_head);
+	
 	StopMusicStream(soincSong);
+
 	UnloadImage(img_soincPlayer);
 	UnloadImage(img_soincPlayer);
-    UnloadImage(img_solin_head);
+	UnloadImage(img_solin_head);
 
 	//printf("\n  : hp = %d\n", player.health_point);
 }
-
-
 
 // Function managing the screen
 void UpdateScreen() {
@@ -164,3 +170,6 @@ int getdir() {
    return 0;
 }
 
+void PrintDebug(char *str) {
+	if(DEBUG) { printf("[DEBUG] %s\n", str); }
+}

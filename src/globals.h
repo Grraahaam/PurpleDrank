@@ -1,5 +1,7 @@
 // Structures and variables definition (no values, values are defined in lib/defines.c)
 
+bool DEBUG;
+
 typedef enum GameScreen {
 	MENU,
 	LEVEL_1,
@@ -19,9 +21,6 @@ typedef struct Player {
 	//bool sol;
 	int health_point;
 } Player;
-
-
-
 
 // Load them at game start in a similar struct
 // Main object with sub-object for level/screen, to access them anywhere, at anytime later

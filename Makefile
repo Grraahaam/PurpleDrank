@@ -22,3 +22,6 @@ windows:
 
 clean:
 	@make -C src clean
+
+purge:
+	@make -C src purge
