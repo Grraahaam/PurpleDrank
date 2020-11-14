@@ -105,7 +105,7 @@ void LevelOneDraw(Player *player_Struct) {
 
 		DrawFPS(screenWidth - 90, screenHeight - 30);
 
-		DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);git 
+		DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE); 
         DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
 		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
 		DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
