@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include "raylib.h"
 #include "lib/raymath.h"
-
 #include "lib/physac.h"
 #include "lib/defines.c"
 
@@ -115,7 +114,6 @@ void UnloadResources() {
 
 // Function managing the screen
 void UpdateScreen() {
-
 	Player* player_adress = &player;
 	// Play the song (loaded previously)
 	//PlayMusicStream(soincSong);
@@ -126,10 +124,14 @@ void UpdateScreen() {
 			MenuDraw();
 		} break;
 		case LEVEL_1: {
+			ResetPhysics();
 			LevelOneDraw(player_adress);
+			
 		} break;
 		case LEVEL_2: {
+			ResetPhysics();
 			LevelTwoDraw(player_adress);
+			
 		} break;
 		default : {
 			// Default action, if screen not handled

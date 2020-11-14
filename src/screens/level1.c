@@ -3,17 +3,18 @@
 #include <stdio.h>
 #include <raylib.h>
 
-#define PHYSAC_IMPLEMENTATION
-#define PHYSAC_NO_THREADS
 
+#ifndef PHYSAC_IMPLEMENTATION
+#define PHYSAC_IMPLEMENTATION
+#endif
+#ifndef PHYSAC_NO_THREADS
+#define PHYSAC_NO_THREADS
+#endif
 #include "../lib/physac.h"
 #include "../lib/defines.c"
 #include "../globals.h"
 #include "../screens/level1.h"
 
-//Initialize and Default settings 
-//Needs to be defined in the main, but seems we can't extern a struct in C
-//Player player = { (Vector2){20,300},10,true,true, 5};
 
 float vitesse = VELOCITY*0.4;
 bool boule = true;
@@ -42,6 +43,8 @@ void Check_Event(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Recta
 	}
 	else if ( End_Level(wall_right, rect_solin) ) {
 		victory = true;	
+		game.gameScreen = LEVEL_2;
+
 	}
 }
 
@@ -72,7 +75,6 @@ void LevelOneRead(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Rect
 }
 
 void LevelOneDraw(Player *player_Struct) {
-
  	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	// Create floor and walls rectangle physics body
@@ -93,9 +95,11 @@ void LevelOneDraw(Player *player_Struct) {
     wallRight->enabled = false;
 	body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
 	
-	while (!WindowShouldClose() || victory) {   // Detect window close button, ESC key or victory
+	while (!victory && !WindowShouldClose() ) {   // Detect window close button, ESC key or victory
 		
 		RunPhysicsStep();
+
+		printf("[DEBUG] FPS : %d\n", GetFPS());
 		Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
 		
 		LevelOneRead(player_Struct,&body,&trou, &wall_right, &rect_solin);
@@ -114,7 +118,6 @@ void LevelOneDraw(Player *player_Struct) {
 		DrawText(TextFormat("%d", player_Struct->health_point), 90, 35, 30, WHITE);
 		
 		EndDrawing();
-		
 	}
 
 	//DESTROY PHYSICS BODY
@@ -122,7 +125,7 @@ void LevelOneDraw(Player *player_Struct) {
         PhysicsBody body = GetPhysicsBody(i);
 		DestroyPhysicsBody(body);
 	}
-	
+
 }
 
 

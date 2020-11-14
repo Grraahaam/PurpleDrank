@@ -74,7 +74,7 @@
 #define PHYSAC_H
 
 #if defined(PHYSAC_STATIC)
-    #define PHYSACDEF static            // Functions just visible to module including this file
+    #define PHYSACDEF extern            // Functions just visible to module including this file
 #else
     #if defined(__cplusplus)
         #define PHYSACDEF extern "C"    // Functions visible from other files (no name mangling of functions in C++)
