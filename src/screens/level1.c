@@ -20,7 +20,7 @@ float vitesse = VELOCITY*0.4;
 bool boule = true;
 bool right = true;
 bool victory = false;
-int fall = 0;
+bool dead = false;
 
 // Return true si tombé dans le trou
 bool Fallen_Hole(Rectangle *trou, Rectangle *rect_solin) {
@@ -38,14 +38,13 @@ void Check_Event(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Recta
 	if ( Fallen_Hole(trou, rect_solin) ) {
 		(*body)->position.x = 80;
 		(*body)->position.y = screenHeight/2;
-		fall++;
 		player_Struct->health_point -= 1 ;
 
 		// Check if player is dead
 		if(player_Struct->health_point <= 0) {
 			// Reset 3 lives and show Game over screen
 			player_Struct->health_point = 3;
-			victory = true;
+			dead = true;
 			game.gameScreen = GAME_OVER;
 		}
 	}
@@ -58,20 +57,20 @@ void Check_Event(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Recta
 void LevelOneRead(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Rectangle *wall_right, Rectangle *rect_solin)
 {
 	// Horizontal movement input
-        if (IsKeyDown(KEY_RIGHT)) {
+    if (IsKeyDown(KEY_RIGHT)) {
 		(*body)->velocity.x = vitesse;
 		if (boule && !right){
 			imgPlayer = soincPlayer;
 		}
 		right = true;
-        }        
-        else if (IsKeyDown(KEY_LEFT)) {
+    }        
+    else if (IsKeyDown(KEY_LEFT)) {
 		(*body)->velocity.x = -vitesse;
 		if (boule && right) {
 			imgPlayer = soincReverse;
 		}
 		right = false;
-        }
+    }
 
 	// Vertical movement input checking if player physics body is grounded
 	if (IsKeyDown(KEY_UP) && (*body)->isGrounded) {
@@ -92,6 +91,7 @@ void LevelOneDraw(Player *player_Struct) {
 
 	//Re/set the victory switch (otherwise when gameover + retry = infinite loop)
 	victory = false;
+	dead = false;
 
 	// Create floor and walls rectangle physics body
 	PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10);
@@ -112,36 +112,24 @@ void LevelOneDraw(Player *player_Struct) {
 	body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
 	
 	// Detect window close button, ESC key or victory
-	while (!victory && !WindowShouldClose() ) {
+	while (!victory && !dead && !WindowShouldClose() ) {
 		
 		RunPhysicsStep();
-
-		//printf("[DEBUG] FPS : %d\n", GetFPS());
 
 		Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
 		
 		LevelOneRead(player_Struct, &body, &trou, &wall_right, &rect_solin);
 		
 		BeginDrawing();
-		ClearBackground(BLACK);
-
-		DrawFPS(screenWidth - 90, screenHeight - 30);
-
+	
 		DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE); 
         DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
 		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
 		DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
 		DrawText(TextFormat("%f", body->position.y), 10, 55, 30, RED);
-		//DrawText(TextFormat("%d", player_Struct->health_point), 10, 55, 30, RED);
 		DrawText(TextFormat("%d", player_Struct->health_point), 90, 35, 30, WHITE);
-		
+		DrawFPS(screenWidth - 90, screenHeight - 30);
 		EndDrawing();
-	}
-
-	// Destroy physics bodies
-	for (int i = 0; i < GetPhysicsBodiesCount(); i++) {
-        PhysicsBody body = GetPhysicsBody(i);
-		DestroyPhysicsBody(body);
 	}
 }
 
