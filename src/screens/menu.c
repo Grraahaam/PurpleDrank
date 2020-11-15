@@ -23,7 +23,7 @@ void MenuDraw() {
 	ClearBackground(RAYWHITE);
 
 	DrawTexture(backgroundMenu, screenWidth/2 - backgroundMenu.width/2, screenHeight/2 - backgroundMenu.height/2, WHITE);
-	DrawText("PRESS ENTER TO PLAY", 220, 80, 30, WHITE);
+	//DrawText("PRESS ENTER TO PLAY", 220, 80, 30, WHITE);
 
 	EndDrawing();
 
