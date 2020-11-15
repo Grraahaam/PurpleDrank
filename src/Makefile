@@ -12,7 +12,7 @@ all: solin
 
 # Add the file you want to join, from screens/ ($^ takes all the dependencies, ../@ output the result in the project's root directory)
 #main: main.o menu.o level1.o level2.o level3.o gameover.o
-solin: main.o menu.o level1.o level2.o
+solin: main.o menu.o gameover.o level1.o level2.o
 	$(CC) -o ../$@ $^ $(LIBS)
 
 # This satisfy all the above targets, with a single regex (compile the .c and .h to generate the .o compiled file)

@@ -33,6 +33,7 @@ int screenWidth;
 int screenHeight;
 
 Texture2D backgroundMenu;
+Texture2D backgroundGameover;
 Texture2D background_lvl1;
 Texture2D background_lvl2;
 Texture2D background_lvl3;

@@ -13,7 +13,7 @@
 #include "main.h"
 
 //Settings player 
-Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 6};
+Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 3};
 
 
 int main(int argc, char *argv[]) {
@@ -51,7 +51,8 @@ int main(int argc, char *argv[]) {
 	PrintDebug("Game window is starting!");
 
 	// Main game loop (Detect window close button or ESC key)
-	while (!WindowShouldClose() || !quit) {
+	//while (!WindowShouldClose() || !quit) {
+	while (!WindowShouldClose()) {
 
 		UpdateScreen();
 	}
@@ -121,6 +122,7 @@ void UpdateScreen() {
 	// Draw the corresponding screen
 	switch(game.gameScreen) {
 		case MENU: {
+			ResetPhysics();
 			MenuDraw();
 		} break;
 		case LEVEL_1: {
@@ -132,6 +134,7 @@ void UpdateScreen() {
 			LevelTwoDraw(player_adress);
 		} break;
 		case GAME_OVER: {
+			ResetPhysics();
 			GameoverDraw();
 		} break;
 		default : {

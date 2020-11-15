@@ -43,6 +43,8 @@ void Check_Event(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Recta
 
 		// Check if player is dead
 		if(player_Struct->health_point <= 0) {
+			// Reset 3 lives and show Game over screen
+			player_Struct->health_point = 3;
 			victory = true;
 			game.gameScreen = GAME_OVER;
 		}
@@ -81,10 +83,16 @@ void LevelOneRead(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Rect
 }
 
 void LevelOneDraw(Player *player_Struct) {
+
+	PrintDebug("Drawing Level 1");
+
  	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	// Re/set default player image
 	imgPlayer = soincPlayer;
+
+	//Re/set the victory switch (otherwise when gameover + retry = infinite loop)
+	victory = false;
 
 	// Create floor and walls rectangle physics body
 	PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 100, screenHeight/2 }, 50, 60, 10);

@@ -4,6 +4,7 @@
 // Function declarations
 void UpdateScreen();
 void MenuDraw();
+void GameoverDraw();
 void LevelOneDraw(Player *player_Struct);
 void LevelTwoDraw(Player *player_Struct);
 void LoadResources();

@@ -7,5 +7,6 @@ void LevelOneDraw(Player *player_Struct);
 void LevelOneRead(Player *player_Struct, PhysicsBody *body, Rectangle *trou, Rectangle *wall_right, Rectangle *rect_solin);
 void Check_Event(Player *player_Struct, PhysicsBody *body, Rectangle *trou, Rectangle *wall_right, Rectangle *rect_solin);
 
+void PrintDebug(char *str);
 
 #endif

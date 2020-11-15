@@ -9,7 +9,7 @@
 // Function reading user ENTER input
 void GameoverRead() {
 
-	if (IsKeyDown(KEY_ENTER)) {
+	if (IsKeyPressed(KEY_ENTER)) {
 		PrintDebug("Pressed ENTER, returning to the menu!");
 		game.gameScreen = MENU;		
 	}
@@ -27,5 +27,5 @@ void GameoverDraw() {
 
 	EndDrawing();
 
-	MenuRead();
+	GameoverRead();
 }

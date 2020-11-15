@@ -9,7 +9,7 @@
 // Function reading user ENTER input
 void MenuRead() {
 
-	if (IsKeyDown(KEY_ENTER)) {
+	if (IsKeyPressed(KEY_ENTER)) {
 		PrintDebug("Pressed ENTER, starting level one!");
 		game.gameScreen = LEVEL_1;		
 	}
