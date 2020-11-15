@@ -18,7 +18,6 @@
 float vitesse = VELOCITY*0.4;
 bool boule = true;
 bool right = true;
-bool col_wall_right = false;
 bool victoryLvl2 = false;
 int fall = 0;
 
@@ -28,14 +27,14 @@ bool End_Level(Rectangle *wall_right, Rectangle *rect_solin) { //Return true if 
 	return CheckCollisionRecs(*rect_solin, *wall_right); 
 }
 
-void Check_Event(Player *player_Struct,PhysicsBody *body, Rectangle *wall_right, Rectangle *rect_solin) {
+void Check_Event( Rectangle *wall_right, Rectangle *rect_solin) {
 	
 	if ( End_Level(wall_right, rect_solin) ) {
 		victoryLvl2 = true;	
 	}
 }
 
-void LevelTwoRead(Player *player_Struct,PhysicsBody *body, Rectangle *wall_right, Rectangle *rect_solin)
+void LevelTwoRead(PhysicsBody *body, Rectangle *wall_right, Rectangle *rect_solin)
 {
 	// Horizontal movement input
         if (IsKeyDown(KEY_RIGHT)) {
@@ -58,7 +57,7 @@ void LevelTwoRead(Player *player_Struct,PhysicsBody *body, Rectangle *wall_right
 		if (IsKeyDown(KEY_UP)) {
 			(*body)->velocity.y = -VELOCITY*1.2;
 		} 
-		Check_Event(player_Struct,body, wall_right, rect_solin);
+		Check_Event(wall_right, rect_solin);
 }
 
 void LevelTwoDraw(Player *player_Struct) {
@@ -79,10 +78,10 @@ void LevelTwoDraw(Player *player_Struct) {
     PhysicsBody platform12 = CreatePhysicsBodyRectangle((Vector2){ 335, 43 }, 70, 86, 10);
     PhysicsBody platform13 = CreatePhysicsBodyPolygon((Vector2){ 370, 10 }, 75.0f, 4, 10);   
     PhysicsBody platform2 = CreatePhysicsBodyRectangle((Vector2){ 705, 245 }, 180, 350, 10);
-    PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight*2, 10);
-    PhysicsBody wall_right = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight*2, 10);
+    PhysicsBody wall_left = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight*2, 10);
+ 
+	Rectangle wall_right = { 800, 200, 10, 200};
 
-	
 	// Disable dynamics to floor and walls physics bodies
     floor1->enabled = false;
     floor2->enabled = false;
@@ -95,15 +94,15 @@ void LevelTwoDraw(Player *player_Struct) {
     platform12->enabled = false;
     platform13->enabled = false;
     platform2->enabled = false;
-    wallLeft->enabled = false;
-    wall_right->enabled = false;    // Constrain body rotation to avoid little collision torque amounts
+    wall_left->enabled = false;
+    //wall_right->enabled = false;    // Constrain body rotation to avoid little collision torque amounts
 	
 	while (!victoryLvl2 && !WindowShouldClose() ) {   // Detect window close button, ESC key or victory
 		
 		RunPhysicsStep();
 		Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
 		
-		LevelTwoRead(player_Struct,&body, &wall_right, &rect_solin);
+		LevelTwoRead(&body, &wall_right, &rect_solin);
 		
 		BeginDrawing();
 		ClearBackground(BLACK);

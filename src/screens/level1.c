@@ -19,8 +19,6 @@
 float vitesse = VELOCITY*0.4;
 bool boule = true;
 bool right = true;
-bool col_trou = false;
-bool col_wall_right = false;
 bool victory = false;
 int fall = 0;
 
@@ -82,17 +80,16 @@ void LevelOneDraw(Player *player_Struct) {
 	PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10);
     PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10);
     PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10);
-    PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ 0, screenHeight/2 }, 10, screenHeight, 10);
-    PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10);
-    Rectangle trou = { 415, 700, 245, 10};
+    PhysicsBody wall_left = CreatePhysicsBodyRectangle((Vector2){ 0, screenHeight/2 }, 10, screenHeight, 10);
+  
+  	Rectangle trou = { 415, 700, 245, 10};
     Rectangle wall_right = { 800, 200, 10, 200};
 
 	// Disable dynamics to floor and walls physics bodies
     floorLeft->enabled = false;
     floorRight->enabled=false;
     platform->enabled = false;
-    wallLeft->enabled = false;
-    wallRight->enabled = false;
+    wall_left->enabled = false;
 	body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
 	
 	while (!victory && !WindowShouldClose() ) {   // Detect window close button, ESC key or victory
