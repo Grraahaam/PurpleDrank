@@ -81,8 +81,8 @@ void LevelOneDraw(Player *player_Struct) {
     PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10);
     PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10);
     PhysicsBody wall_left = CreatePhysicsBodyRectangle((Vector2){ 0, screenHeight/2 }, 10, screenHeight, 10);
-  
-  	Rectangle trou = { 415, 700, 245, 10};
+  	
+	  Rectangle trou = { 415, 700, 245, 10};
     Rectangle wall_right = { 800, 200, 10, 200};
 
 	// Disable dynamics to floor and walls physics bodies
@@ -90,6 +90,7 @@ void LevelOneDraw(Player *player_Struct) {
     floorRight->enabled=false;
     platform->enabled = false;
     wall_left->enabled = false;
+    //wall_right->enabled = false;
 	body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
 	
 	while (!victory && !WindowShouldClose() ) {   // Detect window close button, ESC key or victory
@@ -122,7 +123,6 @@ void LevelOneDraw(Player *player_Struct) {
         PhysicsBody body = GetPhysicsBody(i);
 		DestroyPhysicsBody(body);
 	}
-
 }
 
 

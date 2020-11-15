@@ -95,7 +95,7 @@ void LevelTwoDraw(Player *player_Struct) {
     platform13->enabled = false;
     platform2->enabled = false;
     wall_left->enabled = false;
-    //wall_right->enabled = false;    // Constrain body rotation to avoid little collision torque amounts
+    body->freezeOrient = true;    // Constrain body rotation to avoid little collision torque amounts
 	
 	while (!victoryLvl2 && !WindowShouldClose() ) {   // Detect window close button, ESC key or victory
 		
@@ -125,7 +125,6 @@ void LevelTwoDraw(Player *player_Struct) {
         PhysicsBody body = GetPhysicsBody(i);
 		DestroyPhysicsBody(body);
 	}
-	
 }
 
 
