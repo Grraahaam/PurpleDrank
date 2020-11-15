@@ -74,9 +74,8 @@ void LevelOneRead(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Rect
         }
 
 	// Vertical movement input checking if player physics body is grounded
-        //if (IsKeyDown(KEY_UP) && (*body)->isGrounded) {
-	if (IsKeyDown(KEY_UP)) {
-		(*body)->velocity.y = -VELOCITY*1.2;
+	if (IsKeyDown(KEY_UP) && (*body)->isGrounded) {
+		(*body)->velocity.y = -VELOCITY*3;
 	}
 
 	Check_Event(player_Struct, body, trou, wall_right, rect_solin);
@@ -95,7 +94,6 @@ void LevelOneDraw(Player *player_Struct) {
 	victory = false;
 
 	// Create floor and walls rectangle physics body
-	PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 100, screenHeight/2 }, 50, 60, 10);
 	PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10);
 	PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10);
 	PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10);
@@ -109,7 +107,8 @@ void LevelOneDraw(Player *player_Struct) {
 	floorRight->enabled=false;
 	platform->enabled = false;
 	wall_left->enabled = false;
-	//wall_right->enabled = false;
+	
+	PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 100, screenHeight/2 }, 50, 60, 10);
 	body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
 	
 	// Detect window close button, ESC key or victory
@@ -129,7 +128,7 @@ void LevelOneDraw(Player *player_Struct) {
 		DrawFPS(screenWidth - 90, screenHeight - 30);
 
 		DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE); 
-        	DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+        DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
 		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
 		DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
 		DrawText(TextFormat("%f", body->position.y), 10, 55, 30, RED);
@@ -141,7 +140,7 @@ void LevelOneDraw(Player *player_Struct) {
 
 	// Destroy physics bodies
 	for (int i = 0; i < GetPhysicsBodiesCount(); i++) {
-        	PhysicsBody body = GetPhysicsBody(i);
+        PhysicsBody body = GetPhysicsBody(i);
 		DestroyPhysicsBody(body);
 	}
 }

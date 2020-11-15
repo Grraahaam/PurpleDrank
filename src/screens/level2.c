@@ -53,9 +53,8 @@ void LevelTwoRead(PhysicsBody *body, Rectangle *wall_right, Rectangle *rect_soli
         }
 
 		// Vertical movement input checking if player physics body is grounded
-        //if (IsKeyDown(KEY_UP) && (*body)->isGrounded) {
-		if (IsKeyDown(KEY_UP)) {
-			(*body)->velocity.y = -VELOCITY*1.2;
+        if (IsKeyDown(KEY_UP) && (*body)->isGrounded) {
+			(*body)->velocity.y = -VELOCITY*3;
 		} 
 		Check_Event(wall_right, rect_solin);
 }
@@ -64,8 +63,6 @@ void LevelTwoDraw(Player *player_Struct) {
 	
  	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
-	// Create floor and walls rectangle physics body
-	PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 100, screenHeight/2 }, 50, 60, 10);
 	// Create floor and walls rectangle physics body
     PhysicsBody floor1 = CreatePhysicsBodyRectangle((Vector2){ 35, 360 }, 70, 190, 10);
     PhysicsBody floor2 = CreatePhysicsBodyRectangle((Vector2){ 115, 405 }, 90, 50, 10);
@@ -95,6 +92,8 @@ void LevelTwoDraw(Player *player_Struct) {
     platform13->enabled = false;
     platform2->enabled = false;
     wall_left->enabled = false;
+    	
+	PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 100, screenHeight/2 }, 50, 60, 10);
     body->freezeOrient = true;    // Constrain body rotation to avoid little collision torque amounts
 	
 	while (!victoryLvl2 && !WindowShouldClose() ) {   // Detect window close button, ESC key or victory
@@ -114,7 +113,6 @@ void LevelTwoDraw(Player *player_Struct) {
 		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
 		DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
 		DrawText(TextFormat("%f", body->position.y), 10, 55, 30, RED);
-		//DrawText(TextFormat("%d", player_Struct->health_point), 10, 55, 30, RED);
 		DrawText(TextFormat("%d", player_Struct->health_point), 90, 35, 30, WHITE);
 		
 		EndDrawing();
