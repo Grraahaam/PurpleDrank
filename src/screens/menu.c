@@ -6,12 +6,11 @@
 #include "../lib/defines.c"
 #include "../screens/menu.h"
 
-
 // Function reading user ENTER input
 void MenuRead() {
 
 	if (IsKeyDown(KEY_ENTER)) {
-		puts("[DEBUG] Pressed ENTER, starting level one!");
+		PrintDebug("Pressed ENTER, starting level one!");
 		game.gameScreen = LEVEL_1;		
 	}
 }

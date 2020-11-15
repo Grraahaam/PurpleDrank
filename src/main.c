@@ -12,7 +12,6 @@
 #include "globals.h"
 #include "main.h"
 
-
 //Settings player 
 Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 6};
 
@@ -52,7 +51,7 @@ int main(int argc, char *argv[]) {
 	PrintDebug("Game window is starting!");
 
 	// Main game loop (Detect window close button or ESC key)
-	while (!WindowShouldClose() && !quit) {
+	while (!WindowShouldClose() || !quit) {
 
 		UpdateScreen();
 	}
@@ -87,6 +86,7 @@ void LoadResources() {
 	soincPlayer = LoadTextureFromImage(img_soincPlayer);
 
 	backgroundMenu = LoadTexture("res/menu/background.png");
+	backgroundGameover = LoadTexture("res/gameover/background.png");
 	background_lvl1 = LoadTexture("res/Level1/ECRAN1V.png");
 	background_lvl2 = LoadTexture("res/Level2/ECRAN2V.png");
 	background_lvl3 = LoadTexture("res/Level3/ECRAN3V.png");
@@ -126,12 +126,13 @@ void UpdateScreen() {
 		case LEVEL_1: {
 			ResetPhysics();
 			LevelOneDraw(player_adress);
-			
 		} break;
 		case LEVEL_2: {
 			ResetPhysics();
 			LevelTwoDraw(player_adress);
-			
+		} break;
+		case GAME_OVER: {
+			GameoverDraw();
 		} break;
 		default : {
 			// Default action, if screen not handled

@@ -1,0 +1,2 @@
+void GameoverRead();
+void GameoverDraw();

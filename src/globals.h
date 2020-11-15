@@ -5,7 +5,8 @@ bool DEBUG;
 typedef enum GameScreen {
 	MENU,
 	LEVEL_1,
-	LEVEL_2
+	LEVEL_2,
+	GAME_OVER
 } GameScreen;
 
 typedef struct Game {
