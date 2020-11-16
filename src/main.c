@@ -23,7 +23,6 @@ int main(int argc, char *argv[]) {
 	else { DEBUG = false; }
 
 	// Defining variables values
-	bool quit = false;
 	screenWidth = SCREEN_WIDTH;
 	screenHeight = SCREEN_HEIGHT;
 

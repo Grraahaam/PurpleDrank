@@ -45,7 +45,7 @@ void reset_lean(Player *player_Struct){
         l3 = false;
 	player_Struct->nb_lean = 0;
 }	
-void saut_tremplin(Player *player_Struct, PhysicsBody *body, Rectangle *rect_solin, Rectangle *rect_tremplin){
+void saut_tremplin(PhysicsBody *body, Rectangle *rect_solin, Rectangle *rect_tremplin){
 	if(CheckCollisionRecs(*rect_solin, *rect_tremplin)){
 	(*body)->velocity.y = -VELOCITY*5.5;
 	(*body)->velocity.x = +VELOCITY*2;
@@ -53,14 +53,14 @@ void saut_tremplin(Player *player_Struct, PhysicsBody *body, Rectangle *rect_sol
 }
 
 bool use_teleporter(Player *player_Struct, Rectangle *rect_solin, Rectangle *rect_tp){
-	if(CheckCollisionRecs(*rect_solin, *rect_tp) && player_Struct->nb_lean == 3){
-	teleportation = teleportation_OK;
-	return true;
+	if (CheckCollisionRecs(*rect_solin, *rect_tp) && player_Struct->nb_lean == 3){
+		teleportation = teleportation_OK;
+		return true;
 	}
 	else if(CheckCollisionRecs(*rect_solin, *rect_tp) && player_Struct->nb_lean < 3){
-	desactivate = true;
-	return false;
-	} 
+		desactivate = true;
+		return false;
+	}
 }
 
 bool LevelTwoEnd(Player *player_Struct, Rectangle *rect_tp, Rectangle *rect_solin) { //Return true if leveld ended
@@ -87,7 +87,7 @@ bool GetLean(Rectangle *rect_lean1, Rectangle *rect_lean2, Rectangle *rect_lean3
 	return success;
 } 
 
-void LevelTwoCheck_Event(Player *player_Struct, PhysicsBody *body, Rectangle *rect_piques, Rectangle *rect_tp, Rectangle *rect_solin, Rectangle *rect_lean1, Rectangle *rect_lean2, Rectangle *rect_lean3, Rectangle *rect_tremplin) {
+void LevelTwoCheck_Event(Player *player_Struct, PhysicsBody *body, Rectangle *rect_piques, Rectangle *rect_tp, Rectangle *rect_solin, Rectangle *rect_lean1, Rectangle *rect_lean2, Rectangle *rect_lean3) {
 	
 	if ( Fallen_Spikes(rect_piques, rect_solin) ) {
 		(*body)->position.x = 40;
@@ -136,9 +136,9 @@ void LevelTwoRead(Player *player_Struct, PhysicsBody *body, Rectangle *rect_piqu
 		(*body)->velocity.y = -VELOCITY*3;
 	}
 	
-    if (IsKeyDown(KEY_SPACE)) saut_tremplin(player_Struct, body, rect_solin, rect_tremplin);
+    if (IsKeyDown(KEY_SPACE)) saut_tremplin(body, rect_solin, rect_tremplin);
      
-	LevelTwoCheck_Event(player_Struct, body, rect_piques, rect_tp, rect_solin, rect_lean1, rect_lean2, rect_lean3, rect_tremplin);
+	LevelTwoCheck_Event(player_Struct, body, rect_piques, rect_tp, rect_solin, rect_lean1, rect_lean2, rect_lean3);
 }
 
 void LevelTwoDraw(Player *player_Struct) {

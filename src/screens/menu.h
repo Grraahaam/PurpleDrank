@@ -3,5 +3,6 @@
 
 void MenuRead();
 void MenuDraw();
+void PrintDebug(char *str);
 
 #endif
