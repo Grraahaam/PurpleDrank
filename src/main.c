@@ -13,7 +13,7 @@
 #include "main.h"
 
 //Settings player 
-Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 3};
+Player player = { (Vector2){100, SCREEN_HEIGHT/2}, 3, 0};
 
 
 int main(int argc, char *argv[]) {
