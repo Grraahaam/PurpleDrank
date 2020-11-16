@@ -7,6 +7,7 @@ void MenuDraw();
 void GameoverDraw();
 void LevelOneDraw(Player *player_Struct);
 void LevelTwoDraw(Player *player_Struct);
+void SuccessDraw();
 void LoadResources();
 void UnloadResources();
 

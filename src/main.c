@@ -78,20 +78,27 @@ int main(int argc, char *argv[]) {
 void LoadResources() {
 	// Textures MUST be loaded after Window initialization (OpenGL context is required)
 
-	Image img_soincPlayer = LoadImage("res/solin.png");
-	Image img_Reverse = LoadImage("res/solin_reverse.png");
-	Image img_solin_head = LoadImage("res/solin_head.png");
-
-	soincReverse = LoadTextureFromImage(img_Reverse);
-   	solin_head = LoadTextureFromImage(img_solin_head);
-	soincPlayer = LoadTextureFromImage(img_soincPlayer);
-
+	solinReverse = LoadTexture("res/solin_reverse.png");
+   	solin_head = LoadTexture("res/solin_head.png");
+	solinPlayer = LoadTexture("res/solin.png");
+	solinDead = LoadTexture("res/solin_dead.png");
 	backgroundMenu = LoadTexture("res/menu/background.png");
 	backgroundGameover = LoadTexture("res/gameover/background.png");
+	backgroundSuccess = LoadTexture("res/success.png");
 	background_lvl1 = LoadTexture("res/Level1/ECRAN1V.png");
 	background_lvl2 = LoadTexture("res/Level2/ECRAN2V.png");
 	background_lvl3 = LoadTexture("res/Level3/ECRAN3V.png");
-
+	lean1_available = LoadTexture("res/Level2/lean.png");
+	lean2_available = LoadTexture("res/Level2/lean.png");
+	lean3_available = LoadTexture("res/Level2/lean.png");
+	lean1_taken = LoadTexture("res/Level2/empty.png");
+	lean2_taken = LoadTexture("res/Level2/empty.png");
+	lean3_taken = LoadTexture("res/Level2/empty.png");
+	inventory_lean = LoadTexture("res/Level2/lean.png");
+	spikes = LoadTexture("res/Level2/spikes.png");
+	tremplin = LoadTexture("res/Level2/tremplin.png");
+	teleportation_NOK = LoadTexture("res/Level2/tp_desac.png");
+	teleportation_OK = LoadTexture("res/Level2/tp.png");
 	soincSong = LoadMusicStream("res/menu/smash.mp3");
 }
 
@@ -102,15 +109,12 @@ void UnloadResources() {
 	UnloadTexture(background_lvl1);
 	UnloadTexture(background_lvl2);
 	UnloadTexture(background_lvl3);
-	UnloadTexture(soincReverse);
-	UnloadTexture(soincPlayer);
+	UnloadTexture(solinReverse);
+	UnloadTexture(solinPlayer);
+	UnloadTexture(solinDead);
 	UnloadTexture(solin_head);
 	
 	StopMusicStream(soincSong);
-
-	UnloadImage(img_soincPlayer);
-	UnloadImage(img_soincPlayer);
-	UnloadImage(img_solin_head);
 }
 
 // Function managing the screen
@@ -136,6 +140,10 @@ void UpdateScreen() {
 		case GAME_OVER: {
 			ResetPhysics();
 			GameoverDraw();
+		} break;
+		case SUCCESS: {
+			ResetPhysics();
+			SuccessDraw();
 		} break;
 		default : {
 			// Default action, if screen not handled

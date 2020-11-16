@@ -6,6 +6,7 @@ typedef enum GameScreen {
 	MENU,
 	LEVEL_1,
 	LEVEL_2,
+	SUCCESS,
 	GAME_OVER
 } GameScreen;
 
@@ -21,6 +22,7 @@ typedef struct Player {
 	//bool canJump;
 	//bool sol;
 	int health_point;
+	int nb_lean;
 } Player;
 
 // Load them at game start in a similar struct
@@ -34,15 +36,29 @@ int screenHeight;
 
 Texture2D backgroundMenu;
 Texture2D backgroundGameover;
+Texture2D backgroundSuccess;
 Texture2D background_lvl1;
 Texture2D background_lvl2;
 Texture2D background_lvl3;
-Texture2D soincReverse;
-Texture2D soincPlayer;
+Texture2D solinReverse;
+Texture2D solinPlayer;
+Texture2D solinDead;
 Texture2D solin_head;
 Texture2D imgPlayer;
+Texture2D lean1_available;
+Texture2D lean2_available;
+Texture2D lean3_available;
+Texture2D lean1_taken;
+Texture2D lean2_taken;
+Texture2D lean3_taken;
+Texture2D tremplin;
+Texture2D teleportation_OK;
+Texture2D teleportation_NOK;
+Texture2D spikes;
+Texture2D inventory_lean;
+Texture2D lean1;
+Texture2D lean2;
+Texture2D lean3;
+Texture2D teleportation;
 Music soincSong;
-Image img_soincPlayer;
-Image img_Reverse;
-Image img_solin_head;
 

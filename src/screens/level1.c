@@ -60,14 +60,14 @@ void LevelOneRead(Player *player_Struct,PhysicsBody *body, Rectangle *trou, Rect
     if (IsKeyDown(KEY_RIGHT)) {
 		(*body)->velocity.x = vitesse;
 		if (boule && !right){
-			imgPlayer = soincPlayer;
+			imgPlayer = solinPlayer;
 		}
 		right = true;
     }        
     else if (IsKeyDown(KEY_LEFT)) {
 		(*body)->velocity.x = -vitesse;
 		if (boule && right) {
-			imgPlayer = soincReverse;
+			imgPlayer = solinReverse;
 		}
 		right = false;
     }
@@ -87,7 +87,7 @@ void LevelOneDraw(Player *player_Struct) {
  	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	// Re/set default player image
-	imgPlayer = soincPlayer;
+	imgPlayer = solinPlayer;
 
 	//Re/set the victory switch (otherwise when gameover + retry = infinite loop)
 	victory = false;
@@ -123,11 +123,11 @@ void LevelOneDraw(Player *player_Struct) {
 		BeginDrawing();
 	
 		DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE); 
-        DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+        	DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
 		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
-		DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
-		DrawText(TextFormat("%f", body->position.y), 10, 55, 30, RED);
-		DrawText(TextFormat("%d", player_Struct->health_point), 90, 35, 30, WHITE);
+		//DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
+		//DrawText(TextFormat("%f", body->position.y), 10, 55, 30, RED);
+		DrawText(TextFormat("%d", player_Struct->health_point), 90, 25, 30, WHITE);
 		DrawFPS(screenWidth - 90, screenHeight - 30);
 		EndDrawing();
 	}
