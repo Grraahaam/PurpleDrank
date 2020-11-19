@@ -1,89 +1,143 @@
 
+
 #include <stdio.h>
 #include <raylib.h>
-#define VELOCITY 0.5f
+
+#ifndef PHYSAC_IMPLEMENTATION
 #define PHYSAC_IMPLEMENTATION
+#endif
+
+#ifndef PHYSAC_NO_THREADS
 #define PHYSAC_NO_THREADS
-#include "../lib/raymath.h"
+#endif
+
 #include "../lib/physac.h"
-
-#include "../globals.h"
 #include "../lib/defines.c"
+#include "../globals.h"
+#include "../screens/level1.h"
 
+float vitesse = VELOCITY*0.4;
+bool boule = true;
+bool right = true;
+bool victory = false;
+bool dead = false;
 
-//Initialize and Default settings 
-//Needs to be defined in the main, but seems we can't extern a struct in C
-//Player player = { (Vector2){20,300},10,true,true, 5};
-
-// Maybe load PhysicsBody in Struct decor per level (in the main)
-/*
-Decor decor_level1 = {   
-	CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10),
-	CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10),
-	CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10),
-	CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight, 10),
-	CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight, 10)
-};
-*/
-
-
-void LevelOneDraw() {
-
-	BeginDrawing();
-
-	ClearBackground(BLACK);
-
-	DrawFPS(screenWidth - 90, screenHeight - 30);
-
-	body = CreatePhysicsBodyRectangle((Vector2){ 80, screenHeight/2 }, 50, 60, 1);
-	
-	DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
-
-	//Next line doesn't work, 
-    DrawTextureEx(soincPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
-
-	DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
-	//DrawText(TextFormat("%d", player.health_point), 90, 25, 30, WHITE);
-
-	EndDrawing();
+// Return true si tombé dans le trou
+bool Fallen_Hole(Rectangle *trou, Rectangle *rect_solin) {
+	return CheckCollisionRecs(*rect_solin, *trou);
 }
 
-/* 
-void LevelOneRead()
-{
-	
-    if (IsKeyDown(KEY_RIGHT)) {
-        body->velocity.x = vitesse;
-        if (boule && !right){
-        	solin = soincPlayer;
-        }
-        right = true;
-    }        
-    else if (IsKeyDown(KEY_LEFT)) {
-        body->velocity.x = -vitesse;
-        if (boule && right){
-        	solin = soincReverse;
-        }
-        right = false;
-    }
-        
-    col_trou = CheckCollisionRecs(rect_solin, trou);
-	
-	if(col_trou){
-		body->position.x = 80;
-		body->position.y = screenHeight/2;
-		fall++;
-		nb_lives--;
+//Return true if level ended
+bool End_Level(Rectangle *wall_right, Rectangle *rect_solin) {
+	return CheckCollisionRecs(*rect_solin, *wall_right);
+}
+
+void Check_Event(Player *player, PhysicsBody *body, Rectangle *trou, Rectangle *wall_right, Rectangle *rect_solin) {
+
+	if ( Fallen_Hole(trou, rect_solin) ) {
+		(*body)->position.x = 80;
+		(*body)->position.y = screenHeight/2;
+		//player->health_point -= 1 ;
+		--player->health_point;
+
+		// Check if player is dead
+		if(player->health_point <= 0) {
+			// Reset 3 lives and show Game over screen
+			player->health_point = 3;
+			dead = true;
+			game.gameScreen = GAME_OVER;
+		}
 	}
-	
-	col_wall_right = CheckCollisionRecs(rect_solin, wall_right);
-        
-    if(col_wall_right) victory = true;
-        
-
-    // Vertical movement input checking if player physics body is grounded
-    if (IsKeyDown(KEY_UP) && body->isGrounded) body->velocity.y = -VELOCITY*3; 
+	else if ( End_Level(wall_right, rect_solin) ) {
+		victory = true;
+		game.gameScreen = LEVEL_2;
+	}
 }
-*/
+
+void LevelOneRead(Player *player, PhysicsBody *body, Rectangle *trou, Rectangle *wall_right, Rectangle *rect_solin)
+{
+	// Horizontal movement input
+    if (IsKeyDown(KEY_RIGHT)) {
+		(*body)->velocity.x = vitesse;
+		if (boule && !right){
+			imgPlayer = solinPlayer;
+		}
+		right = true;
+    }
+    else if (IsKeyDown(KEY_LEFT)) {
+		(*body)->velocity.x = -vitesse;
+		if (boule && right) {
+			imgPlayer = solinReverse;
+		}
+		right = false;
+    }
+
+	// Vertical movement input checking if player physics body is grounded
+	if (IsKeyDown(KEY_UP) && (*body)->isGrounded) {
+		(*body)->velocity.y = -VELOCITY*3;
+	}
+
+	Check_Event(player, body, trou, wall_right, rect_solin);
+}
+
+void LevelOneDraw(Player *player) {
+
+	PrintDebug("Drawing Level 1");
+
+ 	SetConfigFlags(FLAG_MSAA_4X_HINT);
+
+	// Re/set default player image
+	imgPlayer = solinPlayer;
+
+	//Re/set the victory switch (otherwise when gameover + retry = infinite loop)
+	victory = false;
+	dead = false;
+
+	// Create floor and walls rectangle physics body
+	PhysicsBody floorLeft = CreatePhysicsBodyRectangle((Vector2){ 190, 350 }, 445, 170, 10);
+	PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 535, 340 }, 100, 70, 10);
+	PhysicsBody floorRight = CreatePhysicsBodyRectangle((Vector2){ 740, 360 }, 150, 150, 10);
+	PhysicsBody wall_left = CreatePhysicsBodyRectangle((Vector2){ 0, screenHeight/2 }, 10, screenHeight, 10);
+
+	Rectangle trou = { 415, 700, 245, 10};
+	Rectangle wall_right = { 800, 200, 10, 200};
+
+	// Disable dynamics to floor and walls physics bodies
+	floorLeft->enabled = false;
+	floorRight->enabled=false;
+	platform->enabled = false;
+	wall_left->enabled = false;
+
+	PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 100, screenHeight/2 }, 50, 60, 10);
+	body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
+
+	// Detect window close button, ESC key or victory
+	while (!victory && !dead && !WindowShouldClose() ) {
+
+		RunPhysicsStep();
+
+		Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
+
+		LevelOneRead(player, &body, &trou, &wall_right, &rect_solin);
+
+		BeginDrawing();
+
+		DrawTextureEx(background_lvl1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
+		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
+
+		//DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
+		//DrawText(TextFormat("%f", body->position.y), 10, 55, 30, RED);
+		DrawText(TextFormat("%d", player->health_point), 90, 25, 30, WHITE);
+
+		DrawFPS(screenWidth - 90, screenHeight - 30);
+
+		EndDrawing();
+	}
+}
+
+
+
+
 
 
