@@ -1,12 +1,15 @@
+
 #ifndef LEVEL1_H_
-#define LEVEL1_H_
+    
+    #define LEVEL1_H_
 
-bool Fallen_Hole(Rectangle *trou, Rectangle *rect_solin);
-bool End_Level(Rectangle *wall_right, Rectangle *rect_solin);
-void LevelOneDraw(Player *player_Struct);
-void LevelOneRead(Player *player_Struct, PhysicsBody *body, Rectangle *trou, Rectangle *wall_right, Rectangle *rect_solin);
-void Check_Event(Player *player_Struct, PhysicsBody *body, Rectangle *trou, Rectangle *wall_right, Rectangle *rect_solin);
+    bool l1_collisionHole(Player *player);
+    bool l1_collisionRightWall(Player *player);
 
-void PrintDebug(char *str);
+    void l1_readCollisions(Player *player);
+
+    void LevelOneRead(Player *player);
+    void LevelOneInit(Player *player);
+    void LevelOneDraw(Player *player, ScreenFX *screenFx);
 
 #endif

@@ -1,0 +1,72 @@
+
+# TODO
+
+- [ ] **keyboard binding**
+    - [ ] bind a key to return to the menu
+    - [ ] create a custom key binding menu
+- [ ] **positioning & dimensioning**
+    - [ ] create a function returning the pixel value of each percent of width/height (positioning purposes)
+    - [ ] convert fixed positions to responsive ones where possible
+- [ ] **sounds**
+    - [ ] implement game music
+    - [ ] implement sound effect on actions (jump, super, portal, hit, damaged)
+- [ ] **sprites**
+	- [x] clean up "gob walkking"
+	- [ ] group menu screens into a single spritecheet?
+- [ ] **screens**
+	- [x] remove text on screen images
+	- [ ] set corresponding text and instructions (with effect) on non-game screens
+	- [x] harmonize screens with the game artistic direction?
+	- [ ] implement player selection screen
+	- [ ] implement controls explanantion screen
+	- [ ] set up automatic image ratio scaling to fit the whole window
+- [x] **menu**
+	- [x] create a menu navigation box
+		- [x] *play game*
+		- [x] *select player*
+		- [x] *minigames*
+		- [x] *controls*
+		- [x] *credits*
+		- [x] *quit*
+- [ ] **gameplay**
+	- [x] centralized game controls functions
+	- [x] implement screen fading effects
+	- [x] implement external font drawing
+	- [x] implement out-of-screen asset detection
+        - [ ] centralize this call for the player in gp_readPlayer()
+	- [x] implement static/moving asset frame animation
+	- [ ] set timeout at each level start where the player can't move (fading time, 2s)
+- [ ] **level 1**
+	- [x] level design
+	- [x] level assets and physic bodies definition
+	- [ ] apply movements on the platform to increase difficulty?
+- [x] **level 2**
+	- [x] level design
+	- [x] level assets and physic bodies definition
+	- [x] animate the portal and place/re-size it a little (more on the right)
+- [ ] **level 3**
+	- [x] level design
+	- [x] level assets and physic bodies definition
+        - [x] don't decrement gob amount if not killed
+        - [x] set gobs maximum speed limit
+	- [ ] replace "Dark Solean lifes" with a lives progress bar with the dark solean's head
+	- [ ] add fire launched by dark solin
+	- [ ] make the portal disappear after fade effect timeout
+- [ ] **level 4**
+	- [x] level design
+	- [x] level assets and physic bodies definition
+	- [ ] alter player's movements on ice
+- [ ] **level bonus**
+	- [x] level design
+	- [x] level assets and physic bodies definition
+	- [ ] ...
+- [ ] **level 5** (boss ultimate battle, goblean)
+	- [ ] level design
+	- [ ] level assets and physic bodies definition
+	- [ ] thread for goblean battle ?
+- [ ] **installation**
+	- [ ] create a purpledrank.desktop file (/usr/share/applications/purpledrank.desktop)
+	- [ ] create icons (or single SVG) and link it (/usr/share/icons/hicolor/scalable/icon.svg)
+	- [ ] create an uninstall script to remove the above files
+- [x] `project-outline.md`
+	- [x] edit it to match our project's main components and units

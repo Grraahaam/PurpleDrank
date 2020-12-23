@@ -1,3 +1,0 @@
-# Documentation
-
-Purple Drank documentation
