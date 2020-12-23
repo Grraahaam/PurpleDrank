@@ -1,1 +1,0 @@
-gcc -o build/[LVL]/[NAME] /src/[LVL]/[NAME].c -std=c99 -Wall -Wextra -lraylib -lm

@@ -1,0 +1,11 @@
+
+# Define application's name
+APP = PurpleDrank
+
+# Define the compilator's configuration
+CC = gcc
+CMULTIDEF = -Wl,--allow-multiple-definition
+CFLAGS = -c -std=gnu99 -Wall -Wextra $(CMULTIDEF)
+
+# Define the required libraries
+CLIBS= -lraylib -lpthread -lm $(CMULTIDEF)

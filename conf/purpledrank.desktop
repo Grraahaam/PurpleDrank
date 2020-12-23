@@ -1,0 +1,9 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=PurpleDrank
+Comment=Play it or drank it
+TryExec=purpledrank
+Exec=purpledrank
+Icon=/usr/share/PurpleDrank/icons/purpledrank-128.png
