@@ -26,7 +26,8 @@ char* screenNames[] = {
     "LEVEL: 2",
     "LEVEL: 3",
     "LEVEL: 4",
-    "LEVEL: BONUS"
+    "LEVEL: BONUS",
+    "LEVEL: 5"
 };
 
 typedef enum GameScreen {
@@ -42,7 +43,8 @@ typedef enum GameScreen {
     LEVEL_2,
     LEVEL_3,
     LEVEL_4,
-    LEVEL_BONUS
+    LEVEL_BONUS,
+    LEVEL_5,
 } GameScreen;
 
 typedef enum {RIGHT, LEFT} Direction;
@@ -63,6 +65,7 @@ typedef struct LevelPosition {
     Vector2 level_3;
     Vector2 level_4;
     Vector2 level_bonus;
+    Vector2 level_5;
 } LevelPosition;
 
 typedef struct Game {
@@ -177,6 +180,7 @@ typedef struct ResourcesBackgrounds {
     Texture2D level3;
     Texture2D level4;
     Texture2D levelBonus;
+    Texture2D level5;
 } ResourcesBackgrounds;
 
 typedef struct ResourcesSprites {

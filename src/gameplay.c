@@ -1062,6 +1062,7 @@ void gp_initPositions(LevelPosition *levelPos) {
     levelPos->level_3 = (Vector2){45, 0};
     levelPos->level_4 = (Vector2){20, screenHeight / 2};
     levelPos->level_bonus = (Vector2){205, 390};
+    levelPos->level_5 = (Vector2){50, screenHeight / 2};
 }
 
 // Function initializing screen/text effect objects

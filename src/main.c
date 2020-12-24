@@ -25,6 +25,7 @@
 #include "screens/level3.h"
 #include "screens/level4.h"
 #include "screens/levelBonus.h"
+#include "screens/level5.h"
 
 // Function declarations
 void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, ScreenFX *bounceText);
@@ -104,11 +105,11 @@ int main(int argc, char *argv[]) {
     
     // Go directly to screens when developing
     if(DEBUG) {
-        game.gameScreen = LEVEL_2;
+        game.gameScreen = LEVEL_5;
         //game.gameScreen = CREDITS;
         //game.gameScreen = SELECT_PLAYER;
         //game.gameScreen = LEVEL_3;
-        //player.can_move = false;
+        player.can_move = false;
     }
 
 	// Main game loop (Detect window close button or ESC key)
@@ -159,6 +160,7 @@ void LoadResources() {
     res.backgrounds.level3     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level3.png"));
     res.backgrounds.level4     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level4.png"));
     res.backgrounds.levelBonus = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/levelBonus.png"));
+    res.backgrounds.level5 	= LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level5.png"));
     
     res.sprites.player     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "player/spritecheet_player.png"));
     res.sprites.animations = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "player/spritecheet_animation.png"));
@@ -205,6 +207,7 @@ void UnloadResources() {
     UnloadTexture(res.backgrounds.level3);
     UnloadTexture(res.backgrounds.level4);
     UnloadTexture(res.backgrounds.levelBonus);
+    UnloadTexture(res.backgrounds.level5);
     UnloadTexture(res.sprites.player);
     UnloadTexture(res.sprites.assets);
 
@@ -260,6 +263,10 @@ void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, Scree
 
         case LEVEL_BONUS: {
             LevelBonusDraw(player, fadeFx);
+        } break;
+        
+        case LEVEL_5: {
+            LevelFiveDraw(player, fadeFx);
         } break;
 
         case VICTORY: {
