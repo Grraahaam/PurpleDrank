@@ -63,7 +63,7 @@ This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide 
 
 * Please create a **new branch**, from the current one
 	* `git checkout -b [YOUR_BRANCH] [BASE_BRANCH]`
-		* e.g. `git checkout -b fest/your_name master`
+		* e.g. `git checkout -b feat/foo master`
 		* `git branch` to see which branch you're working on`
 
 * Develop your feature, make your improvements
