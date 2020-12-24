@@ -11,7 +11,7 @@
 char* cred_names[] = {
     "Hugo Mellouet",
     "Liam Le Strat",
-    "Nabil Belfodil",
+    "Bilal Belfodil",
     "Najib Belfodil",
     "Milan Kot",
     "Graham Laignel"

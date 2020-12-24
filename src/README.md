@@ -62,8 +62,8 @@ Please try to keep consistency in the file structure, and not create test files 
 This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide any improvements and modifications, respect the following :
 
 * Please create a **new branch**, from the current one
-	* `git checkout -b [YOUR_BRANCH]`
-		* e.g. `git checkout -b your_name`
+	* `git checkout -b [YOUR_BRANCH] [BASE_BRANCH]`
+		* e.g. `git checkout -b fest/your_name master`
 		* `git branch` to see which branch you're working on`
 
 * Develop your feature, make your improvements

@@ -31,11 +31,11 @@ sudo make uninstall
 ```
 
 ## Contribution :pencil2:
-For contribution instructions, please read this [documentation](https://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank/blob/feat/graham/src/README.md)
+For contribution instructions, please read this [documentation](src/README.md)
 
-To see the overall features we worked on and those we're implementing, check the [TODO](https://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank/blob/feat/graham/TODO.md)
+To see the overall features we worked on and those we're implementing, check the [TODO](TODO.md)
 
-To see the list of the contributors and their assignements, read the [PROJECT-OUTLINE.md](https://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank/blob/feat/graham/PROJECT-OUTLINE.md)
+To see the list of the contributors and their assignements, read the [PROJECT-OUTLINE.md](PROJECT-OUTLINE.md)
 
 ## Structure :heavy_check_mark:
 *The structure tries to follow git/dev best practices*
