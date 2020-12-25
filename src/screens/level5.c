@@ -12,12 +12,12 @@
 
 //pthread_t thread_id;
 
-Enemy gob, goblean;
-Asset lean, gob_dying;
+//Enemy gob, goblean;
+//Asset lean, gob_dying;
 
-Texture2D portal;
+//Texture2D portal;
 
-void LevelFiveRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
+void LevelFiveRead(Player *player) {
     
     gp_readPlayer(player);
 
@@ -69,7 +69,7 @@ void LevelFiveInit(Player *player) {
     /** CUSTOM ****************************************************************************/
     
     // Initialize Lean object (to throw)
-    lean = res.items.lean;
+    /*lean = res.items.lean;
     lean.scale = 0.15;
     lean.speed = 5;
     lean.position = (Vector2){0,0};
@@ -99,6 +99,7 @@ void LevelFiveInit(Player *player) {
         .x = screenWidth + goblean.asset.swidth + 20,
         .y = 180
     };
+    */
     
     // Create floor and walls rectangle physics body
     PhysicsBody body_floor = CreatePhysicsBodyRectangle(
@@ -123,7 +124,6 @@ void LevelFiveInit(Player *player) {
     // Set default position
     player->asset.position = game.levelPos.level_5;
     
-    
     gp_initializeBody(player);
 }
 
@@ -132,40 +132,23 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
      // Initialize the level only if not loaded
     if(game.screenLoaded != LEVEL_5) {
         
-        // If just arrived from previous level
-        if(!player->can_move) {
-
-            LevelFiveInit(player);
-            PrintDebug(TextFormat("Drawing: %s", screenNames[game.gameScreen]));
-            
-            player->can_move = true;
-            
-            // Player just came from the previous level's portal
-            res.items.portal.disabled = false;
-
-        // If player just waited in the portal
-        } else {
-            
-            //PrintDebug("Level 5 unlocked");
-            
-            //pthread_create(thread_id, NULL, unlockPlayer, NULL);
-            //pthread_join(thread_id, NULL);
-            
-            // Update game informations
-            game.screenLoaded = LEVEL_5;
-            game.levelPassed = LEVEL_4;
-            
-            // Set default fade properties
-            gp_resetFx(screenFx);
-            
-            //sleep(GAME_DEFAULT_TIMEOUT);
-            res.items.portal.disabled = false;
-            player->can_move = true;
-        }
+         LevelFiveInit(player);
+        PrintDebug(TextFormat("Drawing: %s", screenNames[game.gameScreen]));
+        
+        player->can_move = true;
+        
+        game.screenLoaded = LEVEL_5;
+        game.levelPassed = LEVEL_4;
+        
+        // Set default fade properties
+        gp_resetFx(screenFx);
+        
+        res.items.portal.disabled = false;
+        player->can_move = true;
     }
     
     // Read user input and interact
-    //LevelFiveRead(player, &lean, &gob, &goblean);
+    LevelFiveRead(player);
     
     RunPhysicsStep();
     BeginDrawing();
@@ -176,7 +159,7 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     /** CUSTOM ****************************************************************************/
     
     // Draw lean, gob and goblean
-    gp_drawAsset(&res.items.portal, (Vector2){15, 105}, 0.4);
+    /*gp_drawAsset(&res.items.portal, (Vector2){15, 105}, 0.4);
     gp_drawAsset(&lean, lean.position, lean.scale);
     gp_drawAsset(&gob.asset, gob.asset.position, gob.asset.scale);
     gp_drawAsset(&gob_dying, gob_dying.position, gob_dying.scale);
@@ -186,7 +169,7 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
         (char*)TextFormat("Goblean lives : %d / 3", goblean.lives),
         res.fonts.pixellari, (Vector2){0, 70},
         20, CENTER_X, DARKGRAY
-    );
+    );*/
 
     /**************************************************************************************/
     
