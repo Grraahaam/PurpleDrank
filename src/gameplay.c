@@ -1018,6 +1018,61 @@ void gp_initResources(Resources *res) {
         1.5, 0, // scale, rotation
         true, false, (Vector2){0,0}, 4 // animate, loop animation, loop position options, frame speed
     );
+    
+    // Goblean + skate
+    gp_initResourcesAssets(
+        &res->items.goblean_skate,
+        SP_ASSETS,
+        (Vector2){1324,284}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        262, 289, // width, height
+        0.6, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Goblean flip
+    gp_initResourcesAssets(
+        &res->items.goblean_flip,
+        SP_ASSETS,
+        (Vector2){1583,282}, // sprite frame position
+        9, 1, // amount of animated frames, number of frame lines
+        330, 293, // width, height
+        0.9, 0, // scale, rotation
+        true, false, (Vector2){0,0}, 9 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Skate flip
+    gp_initResourcesAssets(
+        &res->items.skate_flip,
+        SP_ASSETS,
+        (Vector2){1584,0}, // sprite frame position
+        9, 1, // amount of animated frames, number of frame lines
+        195, 158, // width, height
+        0.9, 0, // scale, rotation
+        true, false, (Vector2){0,0}, 9 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Left hand
+    gp_initResourcesAssets(
+        &res->items.left_hand,
+        SP_ASSETS,
+        (Vector2){1362,616}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        85, 59, // width, height
+        0.9, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 9 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Right hand
+    gp_initResourcesAssets(
+        &res->items.right_hand,
+        SP_ASSETS,
+        (Vector2){1470,616}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        85, 59, // width, height
+        0.9, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 9 // animate, loop animation, loop position options, frame speed
+    );
 }
 
 // Function generating default values for initial items/assets 
