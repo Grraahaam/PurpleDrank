@@ -12,12 +12,13 @@
 
 //pthread_t thread_id;
 
-//Enemy gob, goblean;
+Enemy goblin;
+Asset goblin_flip;
 //Asset lean, gob_dying;
 
 //Texture2D portal;
 
-void LevelFiveRead(Player *player) {
+void LevelFiveRead(Player *player, Enemy *goblin) {
     
     gp_readPlayer(player);
 
@@ -51,6 +52,35 @@ void LevelFiveRead(Player *player) {
         } break;
     }
     */
+    
+    if(goblin->asset.direction == LEFT) {
+                    
+            goblin->asset.position.x -= goblin->asset.speed;
+            
+            // If goblean reached the middle and is facing left
+            if(goblin->asset.position.x < (screenWidth / 2.5 + goblin->asset.swidth)) {
+            
+                // Invert direction
+                goblin->asset.direction = RIGHT;
+                goblin_flip.disabled = false;
+                goblin_flip.frame.animate = true;
+                goblin->asset.disabled = true;
+            }
+                    
+    } else {
+                    
+            goblin->asset.position.x += goblin->asset.speed*3;
+            
+            // If goblean reached the right side and is facing right (right - goblean width - margin)
+            if(goblin->asset.position.x > (screenWidth - goblin->asset.swidth + 20)) {
+            
+                // Invert direction
+                goblin->asset.direction = LEFT;
+                goblin_flip.disabled = true;
+                goblin_flip.frame.animate = true;
+                goblin->asset.disabled = false;
+            }
+        }
 }
     
 void LevelFiveInit(Player *player) {
@@ -87,19 +117,22 @@ void LevelFiveInit(Player *player) {
     
     // Initialize dying gob
     gob_dying = res.items.gob_dying;
-    gob_dying.disabled = true;
+    gob_dying.disabled = true;*/
     
     // Initialize Goblean asset
-    goblean.asset = res.items.dark_sonic;
-    goblean.asset.speed = 1;
-    goblean.asset.direction = LEFT;
-    goblean.lives = 3;
+    goblin.asset = res.items.goblean_skate;
+    goblin.asset.speed = 1;
+    goblin.asset.direction = LEFT;
+    goblin.lives = 3;
+    goblin.asset.disabled = false;
     
-    goblean.asset.position = (Vector2){
-        .x = screenWidth + goblean.asset.swidth + 20,
-        .y = 180
+    goblin.asset.position = (Vector2){
+        .x = screenWidth + goblin.asset.swidth + 20,
+        .y = 300
     };
-    */
+    
+    goblin_flip = res.items.goblean_flip;
+    goblin_flip.disabled = true;
     
     // Create floor and walls rectangle physics body
     PhysicsBody body_floor = CreatePhysicsBodyRectangle(
@@ -148,7 +181,7 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     }
     
     // Read user input and interact
-    LevelFiveRead(player);
+    LevelFiveRead(player, &goblin);
     
     RunPhysicsStep();
     BeginDrawing();
@@ -159,13 +192,13 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     /** CUSTOM ****************************************************************************/
     
     // Draw lean, gob and goblean
-    /*gp_drawAsset(&res.items.portal, (Vector2){15, 105}, 0.4);
-    gp_drawAsset(&lean, lean.position, lean.scale);
-    gp_drawAsset(&gob.asset, gob.asset.position, gob.asset.scale);
-    gp_drawAsset(&gob_dying, gob_dying.position, gob_dying.scale);
-    gp_drawAsset(&goblean.asset, goblean.asset.position, goblean.asset.scale);
+    //gp_drawAsset(&res.items.goblean_skate, (Vector2){500, 280}, 0.7);
+    /*gp_drawAsset(&lean, lean.position, lean.scale);
+    gp_drawAsset(&gob.asset, gob.asset.position, gob.asset.scale);*/
+    gp_drawAsset(&goblin_flip, goblin.asset.position, goblin_flip.scale);
+    gp_drawAsset(&goblin.asset, goblin.asset.position, goblin.asset.scale);
     
-    gp_drawText(
+    /*gp_drawText(
         (char*)TextFormat("Goblean lives : %d / 3", goblean.lives),
         res.fonts.pixellari, (Vector2){0, 70},
         20, CENTER_X, DARKGRAY

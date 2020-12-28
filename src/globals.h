@@ -201,6 +201,11 @@ typedef struct ResourcesItems {
     Asset dark_sonic;
     Asset damage;
     Asset fireball;
+    Asset goblean_skate;
+    Asset goblean_flip;
+    Asset skate_flip;
+    Asset left_hand;
+    Asset right_hand;
     
     Asset kb_arrows;
     Asset kb_spacebar;
