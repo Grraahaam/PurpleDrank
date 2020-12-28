@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "gameplay.h"
 
+
 // Drawing player's info board
 void gp_drawBoard(Player *player) {
     
@@ -466,6 +467,7 @@ void gp_animateAsset(Asset *asset) {
 
 // Read player movement inputs
 void gp_readPlayer(Player *player) {
+
     
     // Check events when player can move
     if(player->can_move) {
@@ -894,7 +896,7 @@ void gp_initResources(Resources *res) {
         (Vector2){0,572}, // sprite frame position
         10, 1, // amount of animated frames, number of frame lines
         111, 107, // width, height
-        1, 0, // scale, rotation
+        0.5, 0, // scale, rotation
         true, false, (Vector2){0,0}, 10 // animate, loop animation, loop position options, frame speed
     );
     
