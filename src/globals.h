@@ -49,7 +49,7 @@ typedef enum GameScreen {
 
 typedef enum {RIGHT, LEFT} Direction;
 typedef enum {CENTER_X, CENTER_Y, CENTER, CUSTOM} TextAlign;
-typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN} Damage;
+typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN, SKATE, HAND} Damage;
 
 typedef struct Notification {
 	char* message;

@@ -18,34 +18,79 @@ int attaque;
 
 //Texture2D portal;
 
-bool l5_collisionAssets(Asset *ast1, Asset *ast2) {
-    
-    return CheckCollisionRecs(
-        // Asset 1
-        (Rectangle){
-            .x = ast1->position.x, .y = ast1->position.y,
-            .width = ast1->swidth, .height = ast1->sheight
-        },
-        // Asset 2
-        (Rectangle){
-            .x = ast2->position.x, .y = ast2->position.y,
-            .width = ast2->swidth, .height = ast2->sheight
-        });
-}
 
-Damage l5_collisionLean(Asset *lean, Enemy *goblin) {
+Damage l5_collisionLean(Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand) {
         
     //Lean hit the Goblean
-    if(l5_collisionAssets(lean, &goblin->asset)) {
-    	damage.position.x = lean->position.x;
-    	damage.position.y = lean->position.y;
-    	damage.frame.current = 0;
-    	damage.disabled = false;
-    	damage.frame.animate = true;
-    	return BOSS;
-    }
+    if(CheckCollisionRecs(
+        // Lean
+        (Rectangle){
+            .x = lean->position.x - 8, .y = lean->position.y - 15,
+            .width = 15, .height = 25
+        },
+        // Goblean
+        (Rectangle){
+            .x = goblin->asset.position.x - 30, .y = goblin->asset.position.y - 70,
+            .width = 80, .height = 150
+        })){
+	    	damage.position.x = lean->position.x;
+	    	damage.position.y = lean->position.y;
+	    	damage.frame.current = 0;
+	    	damage.disabled = false;
+	    	damage.frame.animate = true;
+	   	PrintDebug("BOSS HIT");
+	    	return BOSS;
+    	}
     
-    // Lean hit nothing
+    // Lean hit objects
+    else if(CheckCollisionRecs(
+        // Lean
+        (Rectangle){
+            .x = lean->position.x - 8, .y = lean->position.y - 15,
+            .width = 15, .height = 25
+        },
+        // Skate
+        (Rectangle){
+            .x = skate->position.x - 40, .y = skate->position.y - 20,
+            .width = 80, .height = 40
+        }) && !skate->disabled){
+	    	damage.position.x = lean->position.x;
+	    	damage.position.y = lean->position.y;
+	    	damage.frame.current = 0;
+	    	damage.disabled = false;
+	    	damage.frame.animate = true;
+	   	PrintDebug("SKATE HIT");
+	    	return SKATE;
+    	}
+    else if ((CheckCollisionRecs(
+        // Lean
+        (Rectangle){
+            .x = lean->position.x - 8, .y = lean->position.y - 15,
+            .width = 15, .height = 25
+        },
+        // Left hand
+        (Rectangle){
+            .x = left_hand->position.x - 15, .y = left_hand->position.y - 10,
+            .width = 30, .height = 20
+        }) || CheckCollisionRecs(
+        // Lean
+        (Rectangle){
+            .x = lean->position.x - 8, .y = lean->position.y - 15,
+            .width = 15, .height = 25
+        },
+        // Right hand
+        (Rectangle){
+            .x = right_hand->position.x - 15, .y = right_hand->position.y - 10,
+            .width = 30, .height = 20
+        })) && !left_hand->disabled && !right_hand->disabled) {
+	    	damage.position.x = lean->position.x;
+	    	damage.position.y = lean->position.y;
+	    	damage.frame.current = 0;
+	    	damage.disabled = false;
+	    	damage.frame.animate = true;
+	    	PrintDebug("HAND HIT");
+	    	return HAND;
+    	}
     else return NONE;
 }
 
@@ -72,7 +117,7 @@ Damage l5_collisionPlayer(Player *player, Enemy *goblin, Asset *skate, Asset *le
         }
     
     // Player hit by goblean (SKATE)
-    if(CheckCollisionRecs(
+    else if(CheckCollisionRecs(
         // Player
         player_hitbox,
         // Skate
@@ -83,7 +128,7 @@ Damage l5_collisionPlayer(Player *player, Enemy *goblin, Asset *skate, Asset *le
         }) && !skate->disabled) {  skate->disabled = true; return PLAYER;}
     
    // Player hit by goblean (hands)
-    if(CheckCollisionRecs(
+    else if((CheckCollisionRecs(
         // Player
         player_hitbox,
         // Left hand
@@ -91,8 +136,7 @@ Damage l5_collisionPlayer(Player *player, Enemy *goblin, Asset *skate, Asset *le
             .x = left_hand->position.x - 15, .y = left_hand->position.y - 10,
             .width = 30, .height = 20
             
-        }) ||
-        CheckCollisionRecs(
+        }) || CheckCollisionRecs(
         // Player
         player_hitbox,
         // Right hand
@@ -100,7 +144,7 @@ Damage l5_collisionPlayer(Player *player, Enemy *goblin, Asset *skate, Asset *le
             .x = right_hand->position.x - 15, .y = right_hand->position.y - 10,
             .width = 30, .height = 20
             
-        })) return PLAYER;
+        })) && !right_hand->disabled && !left_hand->disabled) { left_hand->disabled = true; right_hand->disabled; return PLAYER; }
 }
 
 void l5_throwLean(Player *player, Asset *lean) {
@@ -131,7 +175,7 @@ void l5_destroyLean(Asset *lean) {
     lean->position = (Vector2){0,0};
 }
 
-void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enemy *goblean) {
+void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand) {
     
     // If gob or goblean hit by a throwed lean
     switch(dtype) {
@@ -141,7 +185,7 @@ void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enem
         case BOSS: {
             
             // Decrement goblean's lives
-            --goblean->lives;
+            --goblin->lives;
             
             // If lean throwed, destroy iy
             if(actor == LEAN) l5_destroyLean(lean);
@@ -157,17 +201,38 @@ void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enem
             player->body->position = game.levelPos.level_5;
             
         } break;
-
-        // Default action
-        default : break;
+        
+        case SKATE: {
+            
+            // Decrement player's lives
+            skate->disabled = true;
+            
+            // Destroy lean
+            l5_destroyLean(lean);
+            
+        } break;
+        
+        case HAND: {
+            
+            // Decrement player's lives
+            left_hand->disabled = true;
+            right_hand->disabled = true;
+            
+            // Destroy lean
+            l5_destroyLean(lean);
+            
+        } break;
+        
+       // Default action
+       default : break;
     }
 }
 
 void l5_readCollisions(Player *player, Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand) {
     
     // Read and process collision damage type
-    l5_readDamage(l5_collisionLean(lean, goblin), LEAN, player, lean, goblin);
-    l5_readDamage(l5_collisionPlayer(player, goblin, skate, left_hand, right_hand), PLAYER, player, lean, goblin);
+    l5_readDamage(l5_collisionLean(lean, goblin, skate, left_hand, right_hand), LEAN, player, lean, goblin, skate, left_hand, right_hand);
+    l5_readDamage(l5_collisionPlayer(player, goblin, skate, left_hand, right_hand), PLAYER, player, lean, goblin, skate, left_hand, right_hand);
 }
         
 
@@ -432,8 +497,8 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     // Drawing the fade in effect
     gp_drawFade(screenFx);
     
-    //DrawRectangle(left_hand.position.x - 15, left_hand.position.y - 10, 30, 20, GOLD);
-    //DrawRectangle(right_hand.position.x - 15, right_hand.position.y - 10, 30, 20, GOLD);
+    //DrawRectangle(skate.position.x - 40, skate.position.y - 20, 80, 40, GOLD);
+    //DrawRectangle(lean.position.x - 8, lean.position.y - 15, 15, 25, RED);
     
     EndDrawing();
 }
