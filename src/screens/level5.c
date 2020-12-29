@@ -86,19 +86,19 @@ Damage l5_collisionPlayer(Player *player, Enemy *goblin, Asset *skate, Asset *le
     if(CheckCollisionRecs(
         // Player
         player_hitbox,
-        // Skate
+        // Left hand
         (Rectangle){
-            .x = left_hand->position.x - 95, .y = left_hand->position.y + 62,
-            .width = 50, .height = 40
+            .x = left_hand->position.x - 15, .y = left_hand->position.y - 10,
+            .width = 30, .height = 20
             
         }) ||
         CheckCollisionRecs(
         // Player
         player_hitbox,
-        // Skate
+        // Right hand
         (Rectangle){
-            .x = right_hand->position.x - 95, .y = right_hand->position.y + 62,
-            .width = 50, .height = 40
+            .x = right_hand->position.x - 15, .y = right_hand->position.y - 10,
+            .width = 30, .height = 20
             
         })) return PLAYER;
 }
@@ -282,6 +282,7 @@ void LevelFiveInit(Player *player) {
     
     ResetPhysics();
     SetConfigFlags(FLAG_MSAA_4X_HINT);
+    SetPhysicsGravity(0, 6.5);
     
     attaque = 1;
     player->lean = 20;
@@ -431,7 +432,8 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     // Drawing the fade in effect
     gp_drawFade(screenFx);
     
-    //DrawRectangle(skate.position.x - 40, skate.position.y - 20, 80, 40, GOLD);
+    //DrawRectangle(left_hand.position.x - 15, left_hand.position.y - 10, 30, 20, GOLD);
+    //DrawRectangle(right_hand.position.x - 15, right_hand.position.y - 10, 30, 20, GOLD);
     
     EndDrawing();
 }
