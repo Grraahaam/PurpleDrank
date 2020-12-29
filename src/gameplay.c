@@ -1082,9 +1082,9 @@ void gp_initResources(Resources *res) {
         SP_ASSETS,
         (Vector2){14,784}, // sprite frame position
         6, 1, // amount of animated frames, number of frame lines
-        188, 44, // width, height
-        0.4, 0, // scale, rotation
-        false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
+        186, 44, // width, height
+        1, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 5 // animate, loop animation, loop position options, frame speed
     );
 }
 

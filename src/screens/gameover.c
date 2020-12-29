@@ -13,7 +13,9 @@ char* subTitles[] = {
     "Are you good at something?",
     "Why do you play this game?",
     "Shame on you, stop trying!",
-    "Come on, quit the game!"
+    "Come on, quit the game!",
+    "Go back to play Monopoly",
+    "I really thought you were gonna make it... looser"
 };
 
 char* subtitle;
@@ -53,7 +55,7 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
         textBounceFx->scale = textBounceFx->scaleBase;
         textBounceFx->color = RAYWHITE;
         
-        subtitle = subTitles[rand() % 4];
+        subtitle = subTitles[rand() % 7];
     }
     
     GameoverRead(player);

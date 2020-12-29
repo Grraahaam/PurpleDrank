@@ -13,8 +13,9 @@
 //pthread_t thread_id;
 
 Enemy goblin;
-Asset goblin_flip, skate, left_hand, right_hand, lean, damage;
+Asset goblin_flip, skate, left_hand, right_hand, lean, damage, lifebar;
 int attaque;
+
 
 //Texture2D portal;
 
@@ -178,7 +179,7 @@ void l5_destroyLean(Asset *lean) {
     lean->position = (Vector2){0,0};
 }
 
-void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand) {
+void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand, Asset *lifebar) {
     
     // If gob or goblean hit by a throwed lean
     switch(dtype) {
@@ -189,6 +190,7 @@ void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enem
             
             // Decrement goblean's lives
             --goblin->lives;
+            lifebar->frame.x += lifebar->swidth;
             
             // If lean throwed, destroy iy
             if(actor == LEAN) l5_destroyLean(lean);
@@ -231,19 +233,19 @@ void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enem
     }
 }
 
-void l5_readCollisions(Player *player, Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand) {
+void l5_readCollisions(Player *player, Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand, Asset *lifebar) {
     
     // Read and process collision damage type
-    l5_readDamage(l5_collisionLean(lean, goblin, skate, left_hand, right_hand), LEAN, player, lean, goblin, skate, left_hand, right_hand);
-    l5_readDamage(l5_collisionPlayer(player, goblin, skate, left_hand, right_hand), PLAYER, player, lean, goblin, skate, left_hand, right_hand);
+    l5_readDamage(l5_collisionLean(lean, goblin, skate, left_hand, right_hand), LEAN, player, lean, goblin, skate, left_hand, right_hand, lifebar);
+    l5_readDamage(l5_collisionPlayer(player, goblin, skate, left_hand, right_hand), PLAYER, player, lean, goblin, skate, left_hand, right_hand, lifebar);
 }
         
 
-void LevelFiveRead(Player *player, Enemy *goblin, Asset *lean, Asset *skate, Asset *left_hand, Asset *right_hand) {
+void LevelFiveRead(Player *player, Enemy *goblin, Asset *lean, Asset *skate, Asset *left_hand, Asset *right_hand, Asset *lifebar) {
     
     gp_readPlayer(player);
 
-    l5_readCollisions(player, lean, goblin, skate, left_hand, right_hand);
+    l5_readCollisions(player, lean, goblin, skate, left_hand, right_hand, lifebar);
     
     
     // If ended level
@@ -354,7 +356,8 @@ void LevelFiveInit(Player *player) {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetPhysicsGravity(0, 6.5);
     
-    PlaySound(res.sounds.goblin);        
+    PlaySound(res.sounds.goblin);   
+        
     
     attaque = 1;
     player->lean = 20;
@@ -381,7 +384,7 @@ void LevelFiveInit(Player *player) {
     goblin.asset = res.items.goblean_skate;
     goblin.asset.speed = 1;
     goblin.asset.direction = LEFT;
-    goblin.lives = 5;
+    goblin.lives = 6;
     goblin.asset.disabled = false;
     
     goblin.asset.position = (Vector2){
@@ -419,6 +422,13 @@ void LevelFiveInit(Player *player) {
     	.x = lean.position.x,
     	.y = lean.position.y
     };
+    
+    lifebar = res.items.lifebar;
+    lifebar.position = (Vector2){
+    	.x = screenWidth/2,
+    	.y = 100
+    };
+    
     
     // Create floor and walls rectangle physics body
     PhysicsBody body_floor = CreatePhysicsBodyRectangle(
@@ -467,7 +477,7 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     }
     
     // Read user input and interact
-    LevelFiveRead(player, &goblin, &lean, &skate, &left_hand, &right_hand);
+    LevelFiveRead(player, &goblin, &lean, &skate, &left_hand, &right_hand, &lifebar);
     
     RunPhysicsStep();
     BeginDrawing();
@@ -486,12 +496,13 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     gp_drawAsset(&goblin_flip, goblin.asset.position, goblin_flip.scale);
     gp_drawAsset(&lean, lean.position, lean.scale);
     gp_drawAsset(&damage, damage.position, damage.scale);
+    gp_drawAsset(&lifebar, lifebar.position, lifebar.scale);
     
-    gp_drawText(
+    /*gp_drawText(
         (char*)TextFormat("posX : %f", skate.position.x),
         res.fonts.pixellari, (Vector2){0, 70},
         20, CENTER_X, DARKGRAY
-    );
+    );*/
 
     /**************************************************************************************/
     
@@ -506,6 +517,7 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     
     //DrawRectangle(skate.position.x - 40, skate.position.y - 20, 80, 40, GOLD);
     //DrawRectangle(lean.position.x - 8, lean.position.y - 15, 15, 25, RED);
+    
     
     EndDrawing();
 }
