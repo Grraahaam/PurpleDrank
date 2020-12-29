@@ -255,6 +255,10 @@ typedef struct ResourcesFX {
     ScreenFX bounceText;
 } ResourcesFX;
 
+typedef struct ResourcesSounds {
+    Sound explosion;
+} ResourcesSounds;
+
 typedef struct Resources {
     ResourcesBackgrounds backgrounds;
     ResourcesSprites     sprites;
@@ -262,6 +266,7 @@ typedef struct Resources {
     ResourcesMusics      songs;
     ResourcesFonts       fonts;
     ResourcesFX          fx;
+    ResourcesSounds	  sounds;
 } Resources;
 
 // Initialize the two main global game variables

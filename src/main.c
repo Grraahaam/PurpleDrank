@@ -167,6 +167,9 @@ void LoadResources() {
     res.sprites.assets     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "assets/spritecheet_assets.png"));
 
     res.songs.song_main = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_main.mp3"));
+    
+    res.sounds.explosion = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/explosion.mp3"));
+    SetSoundVolume(res.sounds.explosion, 5.0f);
 }
 
 // Function loading the given font path into the resource struct
@@ -214,6 +217,8 @@ void UnloadResources() {
     UnloadFont(res.fonts.pixellari);
 
     StopMusicStream(res.songs.song_main);
+    
+    UnloadSound(res.sounds.explosion);
 }
 
 // Function managing the screen

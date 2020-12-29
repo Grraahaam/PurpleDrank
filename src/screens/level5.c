@@ -39,6 +39,7 @@ Damage l5_collisionLean(Asset *lean, Enemy *goblin, Asset *skate, Asset *left_ha
 	    	damage.disabled = false;
 	    	damage.frame.animate = true;
 	   	PrintDebug("BOSS HIT");
+	    	PlaySound(res.sounds.explosion);	   	
 	    	return BOSS;
     	}
     
@@ -60,6 +61,7 @@ Damage l5_collisionLean(Asset *lean, Enemy *goblin, Asset *skate, Asset *left_ha
 	    	damage.disabled = false;
 	    	damage.frame.animate = true;
 	   	PrintDebug("SKATE HIT");
+	    	PlaySound(res.sounds.explosion);	   	
 	    	return SKATE;
     	}
     else if ((CheckCollisionRecs(
@@ -89,6 +91,7 @@ Damage l5_collisionLean(Asset *lean, Enemy *goblin, Asset *skate, Asset *left_ha
 	    	damage.disabled = false;
 	    	damage.frame.animate = true;
 	    	PrintDebug("HAND HIT");
+	    	PlaySound(res.sounds.explosion);
 	    	return HAND;
     	}
     else return NONE;
