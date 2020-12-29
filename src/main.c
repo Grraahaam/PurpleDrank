@@ -169,6 +169,7 @@ void LoadResources() {
     res.songs.song_main = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_main.mp3"));
     
     res.sounds.explosion = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/explosion.mp3"));
+    res.sounds.goblin = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/goblin.mp3"));
     SetSoundVolume(res.sounds.explosion, 5.0f);
 }
 
@@ -219,6 +220,7 @@ void UnloadResources() {
     StopMusicStream(res.songs.song_main);
     
     UnloadSound(res.sounds.explosion);
+    UnloadSound(res.sounds.goblin);
 }
 
 // Function managing the screen

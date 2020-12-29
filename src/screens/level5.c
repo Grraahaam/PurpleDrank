@@ -33,13 +33,13 @@ Damage l5_collisionLean(Asset *lean, Enemy *goblin, Asset *skate, Asset *left_ha
             .x = goblin->asset.position.x - 30, .y = goblin->asset.position.y - 70,
             .width = 80, .height = 150
         })){
+	    	PlaySound(res.sounds.explosion);	   	
 	    	damage.position.x = lean->position.x;
 	    	damage.position.y = lean->position.y;
 	    	damage.frame.current = 0;
 	    	damage.disabled = false;
 	    	damage.frame.animate = true;
 	   	PrintDebug("BOSS HIT");
-	    	PlaySound(res.sounds.explosion);	   	
 	    	return BOSS;
     	}
     
@@ -55,13 +55,13 @@ Damage l5_collisionLean(Asset *lean, Enemy *goblin, Asset *skate, Asset *left_ha
             .x = skate->position.x - 40, .y = skate->position.y - 20,
             .width = 80, .height = 40
         }) && !skate->disabled){
+        	PlaySound(res.sounds.explosion);	   	
 	    	damage.position.x = lean->position.x;
 	    	damage.position.y = lean->position.y;
 	    	damage.frame.current = 0;
 	    	damage.disabled = false;
 	    	damage.frame.animate = true;
 	   	PrintDebug("SKATE HIT");
-	    	PlaySound(res.sounds.explosion);	   	
 	    	return SKATE;
     	}
     else if ((CheckCollisionRecs(
@@ -85,13 +85,13 @@ Damage l5_collisionLean(Asset *lean, Enemy *goblin, Asset *skate, Asset *left_ha
             .x = right_hand->position.x - 15, .y = right_hand->position.y - 10,
             .width = 30, .height = 20
         })) && !left_hand->disabled && !right_hand->disabled) {
+	    	PlaySound(res.sounds.explosion);	   	        
 	    	damage.position.x = lean->position.x;
 	    	damage.position.y = lean->position.y;
 	    	damage.frame.current = 0;
 	    	damage.disabled = false;
 	    	damage.frame.animate = true;
 	    	PrintDebug("HAND HIT");
-	    	PlaySound(res.sounds.explosion);
 	    	return HAND;
     	}
     else return NONE;
@@ -245,6 +245,7 @@ void LevelFiveRead(Player *player, Enemy *goblin, Asset *lean, Asset *skate, Ass
 
     l5_readCollisions(player, lean, goblin, skate, left_hand, right_hand);
     
+    
     // If ended level
     if(goblin->lives <= 0) {
         
@@ -292,6 +293,7 @@ void LevelFiveRead(Player *player, Enemy *goblin, Asset *lean, Asset *skate, Ass
             			
                     
   	} else {
+  	
 	            
 	    goblin->asset.position.x += goblin->asset.speed*3;
 	    
@@ -351,6 +353,8 @@ void LevelFiveInit(Player *player) {
     ResetPhysics();
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetPhysicsGravity(0, 6.5);
+    
+    PlaySound(res.sounds.goblin);        
     
     attaque = 1;
     player->lean = 20;

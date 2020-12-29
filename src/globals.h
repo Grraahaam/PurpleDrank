@@ -257,6 +257,7 @@ typedef struct ResourcesFX {
 
 typedef struct ResourcesSounds {
     Sound explosion;
+    Sound goblin
 } ResourcesSounds;
 
 typedef struct Resources {
