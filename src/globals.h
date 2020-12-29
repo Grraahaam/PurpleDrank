@@ -210,6 +210,8 @@ typedef struct ResourcesItems {
     Asset kb_arrows;
     Asset kb_spacebar;
     
+    Asset lifebar;
+    
     Asset player_idle;
     Asset player_anim_flip;
     Asset player_anim_sleep;

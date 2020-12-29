@@ -1075,6 +1075,17 @@ void gp_initResources(Resources *res) {
         0.4, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
     );
+    
+    // Lifebar
+    gp_initResourcesAssets(
+        &res->items.lifebar,
+        SP_ASSETS,
+        (Vector2){14,784}, // sprite frame position
+        6, 1, // amount of animated frames, number of frame lines
+        188, 44, // width, height
+        0.4, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
+    );
 }
 
 // Function generating default values for initial items/assets 
