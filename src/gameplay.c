@@ -1093,9 +1093,9 @@ void gp_initResources(Resources *res) {
     gp_initResourcesAssets(
         &res->items.fire_columns,
         SP_ASSETS,
-        (Vector2){1181,721}, // sprite frame position
+        (Vector2){1160,720}, // sprite frame position
         11, 1, // amount of animated frames, number of frame lines
-        39, 106, // width, height
+        60, 106, // width, height
         1, 0, // scale, rotation
         true, true, (Vector2){0,0}, 5 // animate, loop animation, loop position options, frame speed
     );
