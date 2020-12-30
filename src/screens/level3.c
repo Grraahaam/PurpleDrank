@@ -244,6 +244,11 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
                     // If goblean reached the middle and is facing left
                     if(goblean->asset.position.x < (screenWidth / 2 + goblean->asset.swidth)) {
                     
+                    	 fire.position.x = goblean->asset.position.x - 100;
+        		 fire.position.y = goblean->asset.position.y + 10;
+                    	 fire.disabled = true;
+                    	 fire.frame.animate = false; 
+                    	 goblean->asset.frame.x += goblean->asset.swidth; 
                         // Invert direction
                         goblean->asset.direction = RIGHT;
                     }
@@ -254,7 +259,10 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
                     
                     // If goblean reached the right side and is facing right (right - goblean width - margin)
                     if(goblean->asset.position.x > (screenWidth - goblean->asset.swidth + 20)) {
-                                        
+                    
+                    	 fire.disabled = false;
+                    	 fire.frame.animate = true;  
+                    	 goblean->asset.frame.x -= goblean->asset.swidth;                   
                         // Invert direction
                         goblean->asset.direction = LEFT;
                     }
@@ -341,9 +349,6 @@ void LevelThreeInit(Player *player) {
     
     PrintDebug(TextFormat("Initializing: %s", screenNames[game.gameScreen]));
     
-    fire.disabled = false;
-    fire.frame.animate = true;
-    
     gp_resetNotification();
     
     //TODO: PUT THIS INTO A GLOBAL FUNCTION TO Initialize BASE PROPERTIES FOR PLAYER AT EACH LEVEL
@@ -385,10 +390,10 @@ void LevelThreeInit(Player *player) {
     };
     
     fire = res.items.fire_columns;
-    fire.disabled = false;
+    fire.disabled = true;
     fire.position = (Vector2){
-        .x = 500,
-        .y = 370
+        .x = goblean.asset.position.x - 50,
+        .y = goblean.asset.position.y - 20
     };
     
     // Create floor and walls rectangle physics body
