@@ -105,11 +105,11 @@ int main(int argc, char *argv[]) {
     
     // Go directly to screens when developing
     if(DEBUG) {
-        game.gameScreen = LEVEL_5;
+        game.gameScreen = LEVEL_3;
         //game.gameScreen = CREDITS;
         //game.gameScreen = SELECT_PLAYER;
         //game.gameScreen = LEVEL_3;
-        //player.can_move = false;
+        player.can_move = false;
     }
 
 	// Main game loop (Detect window close button or ESC key)

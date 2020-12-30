@@ -13,7 +13,7 @@
 //pthread_t thread_id;
 
 Enemy gob, goblean;
-Asset lean, gob_dying, fire_columns;
+Asset lean, gob_dying, fire;
 
 Texture2D portal;
 
@@ -244,8 +244,6 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
                     // If goblean reached the middle and is facing left
                     if(goblean->asset.position.x < (screenWidth / 2 + goblean->asset.swidth)) {
                     
-                    	 fire_columns.disabled = true;
-                    	 fire_columns.animate = false;  
                         // Invert direction
                         goblean->asset.direction = RIGHT;
                     }
@@ -256,9 +254,7 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
                     
                     // If goblean reached the right side and is facing right (right - goblean width - margin)
                     if(goblean->asset.position.x > (screenWidth - goblean->asset.swidth + 20)) {
-                    
-                    	 fire_columns.disabled = false;
-                    	 fire_columns.animate = true;                    
+                                        
                         // Invert direction
                         goblean->asset.direction = LEFT;
                     }
@@ -345,6 +341,9 @@ void LevelThreeInit(Player *player) {
     
     PrintDebug(TextFormat("Initializing: %s", screenNames[game.gameScreen]));
     
+    fire.disabled = false;
+    fire.frame.animate = true;
+    
     gp_resetNotification();
     
     //TODO: PUT THIS INTO A GLOBAL FUNCTION TO Initialize BASE PROPERTIES FOR PLAYER AT EACH LEVEL
@@ -385,11 +384,11 @@ void LevelThreeInit(Player *player) {
         .y = 180
     };
     
-    fire_columns = res.items.fire_columns;
-    fire_columns.disabled = true;
-    fire_columns.position = (Vector2){
-        .x = goblean.asset.position.x - 50,
-        .y = goblean.asset.position.y - 20;
+    fire = res.items.fire_columns;
+    fire.disabled = false;
+    fire.position = (Vector2){
+        .x = 500,
+        .y = 370
     };
     
     // Create floor and walls rectangle physics body
@@ -477,7 +476,7 @@ void LevelThreeDraw(Player *player, ScreenFX *screenFx) {
     gp_drawAsset(&gob.asset, gob.asset.position, gob.asset.scale);
     gp_drawAsset(&gob_dying, gob_dying.position, gob_dying.scale);
     gp_drawAsset(&goblean.asset, goblean.asset.position, goblean.asset.scale);
-    gp_drawAsset(&fire_columns, fire_columns.position, fire_columns.scale);
+    gp_drawAsset(&fire, fire.position, fire.scale);
     
     gp_drawText(
         (char*)TextFormat("Goblean lives : %d / 3", goblean.lives),
