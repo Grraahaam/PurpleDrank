@@ -503,6 +503,7 @@ void gp_readPlayer(Player *player) {
                         // Adapt if player's is slipping
                         player->asset.speed * 2 : player->asset.speed;
                     player->asset.frame.pack = FORWARD;
+                    player->super = false;
                 }
             
             } else if (IsKeyDown(KEY_LEFT)) {
@@ -524,6 +525,7 @@ void gp_readPlayer(Player *player) {
                         // Adapt if player's is slipping
                         -player->asset.speed * 2 : -player->asset.speed;
                     player->asset.frame.pack = BACKWARD;
+                    player->super = false;
                 }
             }
         

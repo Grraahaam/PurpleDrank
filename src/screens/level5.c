@@ -14,6 +14,7 @@
 
 Enemy goblin;
 Asset goblin_flip, skate, left_hand, right_hand, lean, damage, lifebar;
+Asset leans[2];
 int attaque;
 
 
@@ -116,7 +117,10 @@ Damage l5_collisionPlayer(Player *player, Enemy *goblin, Asset *skate, Asset *le
             .width = 120, .height = 160
             
         })) {
-        if(player->super) return BOSS;
+        if(player->super) {
+        	l5_createLean();
+        	return NONE;
+        }
         else return PLAYER;
         }
     
@@ -169,6 +173,28 @@ void l5_throwLean(Player *player, Asset *lean) {
         
         // Enable drawing
         lean->disabled = false;
+    }
+}
+
+void l5_createLean() {
+
+    if(leans[0].disabled && leans[1].disabled) {
+	
+	    // Create 2 leans
+	    leans[0].disabled = false;
+	    leans[0].position = (Vector2){goblin.asset.position.x + 40, goblin.asset.position.y - 80};
+	    leans[1].disabled = false;
+	    leans[1].position = (Vector2){goblin.asset.position.x + 60, goblin.asset.position.y - 80};
+    }
+}
+
+void l5_leanPosIncrement() {
+    for(int i = 0; i < 2; i++) {
+        
+        if(leans[i].position.y < 370) {
+        	leans[i].position.x -= 10;
+        	leans[i].position.y += 3;
+        }
     }
 }
 
@@ -233,11 +259,41 @@ void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enem
     }
 }
 
+// Check collision between player and all the lean items
+bool l5_GetLean(Player *player) {
+    
+    for(int i = 0; i < 2; i++) {
+        
+        if(!leans[i].disabled && CheckCollisionRecs(
+            // Player
+            (Rectangle){
+                .x = player->asset.position.x, .y = player->asset.position.y,
+                .width = player->asset.swidth, .height = player->asset.sheight
+            },
+            // Current lean
+            (Rectangle){
+                .x = leans[i].position.x, .y = leans[i].position.y,
+                .width = leans[i].swidth, .height = leans[i].sheight
+            }) && leans[i].position.y == 370) {
+
+            leans[i].disabled = true;
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 void l5_readCollisions(Player *player, Asset *lean, Enemy *goblin, Asset *skate, Asset *left_hand, Asset *right_hand, Asset *lifebar) {
     
     // Read and process collision damage type
     l5_readDamage(l5_collisionLean(lean, goblin, skate, left_hand, right_hand), LEAN, player, lean, goblin, skate, left_hand, right_hand, lifebar);
     l5_readDamage(l5_collisionPlayer(player, goblin, skate, left_hand, right_hand), PLAYER, player, lean, goblin, skate, left_hand, right_hand, lifebar);
+    if(l5_GetLean(player)) {
+
+        ++player->lean;
+    }
+
 }
         
 
@@ -246,7 +302,7 @@ void LevelFiveRead(Player *player, Enemy *goblin, Asset *lean, Asset *skate, Ass
     gp_readPlayer(player);
 
     l5_readCollisions(player, lean, goblin, skate, left_hand, right_hand, lifebar);
-    
+    l5_leanPosIncrement();
     
     // If ended level
     if(goblin->lives <= 0) {
@@ -360,8 +416,7 @@ void LevelFiveInit(Player *player) {
         
     
     attaque = 1;
-    player->lean = 20;
-    player->lives = 10;
+    player->lives = 3;
     
     PrintDebug(TextFormat("Initializing: %s", screenNames[game.gameScreen]));
     
@@ -428,6 +483,18 @@ void LevelFiveInit(Player *player) {
     	.x = screenWidth/2,
     	.y = 100
     };
+    
+    for(int i = 0; i < 2; i++) {
+        
+        leans[i] = res.items.lean;
+        leans[i].scale = 0.18;
+        leans[i].swidth = leans[i].width * leans[i].scale;
+        leans[i].sheight = leans[i].height * leans[i].scale;
+        leans[i].disabled = true;
+    }
+    
+    leans[0].position = (Vector2){goblin.asset.position.x + 40, goblin.asset.position.y - 80};
+    leans[1].position = (Vector2){goblin.asset.position.x + 60, goblin.asset.position.y - 80};
     
     
     // Create floor and walls rectangle physics body
@@ -499,10 +566,17 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     gp_drawAsset(&lifebar, lifebar.position, lifebar.scale);
     
     /*gp_drawText(
-        (char*)TextFormat("posX : %f", skate.position.x),
-        res.fonts.pixellari, (Vector2){0, 70},
+        (char*)TextFormat("super or not ? : %i", player->super),
+        res.fonts.pixellari, (Vector2){0, 150},
         20, CENTER_X, DARKGRAY
     );*/
+    
+    // Draw the leans
+    for(int i = 0; i < 2; i++) {
+        
+        gp_drawAsset(&leans[i], leans[i].position, leans[i].scale);
+    }
+
 
     /**************************************************************************************/
     
