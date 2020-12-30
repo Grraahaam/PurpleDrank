@@ -206,6 +206,7 @@ typedef struct ResourcesItems {
     Asset skate_flip;
     Asset left_hand;
     Asset right_hand;
+    Asset fire_columns;
     
     Asset kb_arrows;
     Asset kb_spacebar;

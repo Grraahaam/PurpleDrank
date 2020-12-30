@@ -1088,6 +1088,17 @@ void gp_initResources(Resources *res) {
         1, 0, // scale, rotation
         false, false, (Vector2){0,0}, 5 // animate, loop animation, loop position options, frame speed
     );
+    
+    // Fire columns
+    gp_initResourcesAssets(
+        &res->items.fire_columns,
+        SP_ASSETS,
+        (Vector2){1199,700}, // sprite frame position
+        11, 1, // amount of animated frames, number of frame lines
+        52, 132, // width, height
+        1, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 7 // animate, loop animation, loop position options, frame speed
+    );
 }
 
 // Function generating default values for initial items/assets 
