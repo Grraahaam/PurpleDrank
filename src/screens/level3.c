@@ -106,8 +106,20 @@ Damage l3_collisionPlayer(Player *player, Enemy *gob, Enemy *goblean) {
             .width = 180, .height = 40
             
         })) return PLAYER;
+        
+        
+    // Player hit by fire
+    if(CheckCollisionRecs(
+        // Player
+        player_hitbox,
+        // Fire
+        (Rectangle){
+            .x = fire.position.x - 10, .y = fire.position.y - 80,
+            .width = 20, .height = 200
+            
+        }) && !fire.disabled) return PLAYER;
     
-    // Lean hit nothing
+    // Player hit by nothing
     return NONE;
 }
 
@@ -233,6 +245,7 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
             gob->asset.position.x -= gob->asset.speed;
         
         } else {
+         
             
             // If goblean still alive (translate back and forth infinitely on X axis)
             if(goblean->lives > 0) {
@@ -244,11 +257,8 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
                     // If goblean reached the middle and is facing left
                     if(goblean->asset.position.x < (screenWidth / 2 + goblean->asset.swidth)) {
                     
-                    	 fire.position.x = goblean->asset.position.x - 100;
-        		 fire.position.y = goblean->asset.position.y + 10;
-                    	 fire.disabled = true;
-                    	 fire.frame.animate = false; 
-                    	 goblean->asset.frame.x += goblean->asset.swidth; 
+                    	 fire.disabled = false;
+                    	 fire.frame.animate = true;  
                         // Invert direction
                         goblean->asset.direction = RIGHT;
                     }
@@ -260,9 +270,8 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
                     // If goblean reached the right side and is facing right (right - goblean width - margin)
                     if(goblean->asset.position.x > (screenWidth - goblean->asset.swidth + 20)) {
                     
-                    	 fire.disabled = false;
-                    	 fire.frame.animate = true;  
-                    	 goblean->asset.frame.x -= goblean->asset.swidth;                   
+                    	 fire.disabled = true;
+                    	 fire.frame.animate = false;                    
                         // Invert direction
                         goblean->asset.direction = LEFT;
                     }
@@ -392,8 +401,8 @@ void LevelThreeInit(Player *player) {
     fire = res.items.fire_columns;
     fire.disabled = true;
     fire.position = (Vector2){
-        .x = goblean.asset.position.x - 50,
-        .y = goblean.asset.position.y - 20
+        .x = screenWidth/2,
+        .y = 160
     };
     
     // Create floor and walls rectangle physics body
@@ -499,6 +508,8 @@ void LevelThreeDraw(Player *player, ScreenFX *screenFx) {
     
     // Drawing the fade in effect
     gp_drawFade(screenFx);
+    
+    //DrawRectangle(fire.position.x - 10, fire.position.y - 80, 20, 200, GOLD);
     
     EndDrawing();
 }

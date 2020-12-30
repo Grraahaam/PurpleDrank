@@ -11,7 +11,7 @@
 // Define the action choice variable (buttons)
 int choice = 0;
 char* btnStr[] = {"Play game", "Select player", "Mini-games", "Controls", "Credits", "Quit"};
-GameScreen screens[] = {LEVEL_5, SELECT_PLAYER, MINIGAMES, CONTROLS, CREDITS};
+GameScreen screens[] = {LEVEL_1, SELECT_PLAYER, MINIGAMES, CONTROLS, CREDITS};
 
 // Function drawing the menu buttons
 void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {

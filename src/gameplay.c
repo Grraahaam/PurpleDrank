@@ -884,10 +884,10 @@ void gp_initResources(Resources *res) {
     gp_initResourcesAssets(
         &res->items.dark_sonic,
         SP_ASSETS,
-        (Vector2){1853,636}, // sprite frame position
-        2, 1, // amount of animated frames, number of frame lines
-        141, 200, // width, height
-        1.5, 0, // scale, rotation
+        (Vector2){1110,174}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        214, 506, // width, height
+        0.6, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1096,8 +1096,8 @@ void gp_initResources(Resources *res) {
         (Vector2){1160,720}, // sprite frame position
         11, 1, // amount of animated frames, number of frame lines
         60, 106, // width, height
-        2, 0, // scale, rotation
-        false, true, (Vector2){0,0}, 5 // animate, loop animation, loop position options, frame speed
+        2.5, 0, // scale, rotation
+        false, true, (Vector2){0,0}, 8 // animate, loop animation, loop position options, frame speed
     );
 }
 
