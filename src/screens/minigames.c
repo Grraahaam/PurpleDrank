@@ -41,11 +41,13 @@ void MinigamesDraw(ScreenFX *screenFx) {
 
 	ClearBackground(RAYWHITE);
 
-    DrawTextureEx(
+    /*DrawTextureEx(
         res.backgrounds.minigames,
         (Vector2){0, 0},
         0.0f, 0.85f, WHITE
-    );
+    );*/
+    
+    gp_drawImage(&res.backgrounds.controls, res.backgrounds.controls.scale);
     
     // Draw test
     gp_drawText(

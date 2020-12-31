@@ -58,12 +58,8 @@ void CreditsDraw(ScreenFX *screenFx) {
 	BeginDrawing();
 
 	ClearBackground(RAYWHITE);
-
-    DrawTextureEx(
-        res.backgrounds.credits,
-        (Vector2){0, 0},
-        0.0f, 0.65f, WHITE
-    );
+    
+    gp_drawImage(&res.backgrounds.credits, res.backgrounds.credits.scale);
     
     int top = 50, margin_mates = 15, margin_desc = 5;
     int size_name = 25, size_desc = 16;

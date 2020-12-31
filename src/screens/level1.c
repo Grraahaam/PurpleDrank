@@ -47,7 +47,7 @@ bool l1_collisionRightWall(Player *player) {
 void l1_readCollisions(Player *player) {
 
     // Player fall into the hole
-	if (l1_collisionHole(player)) {
+	/*if (l1_collisionHole(player)) {
         
         // Reset player's position
         player->body->position = game.levelPos.level_1;
@@ -56,7 +56,7 @@ void l1_readCollisions(Player *player) {
 		--player->lives;
 
     // Player reached the next level
-	} else if (l1_collisionRightWall(player) ) {
+	} else*/ if (l1_collisionRightWall(player) ) {
         
         // Update its info board, and switch level
 		game.levelPassed = LEVEL_1;
@@ -84,9 +84,9 @@ void LevelOneInit(Player *player) {
     // Initialize physic game box
     //gp_initializeGameBorders();
     
-    //TODO: PUT THIS INTO A GLOBAL FUNCTION TO Initialize BASE PROPERTIES FOR PLAYER AT EACH LEVEL
     //TODO: IMPLEMENT THREAD FUNCTION TO TIMEOUT LEVEL LOADING AND DEATH TIMEOUT
-    player->slip = false;
+    
+    gp_resetPlayer(player);
     
     /** CUSTOM ****************************************************************************/
     
@@ -142,10 +142,6 @@ void LevelOneDraw(Player *player, ScreenFX *screenFx) {
         
         // Set default fade properties
         gp_resetFx(screenFx);
-        
-        // THIS ALLOWS THE PLAYER TO MOVE EVEN AFTER SUCCESS AND RELOAD
-        //TODO: PUT INTO A FUNCTION OR CHECK WHY resetPlayer() in success.c
-        player->can_move = true;
     }
     
     // Read user input and interact
@@ -155,7 +151,8 @@ void LevelOneDraw(Player *player, ScreenFX *screenFx) {
     BeginDrawing();
 
     // Draw level's background
-    DrawTextureEx(res.backgrounds.level1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    //DrawTextureEx(res.backgrounds.level1, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    gp_drawImage(&res.backgrounds.level1, res.backgrounds.level1.scale);
     
     /** CUSTOM ****************************************************************************/
     

@@ -17,28 +17,13 @@ Asset lean, gob_dying;
 
 Texture2D portal;
 
-bool l3_collisionAssets(Asset *ast1, Asset *ast2) {
-    
-    return CheckCollisionRecs(
-        // Asset 1
-        (Rectangle){
-            .x = ast1->position.x, .y = ast1->position.y,
-            .width = ast1->swidth, .height = ast1->sheight
-        },
-        // Asset 2
-        (Rectangle){
-            .x = ast2->position.x, .y = ast2->position.y,
-            .width = ast2->swidth, .height = ast2->sheight
-        });
-}
-
 Damage l3_collisionLean(Asset *lean, Enemy *gob, Enemy *goblean) {
     
     // Lean hit a gob
-    if(l3_collisionAssets(lean, &gob->asset)) return GOB;
+    if(gp_collisionAssets(lean, &gob->asset)) return GOB;
     
     //Lean hit the Goblean
-    else if(l3_collisionAssets(lean, &goblean->asset)) return BOSS;
+    else if(gp_collisionAssets(lean, &goblean->asset)) return BOSS;
     
     // Lean hit nothing
     else return NONE;
@@ -48,7 +33,8 @@ Damage l3_collisionPlayer(Player *player, Enemy *gob, Enemy *goblean) {
     
     // Define player hitbox
     Rectangle player_hitbox = {
-        .x = player->asset.position.x, .y = player->asset.position.y,
+        .x = player->asset.position.x - player->asset.swidth / 2,
+        .y = player->asset.position.y - player->asset.sheight / 2,
         .width = player->asset.swidth, .height = player->asset.sheight
     };
     
@@ -58,60 +44,32 @@ Damage l3_collisionPlayer(Player *player, Enemy *gob, Enemy *goblean) {
         player_hitbox,
         // Gob top
         (Rectangle){
-            .x = gob->asset.position.x - 60, .y = gob->asset.position.y - 30,
-            .width = 120, .height = 10
+            .x = gob->asset.position.x - gob->asset.swidth / 2 + 20,
+            .y = gob->asset.position.y - gob->asset.sheight / 2,
+            .width = gob->asset.swidth - 40, .height = 30
 
         })) return GOB;
     
-    // Player hit a gob (LEFT)
+    // Player hit a gob (RIGHT/LEFT)
     if(CheckCollisionRecs(
         // Player
         player_hitbox,
         // Gob left
         (Rectangle){
-            .x = gob->asset.position.x - 80, .y = gob->asset.position.y,
-            .width = 10, .height = 20
-
-        })) return PLAYER;
-    
-    // Player hit a gob (RIGHT)
-    if(CheckCollisionRecs(
-        // Player
-        player_hitbox,
-        // GOB right
-        (Rectangle){
-            .x = gob->asset.position.x + 70, .y = gob->asset.position.y,
-            .width = 10, .height = 20
+            .x = gob->asset.position.x - gob->asset.swidth / 2 + 5,
+            .y = gob->asset.position.y - gob->asset.sheight / 2 + 30,
+            .width = gob->asset.swidth - 10, .height = gob->asset.sheight - 30
 
         })) return PLAYER;
     
     // Player hit by goblean (GOBLEAN)
-    if(CheckCollisionRecs(
-        // Player
-        player_hitbox,
-        // Goblean
-        (Rectangle){
-            .x = goblean->asset.position.x - 60, .y = goblean->asset.position.y - 100,
-            .width = 120, .height = 160
-            
-        })) return PLAYER;
-    
-    // Player hit by goblean (SKATE)
-    if(CheckCollisionRecs(
-        // Player
-        player_hitbox,
-        // Skate
-        (Rectangle){
-            .x = goblean->asset.position.x - 95, .y = goblean->asset.position.y + 62,
-            .width = 180, .height = 40
-            
-        })) return PLAYER;
+    if(gp_collisionAssets(&player->asset, &goblean->asset)) return PLAYER;
     
     // Lean hit nothing
     return NONE;
 }
 
-void l3_resetAsset(Asset *asset) {
+void l3_resetGob(Asset *asset) {
     
     // Reset the gob to the initial position (right border + gob width + margin)
     asset->position.x = screenWidth + asset->swidth + 20;
@@ -162,7 +120,7 @@ void l3_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enem
             gob_dying.frame.animate = true;
             
             // Reset gob inital position
-            l3_resetAsset(&gob->asset);
+            l3_resetGob(&gob->asset);
             
             // Increasing the gob's velocity each time one disappear or is killed (max. speed limit)
             if(gob->asset.speed < 2.5f) {
@@ -284,7 +242,7 @@ void LevelThreeRead(Player *player, Asset *lean, Enemy *gob, Enemy *goblean) {
             PrintDebug("Gob destroyed");
             
             // Reset the gob inital position
-            l3_resetAsset(&gob->asset);
+            l3_resetGob(&gob->asset);
             
             // Increasing the gob's velocity each time one disappear or is killed
             if(gob->asset.speed < 2.5f) {
@@ -343,9 +301,9 @@ void LevelThreeInit(Player *player) {
     
     gp_resetNotification();
     
-    //TODO: PUT THIS INTO A GLOBAL FUNCTION TO Initialize BASE PROPERTIES FOR PLAYER AT EACH LEVEL
     //TODO: IMPLEMENT THREAD FUNCTION TO TIMEOUT LEVEL LOADING AND DEATH TIMEOUT
-    player->slip = false;
+    
+    gp_resetPlayer(player);
     
     /** CUSTOM ****************************************************************************/
     
@@ -417,36 +375,19 @@ void LevelThreeDraw(Player *player, ScreenFX *screenFx) {
      // Initialize the level only if not loaded
     if(game.screenLoaded != LEVEL_3) {
         
-        // If just arrived from previous level
-        if(!player->can_move) {
-
-            LevelThreeInit(player);
-            PrintDebug(TextFormat("Drawing: %s", screenNames[game.gameScreen]));
+        LevelThreeInit(player);
+        PrintDebug(TextFormat("Drawing: %s", screenNames[game.gameScreen]));
+        
+        //pthread_create(thread_id, NULL, unlockPlayer, NULL);
+        //pthread_join(thread_id, NULL);
+        //res.items.portal.disabled = true;
             
-            player->can_move = true;
-            
-            // Player just came from the previous level's portal
-            res.items.portal.disabled = false;
-
-        // If player just waited in the portal
-        } else {
-            
-            //PrintDebug("Level 3 unlocked");
-            
-            //pthread_create(thread_id, NULL, unlockPlayer, NULL);
-            //pthread_join(thread_id, NULL);
-            
-            // Update game informations
-            game.screenLoaded = LEVEL_3;
-            game.levelPassed = LEVEL_2;
-            
-            // Set default fade properties
-            gp_resetFx(screenFx);
-            
-            //sleep(GAME_DEFAULT_TIMEOUT);
-            res.items.portal.disabled = false;
-            player->can_move = true;
-        }
+        // Update game informations
+        game.screenLoaded = LEVEL_3;
+        game.levelPassed = LEVEL_2;
+        
+        // Set default fade properties
+        gp_resetFx(screenFx);
     }
     
     // Read user input and interact
@@ -456,7 +397,9 @@ void LevelThreeDraw(Player *player, ScreenFX *screenFx) {
     BeginDrawing();
 
     // Draw level's background
-    DrawTextureEx(res.backgrounds.level3, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    //DrawTextureEx(res.backgrounds.level3, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    
+    gp_drawImage(&res.backgrounds.level3, res.backgrounds.level3.scale);
     
     /** CUSTOM ****************************************************************************/
     
@@ -466,6 +409,20 @@ void LevelThreeDraw(Player *player, ScreenFX *screenFx) {
     gp_drawAsset(&gob.asset, gob.asset.position, gob.asset.scale);
     gp_drawAsset(&gob_dying, gob_dying.position, gob_dying.scale);
     gp_drawAsset(&goblean.asset, goblean.asset.position, goblean.asset.scale);
+    
+    /*DrawRectangleLinesEx(
+        (Rectangle){
+        .x = gob.asset.position.x - gob.asset.swidth / 2 + 20,
+        .y = gob.asset.position.y - gob.asset.sheight / 2,
+        .width = gob.asset.swidth - 40, .height = 30
+    }, 2, GREEN);
+    
+    DrawRectangleLinesEx(
+        (Rectangle){
+        .x = gob.asset.position.x - gob.asset.swidth / 2,
+        .y = gob.asset.position.y - gob.asset.sheight / 2 + 30,
+        .width = gob.asset.swidth, .height = gob.asset.sheight - 30
+    }, 2, PINK);*/
     
     gp_drawText(
         (char*)TextFormat("Goblean lives : %d / 3", goblean.lives),

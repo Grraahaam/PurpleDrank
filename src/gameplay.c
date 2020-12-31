@@ -46,11 +46,6 @@ void gp_drawBoard(Player *player) {
         RAYWHITE
     );
     
-    // Level (auto-center text)
-    /*gp_drawTextCenter(
-        TextFormat("%s", screenNames[game.gameScreen]),
-        fontSize + 10, RAYWHITE, fontSize);*/
-    
     gp_drawText(
         (char*)TextFormat("%s", screenNames[game.gameScreen]), res.fonts.pixellari,
         (Vector2){0, fontSize + 10},
@@ -134,6 +129,8 @@ void gp_drawText(char* str, Font font, Vector2 position, int fontSize, TextAlign
                 position.x = GetScreenWidth() / 2 - textSize.x / 2;
                 position.y = GetScreenHeight() / 2 - textSize.y / 2;
             } break;
+            
+            default: break;
         }
         
         // If custom font given
@@ -189,21 +186,46 @@ void gp_resetNotification() {
     game.notification.color = WHITE;
 }
 
-// Check if an asset is outside the screen (to stop/reset its process)
-bool gp_isOutScreen(Asset *asset) {
+// Check if given assets are outside the screen (to stop/reset their process)
+bool gp_isOutScreen(Asset *ast) {
     
-    // Check if position is outside the initial screen dimensions + their own width/height + a X margin
-    if(asset->position.x < 0 - asset->swidth ||
-        asset->position.x > screenWidth + asset->swidth + 50 ||
-        asset->position.y < 0 - asset->sheight ||
-        asset->position.y > GetScreenHeight() + asset->sheight
-    ) return true;
+    //for(int i = 0; i < n; i++) {
+        
+        // Check if position is outside the initial screen dimensions + their own width/height + a X,Y margin
+        if(ast->position.x < 0 - ast->swidth + 50 ||
+            ast->position.x > GetScreenWidth() + ast->swidth + 50 ||
+            ast->position.y < 0 - ast->sheight - 150 ||
+            ast->position.y > GetScreenHeight() + ast->sheight
+        
+        //) return ast->type;
+        ) return true;
+    //}
     
+    //return NONE;
     return false;
 }
 
+// Return the collision status between two assets
+bool gp_collisionAssets(Asset *ast1, Asset *ast2) {
+    
+    return CheckCollisionRecs(
+        // Asset 1
+        (Rectangle){
+            .x = ast1->position.x - ast1->swidth / 2,
+            .y = ast1->position.y - ast1->sheight / 2,
+            .width = ast1->swidth, .height = ast1->sheight
+        },
+        // Asset 2
+        (Rectangle){
+            .x = ast2->position.x - ast2->swidth / 2,
+            .y = ast2->position.y - ast2->sheight / 2,
+            .width = ast2->swidth, .height = ast2->sheight
+        }
+    );
+}
+
 // Function reseting the player's default properties
-void gp_resetPlayer(Player *player) {
+void gp_initPlayer(Player *player) {
     
     player->asset.frame.loop    = true;
     player->asset.frame.pack    = FORWARD;
@@ -240,8 +262,21 @@ void gp_resetPlayer(Player *player) {
     player->can_move        = true;
     player->gelano          = false;
     player->jetLean         = false;
-    player->slip            = true;
+    player->slip            = false;
     player->portalPowerUsed = false;
+    
+    // Set gravity force Default is { 0.0f, 9.81f }
+    SetPhysicsGravity(0.0f, 6.8f);
+}
+
+void gp_resetPlayer(Player *player) {
+    
+    player->asset.speed     = VELOCITY * 0.4;
+    player->asset.density   = 10;
+    player->asset.rotation  = 0;
+    player->dead            = false;
+    player->can_move        = true;
+    player->slip            = false;
 }
 
 // Function initializing an asset body
@@ -306,6 +341,10 @@ void gp_drawAsset(Asset *asset, Vector2 position, float scale) {
             sprite = res.sprites.animations;
         } break;
         
+        case SP_SCREENS: {
+            sprite = res.sprites.screens;
+        } break;
+        
         default: {
             sprite = res.sprites.assets;
         } break;
@@ -341,7 +380,7 @@ void gp_drawAsset(Asset *asset, Vector2 position, float scale) {
         
             gp_drawAssetLines(asset, position, scale);
             
-            if(game.gameScreen == LEVEL_1 || game.gameScreen == LEVEL_2 || game.gameScreen == LEVEL_3 || game.gameScreen == LEVEL_4 || game.gameScreen == LEVEL_BONUS) {
+            if(game.gameScreen == LEVEL_1 || game.gameScreen == LEVEL_2 || game.gameScreen == LEVEL_3 || game.gameScreen == LEVEL_4 || game.gameScreen == LEVEL_5 || game.gameScreen == LEVEL_BONUS) {
             
                 gp_drawText(
                     "In/Decrease size: + -", res.fonts.raylib,
@@ -476,7 +515,7 @@ void gp_readPlayer(Player *player) {
         if(IsKeyDown(KEY_UP) && player->body->isGrounded) {
             
             // Invert Y axis velocity to simulate a jump
-            player->body->velocity.y = -VELOCITY * 3.2;
+            player->body->velocity.y = -VELOCITY * 2.6;
         }
         
         // If moving on X axis
@@ -490,8 +529,8 @@ void gp_readPlayer(Player *player) {
             
                     player->asset.frame.pack = SUPER;
                     player->body->velocity.x = player->slip ?
-                        // Adapt if player's is slipping
-                        player->asset.speed * 3.5 : player->asset.speed * 2;
+                    // Adapt if player's is slipping
+                    player->asset.speed * 3.5 : player->asset.speed * 2;
                     player->super = true;
                 
                 } else {
@@ -573,6 +612,43 @@ void gp_readPlayer(Player *player) {
         game.gameScreen = GAMEOVER;
     }
     
+    // Detect if player is outside the screen, and reset its position
+    if(gp_isOutScreen(&player->asset)) {
+        
+        // Decrement one live
+        --player->lives;
+    
+        // Detect which screen
+        switch(game.gameScreen) {
+            
+            case LEVEL_1: {
+                player->body->position = game.levelPos.level_1;
+            } break;
+            
+            case LEVEL_2: {
+                player->body->position = game.levelPos.level_2;
+            } break;
+            
+            case LEVEL_3: {
+                player->body->position = game.levelPos.level_3;
+            } break;
+            
+            case LEVEL_4: {
+                player->body->position = game.levelPos.level_4;
+            } break;
+            
+            case LEVEL_5: {
+                player->body->position = game.levelPos.level_5;
+            } break;
+            
+            case LEVEL_BONUS: {
+                player->body->position = game.levelPos.level_bonus;
+            } break;
+            
+            default: break;
+        }
+    }
+    
     // Edit player's asset in-game properties
     if(DEBUG) gp_editAsset(&player->asset);
 }
@@ -597,10 +673,63 @@ void gp_editAsset(Asset *asset) {
 //Function drawing a screen image and auto-center it (on X,Y)
 void gp_drawImage(ResImage *img, float scale) {
     
+    // Screen spritecheet process NOT WORKING YET
+    /*Texture2D sprite;
+    switch(img->sprite) {
+        
+        case SP_PLAYER: {
+            sprite = res.sprites.player;
+        } break;
+        
+        case SP_ASSETS: {
+            sprite = res.sprites.assets;
+        } break;
+        
+        case SP_ANIMATION: {
+            sprite = res.sprites.animations;
+        } break;
+        
+        case SP_SCREENS: {
+            sprite = res.sprites.screens;
+        } break;
+        
+        default: {
+            sprite = res.sprites.assets;
+        } break;
+    }
+    
+    PrintDebug(TextFormat("Frame X: %i", (int)img->frame.x));
+    PrintDebug(TextFormat("Frame Y: %i", (int)img->frame.y));
+    
+    PrintDebug(TextFormat("Screen width: %i", img->width));
+    PrintDebug(TextFormat("Screen height: %i", img->height));
+    
+    PrintDebug(TextFormat("Screen scale: %.2f", img->scale));
+    
+    PrintDebug(TextFormat("ScreenWidth: %i", GetScreenWidth()));
+    PrintDebug(TextFormat("Delta: %.2f", GetScreenWidth() - img->width * scale));
+    PrintDebug(TextFormat("Delta split: %i", (int)(GetScreenWidth() - img->width * scale) / 2));
+    
+    DrawTexturePro(sprite,
+        // Select corresponding frame from original spritecheet
+        (Rectangle){
+            .x = (int)img->frame.x, .y = (int)img->frame.y,
+            .width = img->width, .height = img->height
+        },
+        // Draw its scaled version at the matching position
+        (Rectangle){
+            .x = (GetScreenWidth() - img->width * scale) / 2,
+            .y = (GetScreenHeight() - img->height * scale) / 2,
+            .width = img->width * scale,
+            .height = img->height * scale
+        },
+        (Vector2){0,0}, 0, WHITE
+    );*/
+    
     DrawTextureEx(
         img->screen,
         (Vector2){
-            (int)(screenWidth - img->screen.width * scale) / 2,
+            (int)(GetScreenWidth() - img->screen.width * scale) / 2,
             (int)(GetScreenHeight() - img->screen.height * scale) / 2
         },
         0, scale, WHITE
@@ -676,7 +805,7 @@ void gp_drawCrossFade(ResImage *imgAbove, ResImage *imgBelow, ScreenFX *screenFx
         
         // Draw the rectangle fading in imgAbove and cross fading both images, colored with the imgBelow's color 
         DrawRectanglePro(
-            (Rectangle){0, 0, screenWidth, GetScreenHeight()},
+            (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
             (Vector2){0, 0},
             0, Fade(
                 screenFx->timer > subDuration * 2.5 ?
@@ -1018,10 +1147,139 @@ void gp_initResources(Resources *res) {
         1.5, 0, // scale, rotation
         true, false, (Vector2){0,0}, 4 // animate, loop animation, loop position options, frame speed
     );
+    
+    /********* SCREENS ********/
+    /*
+    // SPLASH screen
+    gp_initResourceScreens(
+        &res->backgrounds.splash,
+        SP_SCREENS,
+        (Vector2){0,0},
+        950, 540,
+        0.85f, BLACK
+    );
+    
+    // MENU screen
+    gp_initResourceScreens(
+        &res->backgrounds.menu,
+        SP_SCREENS,
+        (Vector2){0,550},
+        950, 540,
+        0.85f, (Color){242, 215, 255, 255}
+    );
+    
+    // CONTROLS screen
+    gp_initResourceScreens(
+        &res->backgrounds.controls,
+        SP_SCREENS,
+        (Vector2){0,1100},
+        950, 540,
+        0.85f, WHITE
+    );
+    
+    // VICTORY screen
+    gp_initResourceScreens(
+        &res->backgrounds.victory,
+        SP_SCREENS,
+        (Vector2){0,1650},
+        950, 540,
+        0.85f, WHITE
+    );
+    
+    // GAMEOVER screen
+    gp_initResourceScreens(
+        &res->backgrounds.gameover,
+        SP_SCREENS,
+        (Vector2){0,2200},
+        950, 540,
+        0.85f, WHITE
+    );
+    
+    // CREDITS screen
+    gp_initResourceScreens(
+        &res->backgrounds.credits,
+        SP_SCREENS,
+        (Vector2){961,0},
+        1280, 720,
+        0.65f, WHITE
+    );
+    
+    // SELECT screen
+    gp_initResourceScreens(
+        &res->backgrounds.select,
+        SP_SCREENS,
+        (Vector2){961,730},
+        1280, 720,
+        0.65f, WHITE
+    );
+    
+    // LEVEL 3 screen
+    gp_initResourceScreens(
+        &res->backgrounds.level3,
+        SP_SCREENS,
+        (Vector2){1126,1600},
+        950, 534,
+        0.85f, WHITE
+    );
+    
+    // LEVEL 5 screen
+    gp_initResourceScreens(
+        &res->backgrounds.level5,
+        SP_SCREENS,
+        (Vector2){1126,2200},
+        950, 534,
+        0.85f, WHITE
+    );
+    
+    // SPECIAL screen
+    gp_initResourceScreens(
+        &res->backgrounds.special,
+        SP_SCREENS,
+        (Vector2){2251,0},
+        950, 540,
+        0.85f, WHITE
+    );
+    
+    // LEVEL 1 screen
+    gp_initResourceScreens(
+        &res->backgrounds.level1,
+        SP_SCREENS,
+        (Vector2){2251,550},
+        952, 536,
+        0.85f, WHITE
+    );
+    
+    // LEVEL 2 screen
+    gp_initResourceScreens(
+        &res->backgrounds.level2,
+        SP_SCREENS,
+        (Vector2){2251,1100},
+        950, 534,
+        0.85f, WHITE
+    );
+    
+    // LEVEL BONUS screen
+    gp_initResourceScreens(
+        &res->backgrounds.level_bonus,
+        SP_SCREENS,
+        (Vector2){2251,1644},
+        950, 534,
+        0.85f, WHITE
+    );
+    
+    // LEVEL 4 screen
+    gp_initResourceScreens(
+        &res->backgrounds.level4,
+        SP_SCREENS,
+        (Vector2){2251,2200},
+        950, 534,
+        0.85f, WHITE
+    );
+    */
 }
 
 // Function generating default values for initial items/assets 
-void gp_initResourcesAssets(Asset *asset, SpritePack sprite, Vector2 framePos, int frameAmount, int frameLines, float width, float height, float scale, int rotation, bool animate, bool loop, Vector2 loopPos, float frameSpeed) {
+void gp_initResourcesAssets(Asset *asset, SpritePack sprite, Vector2 framePos, int frameAmount, int frameLines, float width, float height, float scale, int rotation, bool animate, bool loop, Vector2 loopPos, int frameSpeed) {
     
     // Initializing current asset sprite frame position and dimensions
     asset->sprite = sprite;
@@ -1035,8 +1293,6 @@ void gp_initResourcesAssets(Asset *asset, SpritePack sprite, Vector2 framePos, i
     asset->frame.lines = frameLines;
     asset->frame.speed = frameSpeed;
     
-    //asset->frame.line_offset = 0;
-    
     asset->scale = scale;
     asset->rotation = rotation;
     
@@ -1048,6 +1304,24 @@ void gp_initResourcesAssets(Asset *asset, SpritePack sprite, Vector2 framePos, i
     asset->height = height;
     asset->swidth = scale * width;
     asset->sheight = scale * height;
+}
+
+void gp_initResourceScreens(Asset *asset, SpritePack sprite, Vector2 pos, int width, int height, float scale, Color color) {
+    
+    asset->sprite = sprite;
+    
+    asset->frame.x = pos.x;
+    asset->frame.y = pos.y;
+    
+    asset->scale = scale;
+    
+    asset->width = width;
+    asset->height = height;
+    asset->swidth = scale * width;
+    asset->sheight = scale * height;
+    
+    asset->color = color;
+    asset->rotation = 0;
 }
 
 // Function initializing player initial levels position

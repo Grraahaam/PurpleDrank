@@ -25,7 +25,7 @@ void GameoverRead(Player *player) {
         
 		PrintDebug("Pressed ENTER, returning to the menu!");
         
-        gp_resetPlayer(player);
+        gp_initPlayer(player);
         
         game.levelPassed = MENU;
 		game.gameScreen = MENU;
@@ -62,11 +62,13 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
 
     ClearBackground(RAYWHITE);
 
-    DrawTextureEx(
+    /*DrawTextureEx(
         res.backgrounds.gameover,
         (Vector2){0, 0},
         0.0f, 0.85f, WHITE
-    );
+    );*/
+    
+    gp_drawImage(&res.backgrounds.gameover, res.backgrounds.gameover.scale);
     
     // Draw title
     gp_drawBounceText(

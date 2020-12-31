@@ -3,9 +3,6 @@
 
     #define LEVEL2_H_
 
-    bool l2_collisionSpikes(Player *player);
-    bool l2_collisionPortal(Player *player);
-    bool l2_collisionLaunchpad(Player *player);
     bool l2_collisionLean(Player *player);
     
     void l2_readCollisions(Player *player);

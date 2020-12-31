@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
     game.quit = false;
     
     // Initialize player object and its level positions
-    gp_resetPlayer(&player);
+    gp_initPlayer(&player);
     player.asset.version = 1;
     gp_initPositions(&game.levelPos);
     
@@ -104,11 +104,10 @@ int main(int argc, char *argv[]) {
     
     // Go directly to screens when developing
     if(DEBUG) {
-        game.gameScreen = LEVEL_2;
+        game.gameScreen = LEVEL_4;
         //game.gameScreen = CREDITS;
-        //game.gameScreen = SELECT_PLAYER;
+        //game.gameScreen = LEVEL_BONUS;
         //game.gameScreen = LEVEL_3;
-        //player.can_move = false;
     }
 
 	// Main game loop (Detect window close button or ESC key)
@@ -148,21 +147,43 @@ void LoadResources() {
     res.backgrounds.menu.color  = (Color){242, 215, 255, 255};
     res.backgrounds.menu.scale  = 0.85f;
     
-    res.backgrounds.controls   = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/controls.png"));
-    res.backgrounds.credits    = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/credits.png"));
-    res.backgrounds.minigames  = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/controls.png"));
-    res.backgrounds.select     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/select.png"));
-    res.backgrounds.gameover   = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/gameover.png"));
-    res.backgrounds.victory    = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/victory.png"));
-    res.backgrounds.level1     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level1.png"));
-    res.backgrounds.level2     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level2.png"));
-    res.backgrounds.level3     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level3.png"));
-    res.backgrounds.level4     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level4.png"));
-    res.backgrounds.levelBonus = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/levelBonus.png"));
+    res.backgrounds.controls.screen    = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/controls.png"));
+    res.backgrounds.controls.scale     = 0.85f;
+    
+    res.backgrounds.credits.screen     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/credits.png"));
+    res.backgrounds.credits.scale      = 0.65f;
+    
+    res.backgrounds.minigames.screen   = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/controls.png"));
+    res.backgrounds.minigames.scale    = 0.85f;
+    
+    res.backgrounds.select.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/select.png"));
+    res.backgrounds.select.scale       = 0.65f;
+    
+    res.backgrounds.gameover.screen    = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/gameover.png"));
+    res.backgrounds.gameover.scale     = 0.85f;
+    
+    res.backgrounds.victory.screen     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/victory.png"));
+    res.backgrounds.victory.scale      = 0.85f;
+    
+    res.backgrounds.level1.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level1.png"));
+    res.backgrounds.level1.scale       = 0.85f;
+    
+    res.backgrounds.level2.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level2.png"));
+    res.backgrounds.level2.scale       = 0.85f;
+    
+    res.backgrounds.level3.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level3.png"));
+    res.backgrounds.level3.scale       = 0.85f;
+    
+    res.backgrounds.level4.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level4.png"));
+    res.backgrounds.level4.scale       = 0.85f;
+    
+    res.backgrounds.level_bonus.screen = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/levelBonus.png"));
+    res.backgrounds.level_bonus.scale  = 0.85f;
     
     res.sprites.player     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "player/spritecheet_player.png"));
     res.sprites.animations = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "player/spritecheet_animation.png"));
     res.sprites.assets     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "assets/spritecheet_assets.png"));
+    //res.sprites.screens     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/spritecheet_screens.png"));
 
     res.songs.song_main = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_main.mp3"));
 }
@@ -197,16 +218,19 @@ void UnloadResources() {
 
     UnloadTexture(res.backgrounds.splash.screen);
     UnloadTexture(res.backgrounds.menu.screen);
-
-    UnloadTexture(res.backgrounds.gameover);
-    UnloadTexture(res.backgrounds.victory);
-    UnloadTexture(res.backgrounds.level1);
-    UnloadTexture(res.backgrounds.level2);
-    UnloadTexture(res.backgrounds.level3);
-    UnloadTexture(res.backgrounds.level4);
-    UnloadTexture(res.backgrounds.levelBonus);
+    UnloadTexture(res.backgrounds.gameover.screen);
+    UnloadTexture(res.backgrounds.victory.screen);
+    UnloadTexture(res.backgrounds.level1.screen);
+    UnloadTexture(res.backgrounds.level2.screen);
+    UnloadTexture(res.backgrounds.level3.screen);
+    UnloadTexture(res.backgrounds.level4.screen);
+    UnloadTexture(res.backgrounds.level5.screen);
+    UnloadTexture(res.backgrounds.level_bonus.screen);
+    
     UnloadTexture(res.sprites.player);
+    UnloadTexture(res.sprites.animations);
     UnloadTexture(res.sprites.assets);
+    UnloadTexture(res.sprites.screens);
 
     UnloadFont(res.fonts.pixellari);
 

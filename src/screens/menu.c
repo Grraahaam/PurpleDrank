@@ -205,11 +205,8 @@ void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
     } else {
         
         // Draw MENU background
-        DrawTextureEx(
-            res.backgrounds.menu.screen,
-            (Vector2){0, 0},
-            0.0f, res.backgrounds.menu.scale, WHITE
-        );
+        
+        gp_drawImage(&res.backgrounds.menu, res.backgrounds.menu.scale);
         
         // Draw the menu buttons
         menu_drawButtons(textBounceFx);

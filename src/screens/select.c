@@ -113,10 +113,12 @@ void SelectDraw(Player *player, ScreenFX *screenFx) {
 	ClearBackground(RAYWHITE);
 
     DrawTextureEx(
-        res.backgrounds.select,
+        res.backgrounds.select.screen,
         (Vector2){0, 0},
         0.0f, 0.65f, WHITE
     );
+    
+    //gp_drawImage(&res.backgrounds.select, res.backgrounds.select.scale);
     
     // Draw title
     gp_drawText(

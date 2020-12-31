@@ -11,71 +11,13 @@
 
 Asset lean[3];
 
-bool l2_collisionSpikes(Player *player) {
-
-    return CheckCollisionRecs(
-        // Player
-        (Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Spikes
-        (Rectangle){
-            .x = res.items.spikes.position.x, .y = res.items.spikes.position.y,
-            .width = res.items.spikes.swidth, .height = res.items.spikes.sheight
-        }
-    );
-}
-
-bool l2_collisionPortal(Player *player) {
-
-    return CheckCollisionRecs(
-        // Player
-        (Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Portal
-        (Rectangle){
-            .x = res.items.portal.position.x, .y = res.items.portal.position.y,
-            .width = res.items.portal.swidth, .height = res.items.portal.sheight
-        }
-    );
-}
-
-bool l2_collisionLaunchpad(Player *player) {
-
-    return CheckCollisionRecs(
-        // Player
-        (Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Launchpad
-        (Rectangle){
-            .x = res.items.launchpad.position.x, .y = res.items.launchpad.position.y,
-            .width = res.items.launchpad.swidth, .height = res.items.launchpad.sheight
-        }
-    );
-}
-
 // Check collision between player and all the lean items
 bool l2_collisionLean(Player *player) {
 
     for(int i = 0; i < 3; i++) {
-
-        if(!lean[i].disabled && CheckCollisionRecs(
-            // Player
-            (Rectangle){
-                .x = player->asset.position.x, .y = player->asset.position.y,
-                .width = player->asset.swidth, .height = player->asset.sheight
-            },
-            // Current lean
-            (Rectangle){
-                .x = lean[i].position.x, .y = lean[i].position.y,
-                .width = lean[i].swidth, .height = lean[i].sheight
-            })) {
-
+        
+        if(gp_collisionAssets(&player->asset, &lean[i]) && !lean[i].disabled) {
+         
             lean[i].disabled = true;
             return true;
         }
@@ -88,13 +30,13 @@ bool l2_collisionLean(Player *player) {
 void l2_readCollisions(Player *player) {
 
     // Player fall into the hole
-	if (l2_collisionSpikes(player) || player->dead) {
+    if (gp_collisionAssets(&player->asset, &res.items.spikes) || player->dead) {
 
 		// Check if player is dead
 		if(player->lives <= 0) {
 
 			// Redirect player to the gameover screen
-                        game.gameScreen = GAMEOVER;
+            game.gameScreen = GAMEOVER;
 
 		} else {
             // If the player just fall in the spikes
@@ -132,7 +74,7 @@ void l2_readCollisions(Player *player) {
     }
 	
 	// Player reached the portal
-	if (l2_collisionPortal(player)) {
+	if(gp_collisionAssets(&player->asset, &res.items.portal)) {
         
         // If player have enough lean
         if(player->lean >= 3) {
@@ -161,12 +103,12 @@ void l2_readCollisions(Player *player) {
     }
 	
 	// Player is using the launchpad
-	if(l2_collisionLaunchpad(player)) {
+	if(gp_collisionAssets(&player->asset, &res.items.launchpad)) {
         
         // If launchpad activated
         if(player->can_move && IsKeyPressed(KEY_SPACE)) {
             
-            player->body->velocity.y = -VELOCITY * 5.5;
+            player->body->velocity.y = -VELOCITY * 4.2;
             player->body->velocity.x = +VELOCITY * 2;
             
             res.items.launchpad.frame.animate = true;
@@ -220,9 +162,9 @@ void LevelTwoInit(Player *player) {
     
     gp_resetNotification();
     
-    //TODO: PUT THIS INTO A GLOBAL FUNCTION TO Initialize BASE PROPERTIES FOR PLAYER AT EACH LEVEL
     //TODO: IMPLEMENT THREAD FUNCTION TO TIMEOUT LEVEL LOADING AND DEATH TIMEOUT
-    player->slip = false;
+    
+    gp_resetPlayer(player);
     
     /** CUSTOM ****************************************************************************/
     
@@ -306,10 +248,6 @@ void LevelTwoDraw(Player *player, ScreenFX *screenFx) {
         
         // Set default fade properties
         gp_resetFx(screenFx);
-        
-        // THIS ALLOWS THE PLAYER TO MOVE EVEN AFTER SUCCESS AND RELOAD
-        //TODO: PUT INTO A FUNCTION OR CHECK WHY resetPlayer() in success.c
-        player->can_move = true;
     }
 
     // Read user input and interact
@@ -319,7 +257,9 @@ void LevelTwoDraw(Player *player, ScreenFX *screenFx) {
     BeginDrawing();
 
     // Draw level's background
-    DrawTextureEx(res.backgrounds.level2, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    //DrawTextureEx(res.backgrounds.level2, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    
+    gp_drawImage(&res.backgrounds.level2, res.backgrounds.level2.scale);
     
     /** CUSTOM ****************************************************************************/
     

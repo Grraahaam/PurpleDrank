@@ -14,23 +14,7 @@ Asset portalTo;
 Asset portalFrom;
 Asset gelanoStatus;
 
-// Return true if player fall into the hole
-bool l4_collisionHole(Player *player) {
-    
-	return CheckCollisionRecs (
-        // Player
-    	(Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Hole1
-        (Rectangle){
-            .x = 5, .y = 500,
-            .width = screenWidth, .height = 5
-        }
-	);
-}
-
+// TODO: REPLACE WITH PORTAL ASSET COLLISION
 // Return true if player fall into the hole
 bool l4_collisionHoleBonus(Player *player) {
     
@@ -40,7 +24,7 @@ bool l4_collisionHoleBonus(Player *player) {
             .x = player->asset.position.x, .y = player->asset.position.y,
             .width = player->asset.swidth, .height = player->asset.sheight
         },
-        // Hole1
+        // Bonus Hole
         (Rectangle){
             .x = 390, .y = screenHeight - 30,
             .width = 50, .height = 5
@@ -65,25 +49,14 @@ bool l4_collisionRightWall(Player *player) {
     );
 }
 
-bool l4_collisionSpikes(Player *player) {
-	
-	for(int i = 0; i < 3; i++) {
-        
-        if( CheckCollisionRecs(
-            // Player
-            (Rectangle){
-                .x = player->asset.position.x, .y = player->asset.position.y,
-                .width = player->asset.swidth -10, .height = player->asset.sheight
-            },
-            // Current lean
-            (Rectangle){
-                .x = spikes[i].position.x, .y = spikes[i].position.y,
-                .width = spikes[i].swidth, .height = spikes[i].sheight
-            })) {
+bool l4_collisionSpikes(Player *player, Asset *spikes) {
 
-            return true;
-        }
+    for(int i = 0; i < 2; i++) {
+        
+        if(gp_collisionAssets(&player->asset, spikes)) return true;
     }
+    
+    return false;
 }
 
 bool l4_collisionPortal(Player *player) {
@@ -102,38 +75,21 @@ bool l4_collisionPortal(Player *player) {
     );
 }
 
-
-
 // Function checking player's collisions with other physic bodies or items
-void l4_readCollisions(Player *player) {
+void l4_readCollisions(Player *player, Asset *spikes) {
 
     // Player fall into spikes
-    if (l4_collisionSpikes(player) || l4_collisionHole(player)) {
+    //if (l4_collisionSpikes(player) || l4_collisionHole(player)) {
+    if (l4_collisionSpikes(player, spikes)) {
 
-        // If the player just fall in the spikes
-        if(!player->dead) {
+        // Set the player as dead and static
+        //player->dead = true;
+        
+        // Decrement player's lifes
+        --player->lives;
             
-            // Set the player as dead and static
-            player->dead = true;
-            player->can_move = false;
-            
-            // Decrement player's lifes
-            --player->lives;
-            
-        // Check if player is dead
-        } else {
-            
-            // Set the player alive again and allow movements
-            player->dead = false;
-            player->can_move = true;
-            
-            // Time the re-apparition
-            //sleep(GAME_DEFAULT_TIMEOUT);
-            
-            // Reset player's position
-            player->body->position = game.levelPos.level_4;
-            
-        }
+        // Reset player's position
+        player->body->position = game.levelPos.level_4;
         
 	} else if (l4_collisionRightWall(player) ) {
         
@@ -169,31 +125,22 @@ void l4_readCollisions(Player *player) {
     }
 }
 
-void LevelFourRead(Player *player) {
+void LevelFourRead(Player *player, Asset *spikes) {
     
     gp_readPlayer(player);
-    l4_readCollisions(player);
-    
-    /*if(player->slip) {
-        
-        if(player->asset.direction == RIGHT) {
-            player->body->position.x += 1.0f;
-        }
-        else {
-            player->body->position.x -= 1.0f;
-        }
-    }*/
+    l4_readCollisions(player, spikes);
 
-
-	for(int i = 0; i < 3; i++) {
+    // Place the jetLean under the player
+    for(int i = 0; i < 3; i++) {
         
-		lean[i].position = (Vector2){
+        lean[i].position = (Vector2){
             player->asset.position.x - 15 + i * 10,
             player->asset.position.y + 28
         };
-	}
-	
-	if(IsKeyPressed(KEY_R) && !player->portalPowerUsed) {
+    }
+
+    // Enable the portal
+    if(IsKeyPressed(KEY_R) && !player->portalPowerUsed) {
         
         if(portalTo.disabled) {
 
@@ -214,38 +161,40 @@ void LevelFourRead(Player *player) {
             portalTo.disabled = true;
             portalFrom.disabled = true;
         }
-	}
+    }
 
-	//Activate jumpLean mode
-	if(IsKeyPressed(KEY_V)) {
+    //Enable the jetLean mode
+    if(IsKeyPressed(KEY_V)) {
         
-		if(player->lean >= 3 && !player->jetLean ) {
+        if(player->lean >= 3 && !player->jetLean ) {
 
-			player->jetLean = true;
+            player->jetLean = true;
 
-			for(int i = 0; i < 3; i++) {
+            for(int i = 0; i < 3; i++) {
                 
-				lean[i].disabled = false;
-			}
-		}
-	}
+                lean[i].disabled = false;
+            }
+        }
+    }
 
+    // Usung the jetlean
+    if(IsKeyPressed(KEY_SPACE) && player->jetLean) {
+        
+        player->body->velocity.y = -VELOCITY * 3.6;
+        player->lean -= 3;
+        player->jetLean = false;
+        
+        for(int i = 0; i < 3; i++) {
+            
+            lean[i].disabled = true;
+        }
+    }
+
+    // Enable Gelano (disable slipping mode)
     if(IsKeyPressed(KEY_G)) {
 
         player->slip = player->gelano ? false : true;
     }
-
-	if(IsKeyPressed(KEY_SPACE) && player->jetLean) {
-        
-		player->body->velocity.y = -VELOCITY * 4.5;
-		player->lean -= 3;
-		player->jetLean = false;
-        
-		for(int i = 0; i < 3; i++) {
-            
-			lean[i].disabled = true;
-		}
-	}
 }
     
 void LevelFourInit(Player *player) {
@@ -257,9 +206,9 @@ void LevelFourInit(Player *player) {
     
     gp_resetNotification();
     
-    //TODO: PUT THIS INTO A GLOBAL FUNCTION TO Initialize BASE PROPERTIES FOR PLAYER AT EACH LEVEL
     //TODO: IMPLEMENT THREAD FUNCTION TO TIMEOUT LEVEL LOADING AND DEATH TIMEOUT
-    player->slip = false;
+    
+    gp_resetPlayer(player);
     
     /** CUSTOM ****************************************************************************/
         
@@ -295,7 +244,7 @@ void LevelFourInit(Player *player) {
 
 	res.items.gelano.disabled = true;
     
-	for(int i = 0; i < 3; i++) {
+	for(int i = 0; i < 2; i++) {
         
         spikes[i] = res.items.spikes;
         spikes[i].disabled = false;
@@ -305,10 +254,10 @@ void LevelFourInit(Player *player) {
     }
     
     //spikes[0].position = (Vector2){95, 325};
-    spikes[1].position = (Vector2){600, 145};
-    spikes[2].position = (Vector2){780, 328};
+    spikes[0].position = (Vector2){600, 145};
+    spikes[1].position = (Vector2){780, 328};
 
-	for(int i = 0; i < 3; i++) {
+	for(int i = 0; i < 2; i++) {
         
         lean[i] = res.items.lean;
         lean[i].scale = 0.15;
@@ -348,25 +297,23 @@ void LevelFourDraw(Player *player, ScreenFX *screenFx) {
         
         // Set default fade properties
         gp_resetFx(screenFx);
-        
-        // THIS ALLOWS THE PLAYER TO MOVE EVEN AFTER SUCCESS AND RELOAD
-        //TODO: PUT INTO A FUNCTION OR CHECK WHY resetPlayer() in success.c
-        player->can_move = true;
     }
 
     // Read user input and interact
-    LevelFourRead(player);
+    LevelFourRead(player, spikes);
     
     RunPhysicsStep();
     BeginDrawing();
 
     // Draw level's background
-    DrawTextureEx(res.backgrounds.level4, (Vector2){0,0}, 0.0f, 0.85f, WHITE);
+    //DrawTextureEx(res.backgrounds.level4, (Vector2){0,0}, 0.0f, 0.85f, WHITE);
+    
+    gp_drawImage(&res.backgrounds.level4, res.backgrounds.level4.scale);
     
     /** CUSTOM ****************************************************************************/
     
     // Draw the spikes
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 2; i++) {
         
         gp_drawAsset(&spikes[i], spikes[i].position, spikes[i].scale);
     }

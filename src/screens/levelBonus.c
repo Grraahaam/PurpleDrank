@@ -12,38 +12,6 @@
 
 Asset barrel;
 Asset lean[6];
-Asset gelanoStatus;
-
-// Return true if player hit the barrel
-bool lb_collisionBarrel(Player *player) {
-	return CheckCollisionRecs (
-        // Player
-    	(Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Barrel
-        (Rectangle){
-            .x = barrel.position.x, barrel.position.y,
-            .width = barrel.swidth, .height = barrel.sheight
-        }
-	);
-}
-
-bool lb_collisionGelano(Player *player) {
-	return CheckCollisionRecs (
-        // Player
-    	(Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Hole1
-        (Rectangle){
-            .x = res.items.gelano.position.x, res.items.gelano.position.y,
-            .width = res.items.gelano.swidth, .height = res.items.gelano.sheight
-        }
-	);
-}
 
 bool lb_collisionPortal(Player *player) {
 
@@ -62,11 +30,13 @@ bool lb_collisionPortal(Player *player) {
 }
 
 // Check collision between player and all the lean items
-bool lb_collisionLean(Player *player) {
+/*bool lb_collisionLean(Player *player, Asset* lean) {
     
     for(int i = 0; i < 6; i++) {
         
-        if(!lean[i].disabled && CheckCollisionRecs(
+        return gp_collisionAssets(&player->asset, &lean[i]);
+        
+        /*if(!lean[i].disabled && CheckCollisionRecs(
             // Player
             (Rectangle){
                 .x = player->asset.position.x, .y = player->asset.position.y,
@@ -80,48 +50,58 @@ bool lb_collisionLean(Player *player) {
 
             lean[i].disabled = true;
             return true;
-        }
-    }
+        }*/
+ //   }
     
-    return false;
-}
+//    return false;
+//}
 
 // Function checking player's collisions with other physic bodies or items
 void lb_readCollisions(Player *player) {
 
-    if(lb_collisionBarrel(player)) {
+    if(gp_collisionAssets(&player->asset, &barrel) && !barrel.disabled) {
 
         barrel.disabled = true;
 		
         if(!player->gelano) {
+            
             res.items.gelano.disabled = false;
         }
-    }
-	
-	else if(lb_collisionGelano(player)) {
-		PrintDebug("Getting gelano");
+        
+   } else if(gp_collisionAssets(&player->asset, &res.items.gelano) &&
+       barrel.disabled && !player->gelano) {
+    //} else if(lb_collisionGelano(player) && barrel.disabled && !player->gelano) {
+        
+		PrintDebug("Getting Gelano");
 
 		player->gelano = true;
-		res.items.gelano.disabled = true;
-        gelanoStatus.disabled = false;
-        
-	} else if(lb_collisionLean(player)) {
-
-        ++player->lean;
-
+        res.items.gelano.scale = 0.8;
+        res.items.gelano.swidth = res.items.gelano.width * res.items.gelano.scale;
+        res.items.gelano.sheight = res.items.gelano.height * res.items.gelano.scale;
+        res.items.gelano.position = (Vector2){
+            GetScreenWidth() - res.items.gelano.swidth - 15,
+            res.items.gelano.sheight + 5
+        };
+     
     // Player reached the portal
-    } else if(lb_collisionPortal(player)) {
+	} else if(lb_collisionPortal(player)) {
           
 		// Update its info board, and switch level
 		game.levelPassed = LEVEL_BONUS;
 		game.gameScreen = LEVEL_4;
             
-    // Clean the notification if not needed
+    // Check lean collisions
 	} else {
         
-        game.notification.message = "";
-    }	
-
+        for(int i = 0; i < 6; i++) {
+        
+            if(gp_collisionAssets(&player->asset, &lean[i]) && !lean[i].disabled ) {
+                
+                ++player->lean;
+                lean[i].disabled = true;
+            }
+        }
+    }
 }
 
 void LevelBonusRead(Player *player) {
@@ -139,17 +119,18 @@ void LevelBonusInit(Player *player) {
     
     gp_resetNotification();
     
-    //TODO: PUT THIS INTO A GLOBAL FUNCTION TO Initialize BASE PROPERTIES FOR PLAYER AT EACH LEVEL
     //TODO: IMPLEMENT THREAD FUNCTION TO TIMEOUT LEVEL LOADING AND DEATH TIMEOUT
-    player->slip = false;
+    //player->slip = false;
+    
+    gp_resetPlayer(player);
 
     /** CUSTOM ****************************************************************************/
         
     // Create floor and walls rectangle physics body
     
-	PhysicsBody floor1 = CreatePhysicsBodyRectangle((Vector2){ 205, 390 }, 110, 40, 10);
-    PhysicsBody floor2 = CreatePhysicsBodyRectangle((Vector2){ 430, 360 }, 290, 100, 10);
-    PhysicsBody floor3 = CreatePhysicsBodyRectangle((Vector2){ 650, 390 }, 110, 40, 10);
+	PhysicsBody floor_left = CreatePhysicsBodyRectangle((Vector2){ 205, 390 }, 110, 40, 10);
+    PhysicsBody floor_middle = CreatePhysicsBodyRectangle((Vector2){ 430, 360 }, 290, 100, 10);
+    PhysicsBody floor_right = CreatePhysicsBodyRectangle((Vector2){ 650, 390 }, 110, 40, 10);
 
     PhysicsBody wall_left = CreatePhysicsBodyRectangle(
         (Vector2){ 130, screenHeight/2 },
@@ -160,9 +141,10 @@ void LevelBonusInit(Player *player) {
         10, screenHeight*2, 10
     );
     
-	floor1->enabled = false;
-	floor2->enabled = false;
-	floor3->enabled = false;
+	floor_left->enabled = false;
+	floor_middle->enabled = false;
+	floor_right->enabled = false;
+    
     wall_left->enabled = false;
     wall_right->enabled = false;
 
@@ -181,11 +163,16 @@ void LevelBonusInit(Player *player) {
     lean[3].position = (Vector2){500, 150};
     lean[4].position = (Vector2){500, 200};
     lean[5].position = (Vector2){500, 250};
-   
-    gelanoStatus = res.items.gelano;
-    gelanoStatus.disabled = (player->gelano) ? false : true;
-    gelanoStatus.scale = 0.8;
-    res.items.gelano.position = (Vector2){410, 150};
+    
+    res.items.gelano.scale = (player->gelano) ? 0.8 : 1;
+    res.items.gelano.swidth = res.items.gelano.width * res.items.gelano.scale;
+    res.items.gelano.sheight = res.items.gelano.height * res.items.gelano.scale;
+    res.items.gelano.position = (player->gelano) ?
+        (Vector2){
+            GetScreenWidth() - res.items.gelano.swidth - 5,
+            res.items.gelano.sheight + 5
+        } :
+        (Vector2){415, 150};
     res.items.gelano.disabled = true;
 
 	barrel = res.items.barrel_full;
@@ -217,10 +204,6 @@ void LevelBonusDraw(Player *player, ScreenFX *screenFx) {
         
         // Set default fade properties
         gp_resetFx(screenFx);
-        
-        // THIS ALLOWS THE PLAYER TO MOVE EVEN AFTER SUCCESS AND RELOAD
-        //TODO: PUT INTO A FUNCTION OR CHECK WHY resetPlayer() in success.c
-        player->can_move = true;
     }
 
     // Read user input and interact
@@ -230,7 +213,9 @@ void LevelBonusDraw(Player *player, ScreenFX *screenFx) {
     BeginDrawing();
 
     // Draw level's background
-    DrawTextureEx(res.backgrounds.levelBonus, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    //DrawTextureEx(res.backgrounds.levelBonus, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
+    
+    gp_drawImage(&res.backgrounds.level_bonus, res.backgrounds.level_bonus.scale);
     
     /** CUSTOM ****************************************************************************/
     
@@ -241,9 +226,9 @@ void LevelBonusDraw(Player *player, ScreenFX *screenFx) {
 
 	gp_drawAsset(&res.items.gelano, res.items.gelano.position, res.items.gelano.scale);
 
-    gp_drawAsset(&res.items.gelano, res.items.gelano.position, res.items.gelano.scale);
+    //gp_drawAsset(&res.items.gelano, res.items.gelano.position, res.items.gelano.scale);
 
-    gp_drawAsset(&gelanoStatus,(Vector2){ 750, 45,}, gelanoStatus.scale);
+    //gp_drawAsset(&gelanoStatus,(Vector2){ 750, 45,}, gelanoStatus.scale);
 
     // Draw the leans
     for(int i = 0; i < 6; i++) {
