@@ -47,12 +47,25 @@ void gp_drawBoard(Player *player) {
         RAYWHITE
     );
     
-    gp_drawText(
-        (char*)TextFormat("%s", screenNames[game.gameScreen]), res.fonts.pixellari,
-        (Vector2){0, fontSize + 10},
-        fontSize, CENTER_X, RAYWHITE
-    );
+    // Draw titla bigger size (only for the bonus stage)
+    if(game.gameScreen == LEVEL_BONUS) {
     
+        gp_drawText(
+            (char*)TextFormat("%s", "BONUS STAGE"), res.fonts.pixellari,
+            (Vector2){0, fontSize + 10},
+            fontSize + 45, CENTER_X, RAYWHITE
+        );
+        
+    // Draw title original size
+    } else {
+        
+        gp_drawText(
+            (char*)TextFormat("%s", screenNames[game.gameScreen]), res.fonts.pixellari,
+            (Vector2){0, fontSize + 10},
+            fontSize, CENTER_X, RAYWHITE
+        );
+    }
+        
     // FPS (auto-corner text)
     DrawText(
         TextFormat("%i FPS", GetFPS()),

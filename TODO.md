@@ -1,13 +1,11 @@
 
-# Achivement rate
+# Achievement rate
 
-The 1.0 version is achieved at around **80%**
-
-Informations (*updated 2021-01-01*) :
+The 1.0 version is achieved at around **80%**!
 
 ```
-~ 47 total tasks
-~ 9 remaining tasks
+total tasks: ~ 47
+remaining tasks: ~ 9
 ```
 
 # TODO
@@ -31,7 +29,6 @@ Informations (*updated 2021-01-01*) :
 	- [x] implement player selection screen
 	- [ ] implement controls explanantion screen
 	- [ ] set up automatic image ratio scaling to fit the whole window
-	- [ ] implement a function to draw screens from the screens' spritecheet (started but a bit buggy, so back to single files)
 - [x] **menu**
 	- [x] create a menu navigation box
 		- [x] *play game*
@@ -53,7 +50,7 @@ Informations (*updated 2021-01-01*) :
 - [x] **level 2**
 	- [x] level design
 	- [x] level assets and physic bodies definition
-	- [x] animate the portal and place/size it
+	- [x] animate the portal and place/re-size it a little (more on the right)
 - [ ] **level 3**
 	- [x] level design
 	- [x] level assets and physic bodies definition
@@ -69,11 +66,11 @@ Informations (*updated 2021-01-01*) :
 - [x] **level bonus**
 	- [x] level design
 	- [x] level assets and physic bodies definition
-	- [x] overall asset/bonus collisions process
+	- [x] process asset/bonus collisions
 - [x] **level 5** (boss ultimate battle, goblean)
 	- [x] level design
 	- [x] level assets and physic bodies definition
-	- [x] make different boss attacks
+	- [x] set up different boss attacks
 - [x] **installation**
 	- [x] create a purpledrank.desktop file (/usr/share/applications/purpledrank.desktop)
 	- [x] create icons (or single SVG) and link it (/usr/share/icons/hicolor/scalable/icon.svg)

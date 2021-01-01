@@ -45,12 +45,10 @@ The default game controls are listed below, we wanted to go pro and present a cu
 | `LEFT`<br>`UP`<br>`RIGHT`  | Controls player's movements |
 | `SPACE` | Interact with the launchpad/Use the JetLean |
 | `R` | Player "super" mode (ball, faster) |
-| `Q` | Throw lean (when possible) |
-| `W` | Enable the JetLean (when possible) |
+| `Q` | Throw lean |
+| `W` | Enable the JetLean |
 | `E` | Generate portals (when possible) |
-| `G` | Enable Gelano mode (to stop ice-slipping) |
-| `F1` | Return to the menu |
-| `F3` | Toggle debug mode |
+| `G` | Enable Gelano mode (to stop slipping) |
 
 ## Contribution :pencil2:
 For contribution instructions, please read this [documentation](src/README.md)

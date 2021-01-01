@@ -116,10 +116,10 @@ int main(int argc, char *argv[]) {
     
         // Toggle on/off the DEBUG functions
         ToggleDebugRead();
-        
-        // If returning to the menu
-        if(IsKeyPressed(KEY_F1)) game.gameScreen = MENU;
 
+        // Returning to the menu and re-initializing player object
+        if(IsKeyPressed(KEY_F1)) game.gameScreen = MENU;
+        
         // Show corresponding screen (with corresponding effects)
 		UpdateScreen(&player, &res.fx.fade, &res.fx.crossFade, &res.fx.bounceText);
 	}

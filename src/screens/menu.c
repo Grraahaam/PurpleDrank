@@ -174,6 +174,7 @@ void MenuDraw(Player *player, ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
             crossFadeFx->color = (Color){242, 215, 255, 255};
         }
         
+        // Re-initialize player
         gp_initPlayer(player);
     }
     
