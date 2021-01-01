@@ -22,6 +22,22 @@ OR in game toggling by pressing <F3>
 
 ```
 
+# Structure :heavy_check_mark:
+*The structure tries to follow git/dev best practices*
+
+* `/lib`
+    * Contains external libraries (e.g. raylib)
+* `/src`
+    * Contains our source code and header file (*.c and *.h)
+* `/src/lib`
+    * Contains libraries used for the game and the game's `#define`
+* `/test`
+    * Contains ALL the tests, keep them separate THERE
+* `/scripts`
+    * Automatization scripts, for custom operations (raylib installation, environment setup)
+* `/res`
+    * Contains all the static ressources, as images and sounds
+
 # Keys files/directories
 
 `main.c`

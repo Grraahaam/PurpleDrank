@@ -8,28 +8,15 @@
 
 #include "level4.h"
 
-Asset spikes[3];
-Asset lean[3];
-Asset portalTo;
-Asset portalFrom;
-Asset gelanoStatus;
+Asset spikes[2], lean[3];
+Asset portalTo, portalFrom, portalBonus, gelanoStatus;
 
-// TODO: REPLACE WITH PORTAL ASSET COLLISION
+//TODO: gp_collisionAssets CHECK THE ROTATION AND SWITCH WIDTH/HEIGHT
+
 // Return true if player fall into the hole
-bool l4_collisionHoleBonus(Player *player) {
+bool l4_collisionHoleBonus(Player *player, Asset *portalBonus) {
     
-	return CheckCollisionRecs (
-        // Player
-    	(Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Bonus Hole
-        (Rectangle){
-            .x = 390, .y = screenHeight - 30,
-            .width = 50, .height = 5
-        }
-	);
+    return gp_collisionAssets(&player->asset, portalBonus);
 }
 
 //Return true if player reach the right side of the screen
@@ -53,7 +40,7 @@ bool l4_collisionSpikes(Player *player, Asset *spikes) {
 
     for(int i = 0; i < 2; i++) {
         
-        if(gp_collisionAssets(&player->asset, spikes)) return true;
+        if(gp_collisionAssets(&player->asset, &spikes[i])) return true;
     }
     
     return false;
@@ -76,10 +63,9 @@ bool l4_collisionPortal(Player *player) {
 }
 
 // Function checking player's collisions with other physic bodies or items
-void l4_readCollisions(Player *player, Asset *spikes) {
+void l4_readCollisions(Player *player, Asset *spikes, Asset *portalBonus) {
 
     // Player fall into spikes
-    //if (l4_collisionSpikes(player) || l4_collisionHole(player)) {
     if (l4_collisionSpikes(player, spikes)) {
 
         // Set the player as dead and static
@@ -95,9 +81,9 @@ void l4_readCollisions(Player *player, Asset *spikes) {
         
         // Update its info board, and switch level
 		game.levelPassed = LEVEL_4;
-		game.gameScreen = VICTORY;
+		game.gameScreen = LEVEL_5;
         
-	} else if (l4_collisionHoleBonus(player)) {
+	} else if (l4_collisionHoleBonus(player, portalBonus)) {
         
 		PrintDebug("Teleporting to Bonus level");
 		game.gameScreen = LEVEL_BONUS;
@@ -125,10 +111,10 @@ void l4_readCollisions(Player *player, Asset *spikes) {
     }
 }
 
-void LevelFourRead(Player *player, Asset *spikes) {
+void LevelFourRead(Player *player, Asset *spikes, Asset *portalBonus) {
     
     gp_readPlayer(player);
-    l4_readCollisions(player, spikes);
+    l4_readCollisions(player, spikes, portalBonus);
 
     // Place the jetLean under the player
     for(int i = 0; i < 3; i++) {
@@ -140,7 +126,7 @@ void LevelFourRead(Player *player, Asset *spikes) {
     }
 
     // Enable the portal
-    if(IsKeyPressed(KEY_R) && !player->portalPowerUsed) {
+    if(IsKeyPressed(KEY_E) && !player->portalPowerUsed) {
         
         if(portalTo.disabled) {
 
@@ -164,7 +150,7 @@ void LevelFourRead(Player *player, Asset *spikes) {
     }
 
     //Enable the jetLean mode
-    if(IsKeyPressed(KEY_V)) {
+    if(IsKeyPressed(KEY_W)) {
         
         if(player->lean >= 3 && !player->jetLean ) {
 
@@ -236,11 +222,6 @@ void LevelFourInit(Player *player) {
     platform->enabled = false;
     wall_left->enabled = false;
     wall_right->enabled = false;
-    
-    portalTo = res.items.portal;
-    portalTo.disabled = true;
-    portalFrom = res.items.portal;
-    portalFrom.disabled = true;
 
 	res.items.gelano.disabled = true;
     
@@ -268,12 +249,24 @@ void LevelFourInit(Player *player) {
     gelanoStatus.scale = 0.8;
     gelanoStatus.disabled = player->gelano ? false : true;
 
-    portalFrom.scale = 0.7;
+    portalTo = res.items.portal;
+    portalTo.disabled = true;
     portalTo.scale = 0.7;
-    portalFrom.swidth = portalFrom.width * portalFrom.scale;
-    portalFrom.sheight = portalFrom.height * portalFrom.scale;
     portalTo.swidth = portalTo.width * portalTo.scale;
     portalTo.sheight = portalTo.height * portalTo.scale;
+    
+    portalFrom = res.items.portal;
+    portalFrom.disabled = true;
+    portalFrom.scale = 0.7;
+    portalFrom.swidth = portalFrom.width * portalFrom.scale;
+    portalFrom.sheight = portalFrom.height * portalFrom.scale;
+    
+    portalBonus = res.items.portal;
+    portalBonus.scale = 0.55;
+    portalBonus.swidth = portalBonus.width * portalBonus.scale;
+    portalBonus.sheight = portalBonus.height * portalBonus.scale;
+    portalBonus.rotation = 270;
+    portalBonus.position = (Vector2){365, GetScreenHeight() + 35};
     
     player->slip = true;
 
@@ -300,7 +293,7 @@ void LevelFourDraw(Player *player, ScreenFX *screenFx) {
     }
 
     // Read user input and interact
-    LevelFourRead(player, spikes);
+    LevelFourRead(player, spikes, &portalBonus);
     
     RunPhysicsStep();
     BeginDrawing();
@@ -327,6 +320,8 @@ void LevelFourDraw(Player *player, ScreenFX *screenFx) {
     // Draw the portal
     gp_drawAsset(&portalTo, portalTo.position, portalTo.scale);
     gp_drawAsset(&portalFrom, portalFrom.position, portalFrom.scale);
+    
+    gp_drawAsset(&portalBonus, portalBonus.position, portalBonus.scale);
 
     gp_drawAsset(&gelanoStatus, (Vector2){750, 45}, gelanoStatus.scale);
 

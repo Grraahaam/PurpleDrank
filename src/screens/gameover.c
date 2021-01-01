@@ -11,9 +11,11 @@
 char* subTitles[] = {
     "Do you know how to use a keyboard?",
     "Are you good at something?",
-    "Why do you play this game?",
+    "Why do you even play this game?",
     "Shame on you, stop trying!",
-    "Come on, quit the game!"
+    "Come on, quit the game!",
+    "Maybe Monopoly is more suitable for you?",
+    "I really thought you were gonna make it... looser"
 };
 
 char* subtitle;
@@ -53,7 +55,7 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
         textBounceFx->scale = textBounceFx->scaleBase;
         textBounceFx->color = RAYWHITE;
         
-        subtitle = subTitles[rand() % 4];
+        subtitle = subTitles[rand() % 7];
     }
     
     GameoverRead(player);
@@ -61,12 +63,6 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
-
-    /*DrawTextureEx(
-        res.backgrounds.gameover,
-        (Vector2){0, 0},
-        0.0f, 0.85f, WHITE
-    );*/
     
     gp_drawImage(&res.backgrounds.gameover, res.backgrounds.gameover.scale);
     

@@ -51,7 +51,7 @@ typedef enum GameScreen {
 
 typedef enum {RIGHT, LEFT} Direction;
 typedef enum {CENTER_X, CENTER_Y, CENTER, CUSTOM} TextAlign;
-typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN} Damage;
+typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN, SKATE, HAND} Damage;
 
 typedef struct Notification {
 	char* message;
@@ -228,9 +228,17 @@ typedef struct ResourcesItems {
     Asset dark_sonic;
     Asset damage;
     Asset fireball;
+    Asset goblean_skate;
+    Asset goblean_flip;
+    Asset skate_flip;
+    Asset left_hand;
+    Asset right_hand;
+    Asset fire_columns;
     
     Asset kb_arrows;
     Asset kb_spacebar;
+    
+    Asset lifebar;
     
     Asset player_idle;
     Asset player_anim_flip;
@@ -277,6 +285,11 @@ typedef struct ResourcesFX {
     ScreenFX bounceText;
 } ResourcesFX;
 
+typedef struct ResourcesSounds {
+    Sound explosion;
+    Sound goblean;
+} ResourcesSounds;
+
 typedef struct Resources {
     ResourcesBackgrounds backgrounds;
     ResourcesSprites     sprites;
@@ -284,6 +297,7 @@ typedef struct Resources {
     ResourcesMusics      songs;
     ResourcesFonts       fonts;
     ResourcesFX          fx;
+    ResourcesSounds      sounds;
 } Resources;
 
 // Initialize the two main global game variables (globally available)

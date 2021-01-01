@@ -25,6 +25,7 @@
 #include "screens/level3.h"
 #include "screens/level4.h"
 #include "screens/levelBonus.h"
+#include "screens/level5.h"
 
 // Function declarations
 void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, ScreenFX *bounceText);
@@ -104,7 +105,7 @@ int main(int argc, char *argv[]) {
     
     // Go directly to screens when developing
     if(DEBUG) {
-        game.gameScreen = LEVEL_4;
+        game.gameScreen = LEVEL_5;
         //game.gameScreen = CREDITS;
         //game.gameScreen = LEVEL_BONUS;
         //game.gameScreen = LEVEL_3;
@@ -177,7 +178,10 @@ void LoadResources() {
     res.backgrounds.level4.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level4.png"));
     res.backgrounds.level4.scale       = 0.85f;
     
-    res.backgrounds.level_bonus.screen = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/levelBonus.png"));
+    res.backgrounds.level5.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level5.png"));
+    res.backgrounds.level5.scale       = 0.85f;
+    
+    res.backgrounds.level_bonus.screen = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level_bonus.png"));
     res.backgrounds.level_bonus.scale  = 0.85f;
     
     res.sprites.player     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "player/spritecheet_player.png"));
@@ -186,6 +190,11 @@ void LoadResources() {
     //res.sprites.screens     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/spritecheet_screens.png"));
 
     res.songs.song_main = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_main.mp3"));
+    
+    res.sounds.explosion = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/explosion.mp3"));
+    res.sounds.goblean = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/goblean.mp3"));
+    
+    SetSoundVolume(res.sounds.explosion, 5.0f);
 }
 
 // Function loading the given font path into the resource struct
@@ -235,6 +244,9 @@ void UnloadResources() {
     UnloadFont(res.fonts.pixellari);
 
     StopMusicStream(res.songs.song_main);
+    
+    UnloadSound(res.sounds.explosion);
+    UnloadSound(res.sounds.goblean);
 }
 
 // Function managing the screen
@@ -284,6 +296,10 @@ void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, Scree
 
         case LEVEL_BONUS: {
             LevelBonusDraw(player, fadeFx);
+        } break;
+        
+        case LEVEL_5: {
+            LevelFiveDraw(player, fadeFx);
         } break;
 
         case VICTORY: {

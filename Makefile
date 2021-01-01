@@ -5,11 +5,13 @@ all:
 
 # Adding binary file and desktop related icons/launcher
 install:
-	cp PurpleDrank /usr/games/purpledrank
+	cp -f PurpleDrank /usr/games/purpledrank
 	
-	cp -r res/ /usr/share/PurpleDrank
+	mkdir -p /usr/share/PurpleDrank
 	
-	cp conf/purpledrank.desktop ~/.local/share/applications
+	cp -rf res/* /usr/share/PurpleDrank
+	
+	cp -f conf/purpledrank.desktop ~/.local/share/applications
 	
 	update-desktop-database ~/.local/share/applications
 

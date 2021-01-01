@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "gameplay.h"
 
+
 // Drawing player's info board
 void gp_drawBoard(Player *player) {
     
@@ -95,11 +96,12 @@ void gp_drawPlayerMeta(Player *player) {
     DrawText(TextFormat("Y: %.2f", player->asset.position.y), 10, GetScreenHeight() - 25, 15, RED);
     DrawText(TextFormat("X: %.2f", player->asset.position.x), 10, GetScreenHeight() - 45, 15, WHITE);
     
-    // Draw player's size, speed and direction
+    // Draw player's size, speed, direction and super mode
     DrawText(TextFormat("Frame speed: %i", player->asset.frame.speed), 10, GetScreenHeight() - 65, 15, RAYWHITE);
     DrawText(TextFormat("Speed: %.2f", player->asset.speed), 10, GetScreenHeight() - 85, 15, RAYWHITE);
     DrawText(TextFormat("Scale: %.2f", player->asset.scale), 10, GetScreenHeight() - 105, 15, RAYWHITE);
     DrawText(TextFormat("Direction: %s", player->asset.direction == RIGHT ? "RIGHT" : "LEFT"), 10, GetScreenHeight() - 125, 15, RAYWHITE);
+    DrawText(TextFormat("Super: %s", player->super ? "TRUE" : "FALSE"), 10, GetScreenHeight() - 145, 15, RAYWHITE);
 }
 
 // Function drawing text with additional settings (font and auto- center)
@@ -192,34 +194,67 @@ bool gp_isOutScreen(Asset *ast) {
     //for(int i = 0; i < n; i++) {
         
         // Check if position is outside the initial screen dimensions + their own width/height + a X,Y margin
-        if(ast->position.x < 0 - ast->swidth + 50 ||
-            ast->position.x > GetScreenWidth() + ast->swidth + 50 ||
-            ast->position.y < 0 - ast->sheight - 150 ||
-            ast->position.y > GetScreenHeight() + ast->sheight
+    
+        // Define current dimensions
+        int swidth = ast->width * ast->scale;
+        int sheight = ast->height * ast->scale;
+    
+        if(ast->position.x < 0 - swidth + 50 ||
+            ast->position.x > GetScreenWidth() + swidth + 50 ||
+            ast->position.y < 0 - sheight - 150 ||
+            ast->position.y > GetScreenHeight() + sheight
         
         //) return ast->type;
         ) return true;
     //}
     
     //return NONE;
-    return false;
+    else return false;
 }
 
-// Return the collision status between two assets
+// Return the collision status between two assets (auto-adapt according to asset's rotation)
 bool gp_collisionAssets(Asset *ast1, Asset *ast2) {
     
+    int ast1_width, ast1_height, ast2_width, ast2_height;
+    
+    // Switch width and height according to the assets' rotation
+    if((ast1->rotation >= 45 && ast1->rotation < 134) ||
+        (ast1->rotation >= 225 && ast1->rotation < 315)) {
+     
+        ast1_width = ast1->height;
+        ast1_height = ast1->width;
+        
+    } else {
+        
+        ast1_width = ast1->width;
+        ast1_height = ast1->height;
+    }
+    
+    if((ast2->rotation >= 45 && ast2->rotation < 134) ||
+        (ast2->rotation >= 225 && ast2->rotation < 315)) {
+     
+        ast2_width = ast2->height;
+        ast2_height = ast2->width;
+        
+    } else {
+        
+        ast2_width = ast2->width;
+        ast2_height = ast2->height;
+    }
+    
+    // Check the collision
     return CheckCollisionRecs(
         // Asset 1
         (Rectangle){
-            .x = ast1->position.x - ast1->swidth / 2,
-            .y = ast1->position.y - ast1->sheight / 2,
-            .width = ast1->swidth, .height = ast1->sheight
+            .x = ast1->position.x - (ast1->scale * ast1_width / 2),
+            .y = ast1->position.y - (ast1->scale * ast1_height / 2),
+            .width = ast1->scale * ast1_width, .height = ast1->scale * ast1_height
         },
         // Asset 2
         (Rectangle){
-            .x = ast2->position.x - ast2->swidth / 2,
-            .y = ast2->position.y - ast2->sheight / 2,
-            .width = ast2->swidth, .height = ast2->sheight
+            .x = ast2->position.x - (ast2->scale * ast2_width / 2),
+            .y = ast2->position.y - (ast2->scale * ast2->sheight / 2),
+            .width = ast2->scale * ast2_width, .height = ast2->scale * ast2_height
         }
     );
 }
@@ -277,6 +312,8 @@ void gp_resetPlayer(Player *player) {
     player->dead            = false;
     player->can_move        = true;
     player->slip            = false;
+    
+    SetPhysicsGravity(0.0f, 6.8f);
 }
 
 // Function initializing an asset body
@@ -505,6 +542,7 @@ void gp_animateAsset(Asset *asset) {
 
 // Read player movement inputs
 void gp_readPlayer(Player *player) {
+
     
     // Check events when player can move
     if(player->can_move) {
@@ -525,7 +563,7 @@ void gp_readPlayer(Player *player) {
                 
                 player->asset.direction = RIGHT;
                 
-                if(IsKeyDown(KEY_DOWN)) {
+                if(IsKeyDown(KEY_R)) {
             
                     player->asset.frame.pack = SUPER;
                     player->body->velocity.x = player->slip ?
@@ -540,13 +578,14 @@ void gp_readPlayer(Player *player) {
                         // Adapt if player's is slipping
                         player->asset.speed * 2 : player->asset.speed;
                     player->asset.frame.pack = FORWARD;
+                    player->super = false;
                 }
             
             } else if (IsKeyDown(KEY_LEFT)) {
                 
                 player->asset.direction = LEFT;
                 
-                if (IsKeyDown(KEY_DOWN)) {
+                if (IsKeyDown(KEY_R)) {
                 
                     player->asset.frame.pack = SUPER;
                     player->body->velocity.x = player->slip ?
@@ -561,6 +600,7 @@ void gp_readPlayer(Player *player) {
                         // Adapt if player's is slipping
                         -player->asset.speed * 2 : -player->asset.speed;
                     player->asset.frame.pack = BACKWARD;
+                    player->super = false;
                 }
             }
         
@@ -1023,7 +1063,7 @@ void gp_initResources(Resources *res) {
         (Vector2){0,572}, // sprite frame position
         10, 1, // amount of animated frames, number of frame lines
         111, 107, // width, height
-        1, 0, // scale, rotation
+        0.5, 0, // scale, rotation
         true, false, (Vector2){0,0}, 10 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1076,7 +1116,7 @@ void gp_initResources(Resources *res) {
         &res->items.barrel_full,
         SP_ASSETS,
         (Vector2){503,679}, // sprite frame position
-        1, 1, // amount of animated frames, number of frame lines
+        1, 0, // amount of animated frames, number of frame lines
         35, 32, // width, height
         1, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
@@ -1087,7 +1127,7 @@ void gp_initResources(Resources *res) {
         &res->items.barrel_broken,
         SP_ASSETS,
         (Vector2){539,679}, // sprite frame position
-        1, 1, // amount of animated frames, number of frame lines
+        1, 0, // amount of animated frames, number of frame lines
         35, 32, // width, height
         1, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
@@ -1146,6 +1186,83 @@ void gp_initResources(Resources *res) {
         40, 40, // width, height
         1.5, 0, // scale, rotation
         true, false, (Vector2){0,0}, 4 // animate, loop animation, loop position options, frame speed
+    );
+    
+        // Goblean + skate
+    gp_initResourcesAssets(
+        &res->items.goblean_skate,
+        SP_ASSETS,
+        (Vector2){1324,284}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        262, 289, // width, height
+        0.6, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Goblean flip
+    gp_initResourcesAssets(
+        &res->items.goblean_flip,
+        SP_ASSETS,
+        (Vector2){1583,282}, // sprite frame position
+        9, 1, // amount of animated frames, number of frame lines
+        330, 293, // width, height
+        0.5, 0, // scale, rotation
+        true, true, (Vector2){0,0}, 8 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Skate flip
+    gp_initResourcesAssets(
+        &res->items.skate_flip,
+        SP_ASSETS,
+        (Vector2){1584,0}, // sprite frame position
+        9, 1, // amount of animated frames, number of frame lines
+        195, 158, // width, height
+        0.5, 0, // scale, rotation
+        true, true, (Vector2){0,0}, 9 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Left hand
+    gp_initResourcesAssets(
+        &res->items.left_hand,
+        SP_ASSETS,
+        (Vector2){1362,616}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        85, 59, // width, height
+        0.4, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Right hand
+    gp_initResourcesAssets(
+        &res->items.right_hand,
+        SP_ASSETS,
+        (Vector2){1470,616}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        85, 59, // width, height
+        0.4, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Lifebar
+    gp_initResourcesAssets(
+        &res->items.lifebar,
+        SP_ASSETS,
+        (Vector2){14,784}, // sprite frame position
+        6, 1, // amount of animated frames, number of frame lines
+        186, 44, // width, height
+        1, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 5 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Fire columns
+    gp_initResourcesAssets(
+        &res->items.fire_columns,
+        SP_ASSETS,
+        (Vector2){1160,720}, // sprite frame position
+        11, 1, // amount of animated frames, number of frame lines
+        60, 106, // width, height
+        2.5, 0, // scale, rotation
+        false, true, (Vector2){0,0}, 8 // animate, loop animation, loop position options, frame speed
     );
     
     /********* SCREENS ********/
@@ -1336,6 +1453,7 @@ void gp_initPositions(LevelPosition *levelPos) {
     levelPos->level_3 = (Vector2){45, 0};
     levelPos->level_4 = (Vector2){20, screenHeight / 2};
     levelPos->level_bonus = (Vector2){205, 390};
+    levelPos->level_5 = (Vector2){50, screenHeight / 2};
 }
 
 // Function initializing screen/text effect objects
