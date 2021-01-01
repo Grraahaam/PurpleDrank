@@ -93,7 +93,7 @@ void LevelBonusInit(Player *player) {
     // Create floor and walls rectangle physics body
     
 	PhysicsBody floor_left = CreatePhysicsBodyRectangle((Vector2){ 205, 390 }, 110, 40, 10);
-    PhysicsBody floor_middle = CreatePhysicsBodyRectangle((Vector2){ 430, 360 }, 290, 100, 10);
+    PhysicsBody floor_middle = CreatePhysicsBodyRectangle((Vector2){ 420, 360 }, 270, 100, 10);
     PhysicsBody floor_right = CreatePhysicsBodyRectangle((Vector2){ 650, 390 }, 110, 40, 10);
 
     PhysicsBody wall_left = CreatePhysicsBodyRectangle(

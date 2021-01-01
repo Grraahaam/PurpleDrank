@@ -135,7 +135,7 @@ void MenuRead() {
 }
 
 // Function drawing the menu screen
-void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
+void MenuDraw(Player *player, ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
     
     // Initialize the level only if not loaded
     if(game.screenLoaded != MENU) {
@@ -173,6 +173,8 @@ void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
             
             crossFadeFx->color = (Color){242, 215, 255, 255};
         }
+        
+        gp_initPlayer(player);
     }
     
     // Only read user input when the animation is done

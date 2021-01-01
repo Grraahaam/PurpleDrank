@@ -33,7 +33,7 @@ void LoadResources(void);
 void LoadFonts();
 void UnloadResources(void);
 void PrintDebug(char *str);
-void TogleDebugRead();
+void ToggleDebugRead();
 char *getcwd(char *buf, size_t size);
 int GetDir();
 
@@ -105,9 +105,9 @@ int main(int argc, char *argv[]) {
     
     // Go directly to screens when developing
     if(DEBUG) {
-        game.gameScreen = LEVEL_5;
+        //game.gameScreen = LEVEL_5;
         //game.gameScreen = CREDITS;
-        //game.gameScreen = LEVEL_BONUS;
+        game.gameScreen = LEVEL_BONUS;
         //game.gameScreen = LEVEL_3;
     }
 
@@ -115,7 +115,10 @@ int main(int argc, char *argv[]) {
 	while (!WindowShouldClose() && !game.quit) {
     
         // Toggle on/off the DEBUG functions
-        TogleDebugRead();
+        ToggleDebugRead();
+        
+        // If returning to the menu
+        if(IsKeyPressed(KEY_F1)) game.gameScreen = MENU;
 
         // Show corresponding screen (with corresponding effects)
 		UpdateScreen(&player, &res.fx.fade, &res.fx.crossFade, &res.fx.bounceText);
@@ -259,7 +262,7 @@ void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, Scree
     switch(game.gameScreen) {
 
         case MENU: {
-            MenuDraw(crossFadeFx, bounceText);
+            MenuDraw(player, crossFadeFx, bounceText);
         } break;
         
         case CONTROLS: {
@@ -312,7 +315,7 @@ void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, Scree
 
         // Default action, if screen not handled
         default : {
-            MenuDraw(crossFadeFx, bounceText);
+            MenuDraw(player, crossFadeFx, bounceText);
         } break;
     }  
 }
@@ -324,7 +327,7 @@ void PrintDebug(char *str) {
 }
 
 // Function en/disabling debug mode
-void TogleDebugRead() {
+void ToggleDebugRead() {
     
     // Just switching state
     if(IsKeyPressed(KEY_F3)) DEBUG = DEBUG ? false : true;
