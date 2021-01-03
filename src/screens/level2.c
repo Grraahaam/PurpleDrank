@@ -78,9 +78,6 @@ void l2_readCollisions(Player *player) {
         if(player->lean >= 3) {
             
             PrintDebug("Teleporting to level 2");
-            
-            //game.notification.message = "Teleporting through the Gob-Portal!";
-            //game.notification.color = GREEN;
                 
             // Block player's movements
             player->can_move = false;
@@ -97,7 +94,7 @@ void l2_readCollisions(Player *player) {
         // If launchpad activated
         if(player->can_move && IsKeyPressed(KEY_SPACE)) {
             
-            player->body->velocity.y = -1 * gp_perY(.4);
+            player->body->velocity.y = -1 * gp_perY(.42);
             player->body->velocity.x = gp_perX(.15);
             
             res.items.launchpad.frame.animate = true;
@@ -182,7 +179,7 @@ void LevelTwoInit(Player *player) {
     gp_createPhyRec((Vector2){
         .x = 0,
         .y = gp_perY(58)
-    }, gp_perX(10), gp_perY(42));
+    }, gp_perX(9), gp_perY(42));
     
     // Floor after spikes
     gp_createPhyRec((Vector2){
@@ -261,6 +258,8 @@ void LevelTwoDraw(Player *player, ScreenFX *screenFx) {
     
     RunPhysicsStep();
     BeginDrawing();
+    
+    ClearBackground(BLACK);
 
     // Draw level's background
     gp_drawImage(&res.backgrounds.level2, res.backgrounds.level2.scale);

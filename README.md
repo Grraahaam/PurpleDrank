@@ -59,6 +59,8 @@ To see the overall features we worked on and those we're implementing, check the
 
 To see the list of the contributors and their assignements, read the [PROJECT-OUTLINE.md](PROJECT-OUTLINE.md)
 
+The game tries to follow [16:9 viewport ratio](https://en.wikipedia.org/wiki/16:9). Currently using **1024x576** ratio, the in-game's dimensions are relative to the any ratio, we choosed a static one instead of fullscreen mode for better support (our fullscreen auto-scale methods doesn't work with all of our beta-testers)
+
 ## Credits
 **@** The Purple Team 
 

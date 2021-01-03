@@ -106,6 +106,8 @@ void LevelOneDraw(Player *player, ScreenFX *screenFx) {
 
     RunPhysicsStep();
     BeginDrawing();
+    
+    ClearBackground(BLACK);
 
     // Draw level's background
     gp_drawImage(&res.backgrounds.level1, res.backgrounds.level1.scale);

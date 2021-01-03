@@ -57,7 +57,7 @@ void CreditsDraw(ScreenFX *screenFx) {
     
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
     
     //Draw background
     gp_drawImage(&res.backgrounds.credits, res.backgrounds.credits.scale);

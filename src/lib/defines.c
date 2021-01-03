@@ -15,8 +15,8 @@
     
     #define SPRITE_FRAME_SPEED   9
 
-    #define SCREEN_WIDTH  800
-    #define SCREEN_HEIGHT 450
+    #define SCREEN_WIDTH  1024
+    #define SCREEN_HEIGHT 576
 
     #define VELOCITY 0.5f
 

@@ -480,6 +480,8 @@ void LevelFiveDraw(Player *player, ScreenFX *screenFx) {
     
     RunPhysicsStep();
     BeginDrawing();
+    
+    ClearBackground(BLACK);
 
     // Draw level's background
     gp_drawImage(&res.backgrounds.level5, res.backgrounds.level5.scale);

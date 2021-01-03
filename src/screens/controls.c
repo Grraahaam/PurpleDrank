@@ -39,7 +39,7 @@ void ControlsDraw(ScreenFX *screenFx) {
     
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
 
     // Draw background
     gp_drawImage(&res.backgrounds.controls, res.backgrounds.controls.scale);

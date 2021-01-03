@@ -62,7 +62,7 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
     
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
     
     // Draw background
     gp_drawImage(&res.backgrounds.gameover, res.backgrounds.gameover.scale);

@@ -192,7 +192,7 @@ void MenuDraw(Player *player, ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
     
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
     
     // If game just launched
     if(game.levelPassed == NULL) {
