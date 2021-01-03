@@ -596,10 +596,10 @@ void gp_readPlayer(Player *player) {
         if(player->slip) {
             
             if(IsKeyUp(KEY_LEFT) && player->body->isGrounded)
-                player->body->position.x += gp_perX(.5);
+                player->body->position.x += gp_perX(.7);
             
             if(IsKeyUp(KEY_RIGHT) && player->body->isGrounded)
-                player->body->position.x -= gp_perX(.5);
+                player->body->position.x -= gp_perX(.7);
         }
         
         // Moving on Y axis, when player jump, and its physic body is grounded (placed at the top for improved input detection)
@@ -607,9 +607,9 @@ void gp_readPlayer(Player *player) {
             
             // Invert Y axis velocity to simulate a jump
             if(game.gameScreen == LEVEL_BONUS)
-                player->body->velocity.y = -1 * gp_perY(.21);
+                player->body->velocity.y = -1 * gp_perY(.24);
             else
-                player->body->velocity.y = -1 * gp_perY(.18);
+                player->body->velocity.y = -1 * gp_perY(.2);
         }
         
         // If moving on X axis
@@ -827,7 +827,7 @@ void gp_drawImage(ResImage *img, float scale) {
         
         // Auto fit width
         scale = (float)GetScreenWidth() / (float)img->screen.width;
-            
+
         // Auto fit height
         scale = GetScreenHeight() - img->screen.height * scale >= 0 ?
             (float)GetScreenHeight() / (float)img->screen.height :

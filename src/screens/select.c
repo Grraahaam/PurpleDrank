@@ -111,9 +111,9 @@ void SelectDraw(Player *player, ScreenFX *screenFx) {
     
     SelectRead(player);
     
-	BeginDrawing();
+    BeginDrawing();
 
-	ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
 
     // Draw background
     gp_drawImage(&res.backgrounds.select, res.backgrounds.select.scale);

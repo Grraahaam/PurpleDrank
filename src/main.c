@@ -66,12 +66,12 @@ int main(int argc, char *argv[]) {
 
     // Init the window and hide the cursor within it
     PrintDebug("Launching window!");
-    //InitWindow(screenWidth, screenHeight, GAME_NAME);
-    InitWindow(GetScreenWidth(), GetScreenHeight(), GAME_NAME);
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_NAME);
+    //InitWindow(GetScreenWidth(), GetScreenHeight(), GAME_NAME);
     HideCursor();
     
     // Set the game window fullscreen by default
-    ToggleFullscreen();
+    //ToggleFullscreen();
 
     PrintDebug("Init audio device!");
     InitAudioDevice();
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
         //game.gameScreen = LEVEL_3;
         //game.gameScreen = LEVEL_4;
         //game.gameScreen = LEVEL_5;
-        game.gameScreen = LEVEL_BONUS;
+        //game.gameScreen = LEVEL_BONUS;
     }
 
     // Main game loop (Detect window close button or ESC key)

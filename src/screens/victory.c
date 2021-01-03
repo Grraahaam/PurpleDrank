@@ -48,7 +48,7 @@ void VictoryDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
     
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLACK);
     
     // Draw background
     gp_drawImage(&res.backgrounds.victory, res.backgrounds.victory.scale);

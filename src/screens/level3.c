@@ -365,7 +365,7 @@ void LevelThreeInit(Player *player) {
     
     // Initialize Dark solin asset
     dark_solin.asset = res.items.dark_sonic;
-    dark_solin.asset.speed = gp_perX(.1);
+    dark_solin.asset.speed = gp_perX(.2);
     dark_solin.asset.direction = LEFT;
     dark_solin.lives = 3;
     
@@ -383,7 +383,7 @@ void LevelThreeInit(Player *player) {
     
     damage = res.items.damage;
     damage.disabled = true;
-    damage.scale = gp_perX(8) / res.items.damage.width;
+    damage.scale = gp_perX(12) / res.items.damage.width;
     
     // Left wall
     gp_createPhyRec((Vector2){
@@ -440,6 +440,8 @@ void LevelThreeDraw(Player *player, ScreenFX *screenFx) {
     
     RunPhysicsStep();
     BeginDrawing();
+    
+    ClearBackground(BLACK);
 
     // Draw level's background
     gp_drawImage(&res.backgrounds.level3, res.backgrounds.level3.scale);
