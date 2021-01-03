@@ -7,7 +7,6 @@ The main character is a remake of Sonic, named Solin, refering to the *Lean* whi
 ![PurpleDrank Splashscreen](./res/backgrounds/splash.png "PurpleDrank")
 
 ## Story :fr:
->>>>>>> dev/alpha
 *Solin et son Ekip*
 
 Le monde de Lealle est attaqué par un virus mortel, la fièvre Ebolean, causée par le Gob-Lean lorsqu'il se fit quitter par sa copean. Cette rage se fit ressenti lors d'orages violets, les purple rain, rendant le monde accroc à cette substance qu'est la lean.
@@ -37,6 +36,7 @@ PurpleDrank's adventure mode is made of **5 levels** and **1 bonus stage**. A bo
 PurpleDrank also includes minigames to train your ability for the adventure mode.
 
 ## Controls
+**QWERTY layout**
 The default game controls are listed below, we wanted to go pro and present a customizable controls screen, but you know, kids, family...
 
 | Keys | Description |
