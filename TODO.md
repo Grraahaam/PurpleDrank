@@ -13,9 +13,9 @@ remaining tasks: ~ 9
 - [ ] **keyboard binding**
     - [x] bind a key to return to the menu
     - [ ] create a custom key binding menu
-- [ ] **positioning & dimensioning**
-    - [ ] create a function returning the pixel value of each percent of width/height (positioning purposes)
-    - [ ] convert fixed positions to responsive ones where possible
+- [x] **positioning & dimensioning**
+    - [x] create a function returning the pixel value of each percent of width/height (positioning purposes)
+    - [x] convert fixed positions to responsive ones where possible
 - [ ] **sounds**
     - [ ] implement game music
     - [x] implement sound effect on actions (jump, super, portal, hit, damaged)
@@ -28,7 +28,8 @@ remaining tasks: ~ 9
 	- [x] harmonize screens with the game artistic direction?
 	- [x] implement player selection screen
 	- [ ] implement controls explanantion screen
-	- [ ] set up automatic image ratio scaling to fit the whole window
+	- [x] set up automatic image ratio scaling to fit the whole window
+	- [ ] handle fullscreen toggling
 - [x] **menu**
 	- [x] create a menu navigation box
 		- [x] *play game*

@@ -51,7 +51,7 @@ typedef enum GameScreen {
 
 typedef enum {RIGHT, LEFT} Direction;
 typedef enum {CENTER_X, CENTER_Y, CENTER, CUSTOM} TextAlign;
-typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN, SKATE, HAND} Damage;
+typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN, SKATE, HAND, FIRE} Damage;
 
 typedef struct Notification {
 	char* message;
@@ -168,6 +168,7 @@ typedef struct ResImage {
     Texture2D screen;
     Color color;
     float scale;
+    bool custom_scale;
 } ResImage;
 
 // Main structure with nested struct, to access game properties anywhere, at anytime later

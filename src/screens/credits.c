@@ -31,7 +31,7 @@ void CreditsRead() {
 
     if (IsKeyPressed(KEY_ENTER)) {
         
-        PrintDebug("Pressed ENTER, returning to the menu!");
+        PrintDebug("Credits => Menu");
         
         game.levelPassed = MENU;
         game.gameScreen = MENU;
@@ -55,14 +55,15 @@ void CreditsDraw(ScreenFX *screenFx) {
     
     CreditsRead();
     
-	BeginDrawing();
+    BeginDrawing();
 
-	ClearBackground(RAYWHITE);
+    ClearBackground(RAYWHITE);
     
+    //Draw background
     gp_drawImage(&res.backgrounds.credits, res.backgrounds.credits.scale);
     
-    int top = 50, margin_mates = 15, margin_desc = 5;
-    int size_name = 25, size_desc = 16;
+    int top = gp_perX(7), margin_mates = gp_perX(2), margin_desc = gp_perX(1);
+    int size_name = gp_perX(3), size_desc = gp_perX(1.5);
     
     for(int i = 0; i < 6; i++) {
         
@@ -83,87 +84,8 @@ void CreditsDraw(ScreenFX *screenFx) {
         );
     }
     
-    /*
-    // Hugo ------------------------------------------------------
-    gp_drawText(
-        "@Hugo Mellouet", res.fonts.pixellari,
-        (Vector2){0, top},
-        size_name, CENTER_X, BLACK
-    );
-    
-    gp_drawText(
-        "Level designer and bool expert", res.fonts.pixellari,
-        (Vector2){0, top + size_name + margin_desc},
-        15, CENTER_X, DARKGRAY
-    );
-    
-    // Liam ------------------------------------------------------
-    gp_drawText(
-        "@Liam Le Strat", res.fonts.pixellari,
-        (Vector2){0, 120},
-        size_name, CENTER_X, BLACK
-    );
-    
-    gp_drawText(
-        "Level & screen designer", res.fonts.pixellari,
-        (Vector2){0, 155},
-        15, CENTER_X, DARKGRAY
-    );
-    
-    // Bilal ------------------------------------------------------
-    gp_drawText(
-        "@Bilal Belfodil", res.fonts.pixellari,
-        (Vector2){0, 180},
-        size_name, CENTER_X, BLACK
-    );
-    
-    gp_drawText(
-        "Minigames and sound designer", res.fonts.pixellari,
-        (Vector2){0, 215},
-        15, CENTER_X, DARKGRAY
-    );
-    
-    // Najib ------------------------------------------------------
-    gp_drawText(
-        "@Najib Belfodil", res.fonts.pixellari,
-        (Vector2){0, 240},
-        size_name, CENTER_X, BLACK
-    );
-    
-    gp_drawText(
-        "Minigames designer", res.fonts.pixellari,
-        (Vector2){0, 275},
-        15, CENTER_X, DARKGRAY
-    );
-    
-    // Milan ------------------------------------------------------
-    gp_drawText(
-        "@Milan Kot", res.fonts.pixellari,
-        (Vector2){0, 300},
-        size_name, CENTER_X, BLACK
-    );
-    
-    gp_drawText(
-        "Refactor and code conflict resolver", res.fonts.pixellari,
-        (Vector2){0, 335},
-        15, CENTER_X, DARKGRAY
-    );
-    
-    // Graham ------------------------------------------------------
-    gp_drawText(
-        "@Graham Laignel", res.fonts.pixellari,
-        (Vector2){0, 360},
-        size_name, CENTER_X, BLACK
-    );
-    
-    gp_drawText(
-        "Game engine and structure", res.fonts.pixellari,
-        (Vector2){0, 395},
-        15, CENTER_X, DARKGRAY
-    );*/
-    
     // Drawing the fade in effect
     gp_drawFade(screenFx);
 
-	EndDrawing();
+    EndDrawing();
 }

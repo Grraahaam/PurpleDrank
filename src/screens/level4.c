@@ -11,27 +11,20 @@
 Asset spikes[2], lean[3];
 Asset portalTo, portalFrom, portalBonus, gelanoStatus;
 
-//TODO: gp_collisionAssets CHECK THE ROTATION AND SWITCH WIDTH/HEIGHT
-
-// Return true if player fall into the hole
-bool l4_collisionHoleBonus(Player *player, Asset *portalBonus) {
-    
-    return gp_collisionAssets(&player->asset, portalBonus);
-}
-
 //Return true if player reach the right side of the screen
 bool l4_collisionRightWall(Player *player) {
     
 	return CheckCollisionRecs(
         // Player
         (Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
+            .x = player->asset.position.x - player->asset.scale * player->asset.width / 2,
+            .y = player->asset.position.y - player->asset.scale * player->asset.height / 2,
+            .width = player->asset.scale * player->asset.width, .height = player->asset.scale * player->asset.height
         },
         // Right wall
         (Rectangle){
-            .x = screenWidth, .y = 0,
-            .width = 5, .height = screenHeight
+            .x = GetScreenWidth() + player->asset.scale * player->asset.width / 2, .y = 0,
+            .width = gp_perX(2), .height = GetScreenHeight()
         }
     );
 }
@@ -44,22 +37,6 @@ bool l4_collisionSpikes(Player *player, Asset *spikes) {
     }
     
     return false;
-}
-
-bool l4_collisionPortal(Player *player) {
-
-    return CheckCollisionRecs(
-        // Player
-        (Rectangle){
-            .x = player->asset.position.x, .y = player->asset.position.y,
-            .width = player->asset.swidth, .height = player->asset.sheight
-        },
-        // Portal
-        (Rectangle){
-            .x = portalFrom.position.x + 10, .y = portalFrom.position.y,
-            .width = portalFrom.swidth, .height = portalFrom.sheight
-        }
-    );
 }
 
 // Function checking player's collisions with other physic bodies or items
@@ -77,38 +54,31 @@ void l4_readCollisions(Player *player, Asset *spikes, Asset *portalBonus) {
         // Reset player's position
         player->body->position = game.levelPos.level_4;
         
-	} else if (l4_collisionRightWall(player) ) {
+    } else if(l4_collisionRightWall(player)) {
         
         // Update its info board, and switch level
-		game.levelPassed = LEVEL_4;
-		game.gameScreen = LEVEL_5;
+        game.levelPassed = LEVEL_4;
+        game.gameScreen = LEVEL_5;
         
-	} else if (l4_collisionHoleBonus(player, portalBonus)) {
+    } else if(gp_collisionAssets(&player->asset, portalBonus)) {
         
-		PrintDebug("Teleporting to Bonus level");
-		game.gameScreen = LEVEL_BONUS;
-	
+        PrintDebug("Teleporting to Bonus level");
+        game.gameScreen = LEVEL_BONUS;
+
     // Player reached the portal
-    } else if (l4_collisionPortal(player)) {
+    } else if(gp_collisionAssets(&player->asset, &portalFrom)) {
         
         if(!portalFrom.disabled && !player->portalPowerUsed) {
 
-            PrintDebug("Teleporting to level 2");
+            PrintDebug("Teleporting to Level 2");
             
-            game.notification.message = "Teleporting through the Gob-Portal!";
-            game.notification.color = GREEN;
             portalTo.disabled = true;
             portalFrom.disabled = true;
             player->body->position.x = portalTo.position.x;
             player->body->position.y = portalTo.position.y;
             player->portalPowerUsed = true;
         }
-            
-    // Clean the notification if not needed
-	} else {
-        
-        game.notification.message = "";
-    }
+	}
 }
 
 void LevelFourRead(Player *player, Asset *spikes, Asset *portalBonus) {
@@ -116,26 +86,18 @@ void LevelFourRead(Player *player, Asset *spikes, Asset *portalBonus) {
     gp_readPlayer(player);
     l4_readCollisions(player, spikes, portalBonus);
 
-    // Place the jetLean under the player
-    for(int i = 0; i < 3; i++) {
-        
-        lean[i].position = (Vector2){
-            player->asset.position.x - 15 + i * 10,
-            player->asset.position.y + 28
-        };
-    }
-
     // Enable the portal
     if(IsKeyPressed(KEY_E) && !player->portalPowerUsed) {
         
         if(portalTo.disabled) {
 
             portalTo.position = (Vector2){
-                player->asset.position.x + 150,
-                player->asset.position.y - 190
+                player->asset.position.x + gp_perX(18.5),
+                player->asset.position.y - gp_perY(42)
             };
+            
             portalFrom.position = (Vector2){
-                player->asset.position.x + 40,
+                player->asset.position.x + portalFrom.scale * portalFrom.width + gp_perX(1),
                 player->asset.position.y
             };
             
@@ -149,7 +111,7 @@ void LevelFourRead(Player *player, Asset *spikes, Asset *portalBonus) {
         }
     }
 
-    //Enable the jetLean mode
+    //Enable the JetLean mode
     if(IsKeyPressed(KEY_W)) {
         
         if(player->lean >= 3 && !player->jetLean ) {
@@ -162,13 +124,25 @@ void LevelFourRead(Player *player, Asset *spikes, Asset *portalBonus) {
             }
         }
     }
+    
+    // Place the JetLean under the player
+    if(player->jetLean) {
+        
+        for(int i = 0; i < 3; i++) {
+            
+            lean[i].position = (Vector2){
+                player->asset.position.x - gp_perX(1) + i * gp_perX(1.5),
+                player->asset.position.y + player->asset.sheight / 2 + gp_perY(.2)
+            };
+        }
+    }
 
-    // Usung the jetlean
+    // Using the JetLean
     if(IsKeyPressed(KEY_SPACE) && player->jetLean) {
         
-        player->body->velocity.y = -VELOCITY * 3.6;
-        player->lean -= 3;
+        player->body->velocity.y = -1 * gp_perY(.36);
         player->jetLean = false;
+        player->lean -= 3;
         
         for(int i = 0; i < 3; i++) {
             
@@ -197,83 +171,97 @@ void LevelFourInit(Player *player) {
     gp_resetPlayer(player);
     
     /** CUSTOM ****************************************************************************/
-        
-    // Create floor and walls rectangle physics body
-    PhysicsBody floor1 = CreatePhysicsBodyRectangle((Vector2){60, 585},210, 520, 10);
-	PhysicsBody floor2 = CreatePhysicsBodyRectangle((Vector2){300, 580},70, 560, 10);
-	PhysicsBody floor3 = CreatePhysicsBodyRectangle((Vector2){485, 600},80, 520, 10);
-	PhysicsBody floor4 = CreatePhysicsBodyRectangle((Vector2){785, 600},230, 520, 10);
-    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){620, 190},155, 70, 10);
-
-    PhysicsBody wall_left = CreatePhysicsBodyRectangle(
-        (Vector2){-5, screenHeight / 2},
-        10, screenHeight * 2, 10
-    );
     
-    PhysicsBody wall_right = CreatePhysicsBodyRectangle(
-        (Vector2){screenWidth + 5, screenHeight / 2},
-		10, screenHeight*2, 10
-    );
-	
-	floor1->enabled = false;
-	floor2->enabled = false;
-	floor3->enabled = false;
-	floor4->enabled = false;
-    platform->enabled = false;
-    wall_left->enabled = false;
-    wall_right->enabled = false;
-
-	res.items.gelano.disabled = true;
+    // Left wall
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(-1),
+        .y = gp_perY(0)
+    }, gp_perX(0.5), gp_perY(100));
     
-	for(int i = 0; i < 2; i++) {
+    // Right wall
+    gp_createPhyRec((Vector2){
+        .x = GetScreenWidth() + gp_perX(5),
+        .y = 0
+    }, gp_perX(0.5), gp_perY(100));
+    
+    // Roof
+    gp_createPhyRec((Vector2){
+        .x = 0,
+        .y = gp_perY(-20)
+    }, gp_perX(100), gp_perY(5));
+    
+    // Floor 1
+    gp_createPhyRec((Vector2){
+        .x = 0,
+        .y = gp_perY(73)
+    }, gp_perX(19), gp_perY(25));
+    
+    // Floor 2
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(33.5),
+        .y = gp_perY(63)
+    }, gp_perX(8.5), gp_perY(40));
+    
+    // Floor 3
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(55.5),
+        .y = gp_perY(72)
+    }, gp_perX(9), gp_perY(40));
+    
+    // Floor 4
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(85),
+        .y = gp_perY(72)
+    }, gp_perX(25), gp_perY(30));
+    
+    // Platform
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(68),
+        .y = gp_perY(33.5)
+    }, gp_perX(18), gp_perY(13));
+
+    for(int i = 0; i < 2; i++) {
         
         spikes[i] = res.items.spikes;
         spikes[i].disabled = false;
-        spikes[i].scale = 0.15;
-        spikes[i].swidth = spikes[i].width * spikes[i].scale;
-        spikes[i].sheight = spikes[i].height * spikes[i].scale;
+        spikes[i].scale = gp_perX(5) / res.items.spikes.width;
     }
     
-    //spikes[0].position = (Vector2){95, 325};
-    spikes[0].position = (Vector2){600, 145};
-    spikes[1].position = (Vector2){780, 328};
+    spikes[0].position = (Vector2){gp_perX(75), gp_perY(32.2)};
+    spikes[1].position = (Vector2){gp_perX(96), gp_perY(71)};
 
-	for(int i = 0; i < 2; i++) {
+	for(int i = 0; i < 3; i++) {
         
         lean[i] = res.items.lean;
-        lean[i].scale = 0.15;
+        lean[i].scale = gp_perX(1.5) / res.items.lean.width;
         lean[i].disabled = true;
     }
 
+    res.items.gelano.disabled = true;
+    
     gelanoStatus = res.items.gelano;
-    gelanoStatus.scale = 0.8;
+    gelanoStatus.scale = gp_perX(3) / res.items.gelano.width;
     gelanoStatus.disabled = player->gelano ? false : true;
 
     portalTo = res.items.portal;
     portalTo.disabled = true;
-    portalTo.scale = 0.7;
-    portalTo.swidth = portalTo.width * portalTo.scale;
-    portalTo.sheight = portalTo.height * portalTo.scale;
+    portalTo.scale = gp_perX(3) / res.items.portal.width;
     
     portalFrom = res.items.portal;
     portalFrom.disabled = true;
-    portalFrom.scale = 0.7;
-    portalFrom.swidth = portalFrom.width * portalFrom.scale;
-    portalFrom.sheight = portalFrom.height * portalFrom.scale;
+    portalFrom.scale = gp_perX(3) / res.items.portal.width;
     
     portalBonus = res.items.portal;
-    portalBonus.scale = 0.55;
-    portalBonus.swidth = portalBonus.width * portalBonus.scale;
-    portalBonus.sheight = portalBonus.height * portalBonus.scale;
+    portalBonus.scale = gp_perX(3) / res.items.portal.width;
     portalBonus.rotation = 270;
-    portalBonus.position = (Vector2){365, GetScreenHeight() + 35};
+    portalBonus.position = (Vector2){gp_perX(46), gp_perY(105)};
     
     player->slip = true;
 
 	/************************************************************************************/
-    // Set default position
-    player->asset.position = game.levelPos.level_4;
-    gp_initializeBody(player);
+    
+    // Initialize player's body and default position
+    gp_initializeBody(player, game.levelPos.level_4);
 }
 
 void LevelFourDraw(Player *player, ScreenFX *screenFx) {
@@ -299,8 +287,6 @@ void LevelFourDraw(Player *player, ScreenFX *screenFx) {
     BeginDrawing();
 
     // Draw level's background
-    //DrawTextureEx(res.backgrounds.level4, (Vector2){0,0}, 0.0f, 0.85f, WHITE);
-    
     gp_drawImage(&res.backgrounds.level4, res.backgrounds.level4.scale);
     
     /** CUSTOM ****************************************************************************/
@@ -323,7 +309,7 @@ void LevelFourDraw(Player *player, ScreenFX *screenFx) {
     
     gp_drawAsset(&portalBonus, portalBonus.position, portalBonus.scale);
 
-    gp_drawAsset(&gelanoStatus, (Vector2){750, 45}, gelanoStatus.scale);
+    gp_drawAsset(&gelanoStatus, (Vector2){gp_perX(96), gp_perY(6)}, gelanoStatus.scale);
 
     /**************************************************************************************/
     

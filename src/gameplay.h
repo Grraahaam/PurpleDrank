@@ -12,9 +12,11 @@
     
     bool gp_isOutScreen(Asset *ast);
     bool gp_collisionAssets(Asset *ast1, Asset *ast2);
-    void gp_initializeBody(Player *player);
+    void gp_initializeBody(Player *player, Vector2 pos);
     void gp_initializeGameBorders();
     void gp_drawBodyLines();
+    void gp_createPhyRec(Vector2 pos, float width, float height);
+    void gp_createPhyPoly (Vector2 pos, float radius, int sides);
     
     void gp_animateAsset(Asset *asset);
     void gp_drawAsset(Asset *asset, Vector2 position, float scale);
@@ -25,6 +27,10 @@
     void gp_readPlayer(Player *player);
     void gp_editAsset(Asset *asset);
     
+    float gp_perX(float percent);
+    float gp_perY(float percent);
+    
+    float gp_autoScaleImg(ResImage *img);
     void gp_drawImage(ResImage *img, float scale);
     void gp_drawFade(ScreenFX *screenFx);
     void gp_drawCrossFade(ResImage *imgAbove, ResImage *imgBelow, ScreenFX *screenFx);

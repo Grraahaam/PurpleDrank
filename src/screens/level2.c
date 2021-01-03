@@ -32,13 +32,13 @@ void l2_readCollisions(Player *player) {
     // Player fall into the hole
     if (gp_collisionAssets(&player->asset, &res.items.spikes) || player->dead) {
 
-		// Check if player is dead
-		if(player->lives <= 0) {
+        // Check if player is dead
+        if(player->lives <= 0) {
 
-			// Redirect player to the gameover screen
+            // Redirect player to the gameover screen
             game.gameScreen = GAMEOVER;
 
-		} else {
+        } else {
             // If the player just fall in the spikes
             if(!player->dead) {
 
@@ -61,8 +61,6 @@ void l2_readCollisions(Player *player) {
                 player->can_move = true;
                 
                 //TODO: THREAD this TIMEOUT because it cause a segmentation issue
-                // Time the re-apparition
-                //sleep(GAME_DEFAULT_TIMEOUT);
                 
                 // Reset player's position
                 player->body->position = game.levelPos.level_2;
@@ -72,9 +70,9 @@ void l2_readCollisions(Player *player) {
             }
         }
     }
-	
-	// Player reached the portal
-	if(gp_collisionAssets(&player->asset, &res.items.portal)) {
+
+    // Player reached the portal
+    if(gp_collisionAssets(&player->asset, &res.items.portal)) {
         
         // If player have enough lean
         if(player->lean >= 3) {
@@ -90,26 +88,17 @@ void l2_readCollisions(Player *player) {
             game.levelPassed = LEVEL_2;
             game.gameScreen = LEVEL_3;
             
-        } else {
-            
-            //game.notification.message = "Not enough Lean to use the Gob-Portal!";
-            game.notification.color = RED;
         }
-    
-    // Clean the notification if not needed
-	} else {
-        
-        game.notification.message = "";
     }
-	
-	// Player is using the launchpad
-	if(gp_collisionAssets(&player->asset, &res.items.launchpad)) {
+
+    // Player is using the launchpad
+    if(gp_collisionAssets(&player->asset, &res.items.launchpad)) {
         
         // If launchpad activated
         if(player->can_move && IsKeyPressed(KEY_SPACE)) {
             
-            player->body->velocity.y = -VELOCITY * 4.2;
-            player->body->velocity.x = +VELOCITY * 2;
+            player->body->velocity.y = -1 * gp_perY(.4);
+            player->body->velocity.x = gp_perX(.15);
             
             res.items.launchpad.frame.animate = true;
         }
@@ -171,67 +160,84 @@ void LevelTwoInit(Player *player) {
     // Disable the portal
     res.items.portal.disabled = true;
     
-    PhysicsBody floor_start = CreatePhysicsBodyRectangle((Vector2){ 30, 360 }, 65, 190, 0);
-    PhysicsBody floor_after_spikes = CreatePhysicsBodyRectangle((Vector2){ 218, 390 }, 105, 70, 0);
-    PhysicsBody floor_launchpad = CreatePhysicsBodyPolygon((Vector2){ 510, 475 }, 130, 10, 0);
-    PhysicsBody floor_main = CreatePhysicsBodyRectangle((Vector2){ 545, 402 }, 510, 50, 0);
-    PhysicsBody floor_before_portal = CreatePhysicsBodyPolygon((Vector2){ 245, 440 }, 90, 10, 0);
+    // Left wall
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(-1),
+        .y = gp_perY(0)
+    }, gp_perX(0.5), gp_perY(100));
     
-    floor_start->enabled = false;
-    floor_after_spikes->enabled = false;
-    floor_main->enabled = false;
-    floor_before_portal->enabled = false;
-    floor_launchpad->enabled = false;
+    // Right wall
+    gp_createPhyRec((Vector2){
+        .x = GetScreenWidth() + gp_perX(1),
+        .y = gp_perY(-20)
+    }, gp_perX(0.5), gp_perY(120));
     
-    PhysicsBody platform_lean = CreatePhysicsBodyRectangle(
-        (Vector2){ 705, 135 },
-        180, 130, 0
-    ); platform_lean->enabled = false;
+    // Roof
+    gp_createPhyRec((Vector2){
+        .x = 0,
+        .y = gp_perY(-20)
+    }, gp_perX(100), gp_perY(5));
     
-    PhysicsBody wall_left = CreatePhysicsBodyRectangle(
-        (Vector2){-5, screenHeight / 2 },
-        5, screenHeight * 2, 0
-    ); wall_left->enabled = false;
+    // Start floor
+    gp_createPhyRec((Vector2){
+        .x = 0,
+        .y = gp_perY(58)
+    }, gp_perX(10), gp_perY(42));
     
-    PhysicsBody wall_right = CreatePhysicsBodyRectangle(
-        (Vector2){screenWidth + 5 , screenHeight / 2},
-        5, screenHeight * 2, 0
-    ); wall_right->enabled = false;
+    // Floor after spikes
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(22.5),
+        .y = gp_perY(78.5)
+    }, gp_perX(7), gp_perY(20));
+    
+    // Launchpad floor
+    gp_createPhyPoly((Vector2){
+        .x = gp_perX(25),
+        .y = gp_perY(84.8)
+    }, gp_perX(8), 10);
+    
+    // Main floor
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(35),
+        .y = gp_perY(83.5)
+    }, gp_perX(68), gp_perY(10));
+    
+    // Floor before portal
+    gp_createPhyPoly((Vector2){
+        .x = gp_perX(56),
+        .y = gp_perY(90.5)
+    }, gp_perX(16), 10);
+    
+    // Lean platform
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(77),
+        .y = gp_perY(15)
+    }, gp_perX(22), gp_perY(20));
     
     // Initialize the lean assets
     for(int i = 0; i < 3; i++) {
         lean[i] = res.items.lean;
         lean[i].disabled = false;
-        lean[i].scale = 0.18;
-        lean[i].swidth = lean[i].width * lean[i].scale;
-        lean[i].sheight = lean[i].height * lean[i].scale;
+        lean[i].scale = gp_perX(1.8) / res.items.lean.width;
     }
     
-    lean[0].position = (Vector2){655, 53};
-    lean[1].position = (Vector2){705, 53};
-    lean[2].position = (Vector2){755, 53};
+    lean[0].position = (Vector2){gp_perX(82), gp_perY(11.8)};
+    lean[1].position = (Vector2){gp_perX(88), gp_perY(11.8)};
+    lean[2].position = (Vector2){gp_perX(94), gp_perY(11.8)};
     
-    res.items.spikes.position = (Vector2){108, 390};
-    res.items.spikes.scale = 0.35;
-    res.items.spikes.swidth = res.items.spikes.width * res.items.spikes.scale;
-    res.items.spikes.sheight = res.items.spikes.height * res.items.spikes.scale;
+    res.items.spikes.position = (Vector2){gp_perX(13.4), gp_perY(86)};
+    res.items.spikes.scale = gp_perX(10) / res.items.spikes.width;
 
-    res.items.launchpad.position = (Vector2){297, 346};
-    res.items.launchpad.scale = 0.35;
-    res.items.launchpad.swidth = res.items.launchpad.width * res.items.launchpad.scale;
-    res.items.launchpad.sheight = res.items.launchpad.height * res.items.launchpad.scale;
+    res.items.launchpad.position = (Vector2){gp_perX(37), gp_perY(77)};
+    res.items.launchpad.scale = gp_perX(7) / res.items.launchpad.width;
     
-    res.items.portal.position = (Vector2){720, 295};
-    res.items.portal.scale = 0.7;
-    res.items.portal.swidth = res.items.portal.width * res.items.portal.scale;
-    res.items.portal.sheight = res.items.portal.height * res.items.portal.scale;
+    res.items.portal.position = (Vector2){gp_perX(90), gp_perY(65.5)};
+    res.items.portal.scale = gp_perX(5) / res.items.portal.width;
     
     /************************************************************************************/
     
-    // Set default position
-    player->asset.position = game.levelPos.level_2;
-    
-    gp_initializeBody(player);
+    // Initialize player's body and default position
+    gp_initializeBody(player, game.levelPos.level_2);
 }
 
 void LevelTwoDraw(Player *player, ScreenFX *screenFx) {
@@ -257,8 +263,6 @@ void LevelTwoDraw(Player *player, ScreenFX *screenFx) {
     BeginDrawing();
 
     // Draw level's background
-    //DrawTextureEx(res.backgrounds.level2, (Vector2){0, 0}, 0.0f, 0.85f, WHITE);
-    
     gp_drawImage(&res.backgrounds.level2, res.backgrounds.level2.scale);
     
     /** CUSTOM ****************************************************************************/

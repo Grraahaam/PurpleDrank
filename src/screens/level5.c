@@ -76,8 +76,8 @@ void l5_createLean() {
             
             leans[i].disabled = false;
             leans[i].position = (Vector2){
-                goblean.asset.position.x + 40 + i * 20,
-                goblean.asset.position.y - 80
+                goblean.asset.position.x + gp_perX(5) + i * gp_perX(2.5),
+                goblean.asset.position.y - gp_perY(18)
             };
         }
     }
@@ -211,7 +211,7 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
         if(IsKeyPressed(KEY_Q)) l5_throwLean(player, lean);
         
         // Update the lifebar
-        lifebar->frame.x = lifebar->frame.xinit + lifebar->swidth * (6 - goblean->lives);
+        lifebar->frame.x = lifebar->frame.xinit + lifebar->width * (6 - goblean->lives);
     
         if(goblean->asset.direction == LEFT) {
                     
@@ -234,13 +234,17 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
                     } break;
                     
                     case 2: {
-                        left_hand->position.x = goblean->asset.position.x + 60;
-                        left_hand->position.y = goblean->asset.position.y - 20;
                         left_hand->disabled = false;
+                        left_hand->position = (Vector2){
+                            .x = goblean->asset.position.x + gp_perX(7.5),
+                            .y = goblean->asset.position.y - gp_perY(4.4)
+                        };
                         
-                        right_hand->position.x = goblean->asset.position.x + 20;
-                        right_hand->position.y = goblean->asset.position.y - 20;
                         right_hand->disabled = false;
+                        right_hand->position = (Vector2){
+                            .x = goblean->asset.position.x + gp_perX(2.5),
+                            .y = goblean->asset.position.y - gp_perY(4.4)
+                        };
                     } break;
                     
                     default: break;
@@ -251,8 +255,8 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
                 
             goblean->asset.position.x += goblean->asset.speed * 3;
             
-            // If goblean reached the right side and is facing right (right - goblean width - margin)
-            if(goblean->asset.position.x > (GetScreenWidth() - goblean->asset.swidth + 20)) {
+            // If goblean reached the right side and is facing right (right - goblean width)
+            if(goblean->asset.position.x > (GetScreenWidth() - goblean->asset.swidth)) {
                 
                 // Invert direction
                 goblean->asset.direction = LEFT;
@@ -286,9 +290,9 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
         for(int i = 0; i < 2; i++) {
         
             if(!leans[i].disabled) {
-                if(leans[i].position.y < 360) {
-                    leans[i].position.x -= 10;
-                    leans[i].position.y += 3;
+                if(leans[i].position.y < gp_perY(81)) {
+                    leans[i].position.x -= gp_perX(1.25);
+                    leans[i].position.y += gp_perY(1.1);
                 }
             }
         }
@@ -297,7 +301,7 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
         if(!skate->disabled) {
             
             //TODO: if facing RIGHT/LEFT +/- speed
-            skate->position.x -= 4;
+            skate->position.x -= gp_perX(.5);
         }
         
         if(gp_isOutScreen(skate) && !skate->disabled) {
@@ -310,8 +314,8 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
         if(!left_hand->disabled) {
             
             //TODO: if facing RIGHT/LEFT +/- speed
-            left_hand->position.x -= 4;
-            left_hand->position.y += 1;
+            left_hand->position.x -= gp_perX(.5);
+            left_hand->position.y += gp_perY(.2);
         }
         
         if(gp_isOutScreen(left_hand) && !left_hand->disabled) {
@@ -323,8 +327,8 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
         if(!right_hand->disabled) {
             
             //TODO: if facing RIGHT/LEFT +/- speed
-            right_hand->position.x -= 4;
-            right_hand->position.y += 1;
+            right_hand->position.x -= gp_perX(.5);
+            right_hand->position.y += gp_perY(.2);
         }
         
         if(gp_isOutScreen(right_hand) && !right_hand->disabled) {
@@ -369,29 +373,44 @@ void LevelFiveInit(Player *player) {
         player->lean = 50;
     }
     
-    SetPhysicsGravity(0.0f, 5.5f);
+    // Edit gravity to jump over the HANDS (not enough to avoid SKATE to force player to use lean to destroy it)
+    SetPhysicsGravity(0.0f, 6.0f);
     
-    PlaySound(res.sounds.goblean);   
+    // Left wall
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(-1),
+        .y = gp_perY(0)
+    }, gp_perX(0.5), gp_perY(100));
     
-    attaque = 1;
+    // Right wall
+    gp_createPhyRec((Vector2){
+        .x = GetScreenWidth() + gp_perX(1),
+        .y = 0
+    }, gp_perX(0.5), gp_perY(100));
+    
+    // Main floor
+    gp_createPhyRec((Vector2){
+        .x = 0,
+        .y = gp_perY(83)
+    }, gp_perX(100), gp_perY(10));
     
     // Initialize Lean object (to throw)
     lean = res.items.lean;
-    lean.scale = 0.15;
-    lean.speed = 5;
+    lean.scale = gp_perX(1.5) / res.items.lean.width;
+    lean.speed = gp_perX(.5);
     lean.position = (Vector2){0,0};
     lean.disabled = true;
     
     // Initialize Goblean asset
     goblean.asset = res.items.goblean_skate;
-    goblean.asset.speed = 1;
+    goblean.asset.speed = gp_perX(.2);
     goblean.asset.direction = LEFT;
     goblean.lives = 6;
     goblean.asset.disabled = false;
     
     goblean.asset.position = (Vector2){
-        .x = screenWidth + goblean.asset.swidth + 20,
-        .y = 300
+        .x = GetScreenWidth() + goblean.asset.swidth,
+        .y = gp_perY(66)
     };
     
     goblean_flip = res.items.goblean_flip;
@@ -401,76 +420,40 @@ void LevelFiveInit(Player *player) {
     skate.disabled = true;
     skate.position = (Vector2){
         .x = goblean.asset.position.x,
-        .y = goblean.asset.position.y + 50
+        .y = goblean.asset.position.y + gp_perY(11)
     };
     
     left_hand = res.items.left_hand;
     left_hand.disabled = true;
-    left_hand.position = (Vector2){
-        .x = goblean.asset.position.x + 60,
-        .y = goblean.asset.position.y - 20
-    };
     
     right_hand = res.items.right_hand;
     right_hand.disabled = true;
-    right_hand.position = (Vector2){
-        .x = goblean.asset.position.x + 20,
-        .y = goblean.asset.position.y - 20
-    };
     
     damage = res.items.damage;
+    damage.scale = gp_perX(10) / res.items.damage.width;
     damage.disabled = true;
-    damage.position = (Vector2){
-        .x = lean.position.x,
-        .y = lean.position.y
-    };
     
     lifebar = res.items.lifebar;
-    lifebar.scale = 0.7f;
+    lifebar.scale = gp_perX(15) / res.items.lifebar.width;
     lifebar.position = (Vector2){
         .x = GetScreenWidth() / 2,
-        .y = 100
+        .y = gp_perY(20)
     };
-    
     
     for(int i = 0; i < 2; i++) {
         
         leans[i] = res.items.lean;
-        leans[i].scale = 0.18;
+        leans[i].scale = gp_perX(1.5) / res.items.lean.width;
         leans[i].disabled = true;
     }
     
-    leans[0].position = (Vector2){goblean.asset.position.x + 40, goblean.asset.position.y - 80};
-    leans[1].position = (Vector2){goblean.asset.position.x + 60, goblean.asset.position.y - 80};
-    
-    
-    // Create floor and walls rectangle physics body
-    PhysicsBody body_floor = CreatePhysicsBodyRectangle(
-        (Vector2){GetScreenWidth() / 2, 380},
-        GetScreenWidth(), 10, 10
-    );
-    
-    PhysicsBody body_wall_left = CreatePhysicsBodyRectangle(
-        (Vector2){-5, GetScreenHeight() / 2},
-        10, GetScreenHeight() * 2, 10
-    );
-    
-    PhysicsBody body_wall_right = CreatePhysicsBodyRectangle(
-        (Vector2){GetScreenWidth() + 5, GetScreenHeight() / 2},
-        10, GetScreenHeight() * 2, 10
-    );
-    
-    // Disable dynamics to floor and walls physics bodies
-    body_floor->enabled = false;
-    body_wall_left->enabled = false;
-    body_wall_right->enabled = false;
+    PlaySound(res.sounds.goblean);   
+    attaque = 1;
     
     /************************************************************************************/
     
-    // Set default position
-    player->asset.position = game.levelPos.level_5;
-    
-    gp_initializeBody(player);
+    // Initialize player's body and default position
+    gp_initializeBody(player, game.levelPos.level_5);
 }
 
 void LevelFiveDraw(Player *player, ScreenFX *screenFx) {

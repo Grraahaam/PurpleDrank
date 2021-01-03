@@ -13,7 +13,7 @@ void MinigamesRead() {
 
     if (IsKeyPressed(KEY_ENTER)) {
         
-        PrintDebug("Pressed ENTER, returning to the menu!");
+        PrintDebug("Minigames => Menu");
         
         game.levelPassed = MENU;
         game.gameScreen = MENU;
@@ -41,26 +41,21 @@ void MinigamesDraw(ScreenFX *screenFx) {
 
 	ClearBackground(RAYWHITE);
 
-    /*DrawTextureEx(
-        res.backgrounds.minigames,
-        (Vector2){0, 0},
-        0.0f, 0.85f, WHITE
-    );*/
-    
+    // Draw background
     gp_drawImage(&res.backgrounds.controls, res.backgrounds.controls.scale);
     
-    // Draw test
+    // Draw text
     gp_drawText(
         "Minigames are coming!", res.fonts.pixellari,
         (Vector2){0, 0},
-        30, CENTER, DARKGRAY
+        gp_perX(3), CENTER, DARKGRAY
     );
     
-    // Draw test
+    // Draw text
     gp_drawText(
         "Najib and Bilal are working on it", res.fonts.pixellari,
-        (Vector2){0, GetScreenHeight() / 2 + 30},
-        16, CENTER_X, DARKGRAY
+        (Vector2){0, gp_perY(54)},
+        gp_perX(1.7), CENTER_X, DARKGRAY
     );
     
     // Drawing the fade in effect

@@ -10,9 +10,10 @@
 // Drawing player's info board
 void gp_drawBoard(Player *player) {
     
-    int fontSize = 20, font_align_x = 85;
-    float scale_head = 0.25, scale_lean = 0.15;
-    int margin = 10;
+    int fontSize = gp_perX(1.8), font_align_x = gp_perX(9);
+    float scale_head = gp_perX(4.5) / res.items.player_head.width;
+    float scale_lean = gp_perX(1.5) / res.items.lean.width;
+    int margin = 3;
     
     // Draw notifications, if exists
     gp_drawNotification();
@@ -20,14 +21,14 @@ void gp_drawBoard(Player *player) {
     // Lives amount
     gp_drawAsset(&res.items.player_head,
         (Vector2){
-            res.items.player_head.width * scale_head / 2 + margin,
-            res.items.player_head.height * scale_head / 2 + margin,
+            res.items.player_head.width * scale_head / 2 + gp_perX(margin),
+            res.items.player_head.height * scale_head / 2 + gp_perY(margin),
         }, scale_head);
     
     DrawText(
         TextFormat("%d", player->lives),
         font_align_x,
-        fontSize, // Y axis align
+        gp_perY(margin) + fontSize / 2 + gp_perY(.1), // Y axis align
         fontSize,
         RAYWHITE
     );
@@ -35,14 +36,14 @@ void gp_drawBoard(Player *player) {
     // Lean amount
     gp_drawAsset(&res.items.lean,
         (Vector2){
-            res.items.lean.width * scale_lean / 2 + 3.8 * margin,
-            res.items.lean.height * scale_lean / 2 + res.items.player_head.height * scale_head + margin + 5,
+            res.items.lean.width * scale_lean / 2 + gp_perX(margin) + gp_perX(1.6),
+            res.items.lean.height * scale_lean / 2 + res.items.player_head.height * scale_head + gp_perY(margin) + gp_perY(1.6),
         }, scale_lean);
     
     DrawText(
         TextFormat("%d", player->lean),
         font_align_x,
-        fontSize * 2 + margin, // Y axis align
+        fontSize * 2 + gp_perY(margin) + gp_perY(.8), // Y axis align
         fontSize,
         RAYWHITE
     );
@@ -52,8 +53,8 @@ void gp_drawBoard(Player *player) {
     
         gp_drawText(
             (char*)TextFormat("%s", "BONUS STAGE"), res.fonts.pixellari,
-            (Vector2){0, fontSize + 10},
-            fontSize + 45, CENTER_X, RAYWHITE
+            (Vector2){0, fontSize + gp_perY(2)},
+            gp_perX(6), CENTER_X, RAYWHITE
         );
         
     // Draw title original size
@@ -61,7 +62,7 @@ void gp_drawBoard(Player *player) {
         
         gp_drawText(
             (char*)TextFormat("%s", screenNames[game.gameScreen]), res.fonts.pixellari,
-            (Vector2){0, fontSize + 10},
+            (Vector2){0, fontSize + gp_perY(2)},
             fontSize, CENTER_X, RAYWHITE
         );
     }
@@ -85,7 +86,7 @@ void gp_drawBoard(Player *player) {
 // Function drawing a notification message on the screen (if exists)
 void gp_drawNotification() {
     
-    int fontSize = 20;
+    int fontSize = gp_perX(1.5);
     
     // If a notification message exists
     if(game.notification.message) {
@@ -212,9 +213,9 @@ bool gp_isOutScreen(Asset *ast) {
         int swidth = ast->width * ast->scale;
         int sheight = ast->height * ast->scale;
     
-        if(ast->position.x < 0 - swidth + 50 ||
-            ast->position.x > GetScreenWidth() + swidth + 50 ||
-            ast->position.y < 0 - sheight - 150 ||
+        if(ast->position.x < 0 - swidth - gp_perX(5) ||
+            ast->position.x > GetScreenWidth() + swidth + gp_perX(5) ||
+            ast->position.y < 0 - sheight - gp_perX(5) ||
             ast->position.y > GetScreenHeight() + sheight
         
         //) return ast->type;
@@ -229,6 +230,8 @@ bool gp_isOutScreen(Asset *ast) {
 bool gp_collisionAssets(Asset *ast1, Asset *ast2) {
     
     int ast1_width, ast1_height, ast2_width, ast2_height;
+    
+    //TODO: Support for negative rotation value
     
     // Switch width and height according to the assets' rotation
     if((ast1->rotation >= 45 && ast1->rotation < 134) ||
@@ -266,7 +269,7 @@ bool gp_collisionAssets(Asset *ast1, Asset *ast2) {
         // Asset 2
         (Rectangle){
             .x = ast2->position.x - (ast2->scale * ast2_width / 2),
-            .y = ast2->position.y - (ast2->scale * ast2->sheight / 2),
+            .y = ast2->position.y - (ast2->scale * ast2_height / 2),
             .width = ast2->scale * ast2_width, .height = ast2->scale * ast2_height
         }
     );
@@ -286,18 +289,19 @@ void gp_initPlayer(Player *player) {
     player->asset.frame.xinit   = 0;
     player->asset.frame.y       = 0;
     player->asset.frame.yinit   = 0;
+    player->asset.frame.loopPos.x = 0;
     
     player->asset.version_count = 3;
     
     player->asset.position  = game.levelPos.level_1;
     player->asset.sprite    = SP_PLAYER;
     player->asset.direction = RIGHT;
-    player->asset.speed     = VELOCITY * 0.4;
+    player->asset.speed     = VELOCITY * gp_perX(.05);
     player->asset.density   = 10;
     player->asset.rotation  = 0;
-    player->asset.scale     = 1.4;
     player->asset.width     = res.sprites.player.width / player->asset.frame.amount;
     player->asset.height    = (res.sprites.player.height / player->asset.version_count) / player->asset.frame.lines;
+    player->asset.scale     = gp_perX(5) / player->asset.width; //1.4
     player->asset.swidth    = (float)player->asset.width * player->asset.scale;
     player->asset.sheight   = (float)player->asset.height * player->asset.scale;
     
@@ -319,7 +323,7 @@ void gp_initPlayer(Player *player) {
 
 void gp_resetPlayer(Player *player) {
     
-    player->asset.speed     = VELOCITY * 0.4;
+    player->asset.speed     = VELOCITY * gp_perX(.05);
     player->asset.density   = 10;
     player->asset.rotation  = 0;
     player->dead            = false;
@@ -330,11 +334,11 @@ void gp_resetPlayer(Player *player) {
 }
 
 // Function initializing an asset body
-void gp_initializeBody(Player *player) {
+void gp_initializeBody(Player *player, Vector2 pos) {
     
     // Initialize player's body
     player->body = CreatePhysicsBodyRectangle(
-        player->asset.position,
+        pos,
         player->asset.swidth,
         player->asset.sheight,
         player->asset.density
@@ -344,32 +348,58 @@ void gp_initializeBody(Player *player) {
     player->body->freezeOrient = true;
 }
 
+// Function returning a fixed physic body (rectangle)
+void gp_createPhyRec(Vector2 pos, float width, float height) {
+    
+    PhysicsBody body = CreatePhysicsBodyRectangle(
+        (Vector2){
+            .x = pos.x + width / 2,
+            .y = pos.y + height / 2
+        }, width, height, 0
+    ); body->enabled = false;
+    
+    //return body;
+}
+
+// Function returning a fixed physic body (polygon)
+void gp_createPhyPoly(Vector2 pos, float radius, int sides) {
+    
+    PhysicsBody body = CreatePhysicsBodyPolygon(
+        (Vector2){
+            .x = pos.x + radius / 2,
+            .y = pos.y + radius / 2
+        }, radius, sides, 0
+    ); body->enabled = false;
+    
+    //return body;
+}
+
 // Function defining physic bodies around the game screen with some margin
 void gp_initializeGameBorders() {
     
     /*PhysicsBody border_bottom = CreatePhysicsBodyRectangle(
         (Vector2){
-            screenWidth/2 + 50,
+            GetScreenWidth()/2 + 50,
             GetScreenHeight() + 50
         },
-        screenWidth + 100, 10, 10
+        GetScreenWidth() + 100, 10, 10
     ); border_bottom->enabled = false;
      
     
     PhysicsBody border_left = CreatePhysicsBodyRectangle(
         (Vector2){
-            screenWidth/2,
+            GetScreenWidth()/2,
             290
         },
-        screenWidth, 10, 10
+        GetScreenWidth(), 10, 10
     ); border_left->enabled = false;
      
     PhysicsBody border_right = CreatePhysicsBodyRectangle(
         (Vector2){
-            screenWidth/2,
+            GetScreenWidth()/2,
             290
         },
-        screenWidth, 10, 10
+        GetScreenWidth(), 10, 10
     ); border_right->enabled = false;*/
 }
 
@@ -463,7 +493,7 @@ void gp_drawAssetLines(Asset *asset, Vector2 position, float scale) {
         // Draw Y axis
         DrawLine(
             0, (int)(position.y),
-            screenWidth, (int)(position.y),
+            GetScreenWidth(), (int)(position.y),
         LIGHTGRAY);
     }
     
@@ -562,11 +592,24 @@ void gp_readPlayer(Player *player) {
         
         player->asset.frame.speed = SPRITE_FRAME_SPEED;
         
+        // Apply ice simulation
+        if(player->slip) {
+            
+            if(IsKeyUp(KEY_LEFT) && player->body->isGrounded)
+                player->body->position.x += gp_perX(.5);
+            
+            if(IsKeyUp(KEY_RIGHT) && player->body->isGrounded)
+                player->body->position.x -= gp_perX(.5);
+        }
+        
         // Moving on Y axis, when player jump, and its physic body is grounded (placed at the top for improved input detection)
         if(IsKeyDown(KEY_UP) && player->body->isGrounded) {
             
             // Invert Y axis velocity to simulate a jump
-            player->body->velocity.y = -VELOCITY * 2.6;
+            if(game.gameScreen == LEVEL_BONUS)
+                player->body->velocity.y = -1 * gp_perY(.21);
+            else
+                player->body->velocity.y = -1 * gp_perY(.18);
         }
         
         // If moving on X axis
@@ -581,7 +624,7 @@ void gp_readPlayer(Player *player) {
                     player->asset.frame.pack = SUPER;
                     player->body->velocity.x = player->slip ?
                     // Adapt if player's is slipping
-                    player->asset.speed * 3.5 : player->asset.speed * 2;
+                    player->asset.speed * 2.8 : player->asset.speed * 2;
                     player->super = true;
                 
                 } else {
@@ -603,7 +646,7 @@ void gp_readPlayer(Player *player) {
                     player->asset.frame.pack = SUPER;
                     player->body->velocity.x = player->slip ?
                         // Adapt if player's is slipping
-                        -player->asset.speed * 3.5 : -player->asset.speed * 2;
+                        -player->asset.speed * 2.8 : -player->asset.speed * 2;
                     player->super = true;
                 
                 } else {
@@ -660,7 +703,7 @@ void gp_readPlayer(Player *player) {
     // If player have no lives left
     if(player->lives <= 0) {
         
-        PrintDebug("Player have no more lives => Gameover");
+        PrintDebug("Player's dead => Gameover");
         
         game.gameScreen = GAMEOVER;
     }
@@ -779,6 +822,18 @@ void gp_drawImage(ResImage *img, float scale) {
         (Vector2){0,0}, 0, WHITE
     );*/
     
+    // Autoscale
+    if(!img->custom_scale) {
+        
+        // Auto fit width
+        scale = (float)GetScreenWidth() / (float)img->screen.width;
+            
+        // Auto fit height
+        scale = GetScreenHeight() - img->screen.height * scale >= 0 ?
+            (float)GetScreenHeight() / (float)img->screen.height :
+            scale;
+    }
+        
     DrawTextureEx(
         img->screen,
         (Vector2){
@@ -787,6 +842,34 @@ void gp_drawImage(ResImage *img, float scale) {
         },
         0, scale, WHITE
     );
+}
+
+// Function returning a scaling rate to fit the given image to the screen
+float gp_autoScaleImg(ResImage *img) {
+    
+    float scale;
+    
+    // Auto fit width
+    scale = (float)GetScreenWidth() / (float)img->screen.width;
+        
+    // Auto fit height
+    scale = GetScreenHeight() > (img->screen.height * scale) ?
+        (float)GetScreenHeight() / (float)img->screen.height :
+        scale;
+        
+    return scale;
+}
+
+// Get X axis pixel position corresponding to a percentage (responsive positioning)
+float gp_perX(float percent) {
+    
+    return (float)GetScreenWidth() / 100 * percent;
+}
+
+// Get Y axis pixel position corresponding to a percentage (responsive positioning)
+float gp_perY(float percent) {
+    
+    return (float)GetScreenHeight() / 100 * percent;
 }
 
 void gp_drawCrossFade(ResImage *imgAbove, ResImage *imgBelow, ScreenFX *screenFx) {
@@ -904,7 +987,7 @@ void gp_drawFade(ScreenFX *screenFx) {
         
         // Draw the fade effect
         DrawRectanglePro(
-            (Rectangle){0, 0, screenWidth, GetScreenHeight()},
+            (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
             (Vector2){0, 0},
             screenFx->rotation,
             Fade(screenFx->color, screenFx->alpha)
@@ -1043,7 +1126,7 @@ void gp_initResources(Resources *res) {
         (Vector2){0,174}, // sprite frame position
         6, 1, // amount of animated frames, number of frame lines
         129, 110, // width, height
-        0.9, 0, // scale, rotation
+        gp_perX(12) / 129, 0, // scale, rotation
         true, true, (Vector2){0,0}, 9 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1054,7 +1137,7 @@ void gp_initResources(Resources *res) {
         (Vector2){0,284}, // sprite frame position
         7, 1, // amount of animated frames, number of frame lines
         158, 120, // width, height
-        0.9, 0, // scale, rotation
+        gp_perX(12) / 158, 0, // scale, rotation
         true, false, (Vector2){0,0}, 8 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1065,7 +1148,7 @@ void gp_initResources(Resources *res) {
         (Vector2){1110,174}, // sprite frame position
         1, 1, // amount of animated frames, number of frame lines
         214, 506, // width, height
-        0.6, 0, // scale, rotation
+        gp_perX(15) / 214, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1153,7 +1236,7 @@ void gp_initResources(Resources *res) {
         (Vector2){0,90}, // sprite frame position
         9, 1, // amount of animated frames, number of frame lines
         30, 30, // width, height
-        1.9, 0, // scale, rotation
+        gp_perX(6) / 30, 0, // scale, rotation
         true, true, (Vector2){0,0}, 2 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1164,7 +1247,7 @@ void gp_initResources(Resources *res) {
         (Vector2){0,0}, // sprite frame position
         56, 3, // amount of animated frames, number of frame lines
         45, 49, // width, height
-        1.7, 0, // scale, rotation
+        1.9, 0, // scale, rotation
         true, false, (Vector2){13,0}, 8 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1186,7 +1269,7 @@ void gp_initResources(Resources *res) {
         (Vector2){0,699}, // sprite frame position
         23, 1, // amount of animated frames, number of frame lines
         40, 40, // width, height
-        1.5, 0, // scale, rotation
+        gp_perX(6) / 40, 0, // scale, rotation
         true, true, (Vector2){18,0}, 4 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1197,18 +1280,18 @@ void gp_initResources(Resources *res) {
         (Vector2){0,819}, // sprite frame position
         11, 1, // amount of animated frames, number of frame lines
         40, 40, // width, height
-        1.5, 0, // scale, rotation
+        gp_perX(6) / 40, 0, // scale, rotation
         true, false, (Vector2){0,0}, 4 // animate, loop animation, loop position options, frame speed
     );
     
-        // Goblean + skate
+    // Goblean + Skate
     gp_initResourcesAssets(
         &res->items.goblean_skate,
         SP_ASSETS,
         (Vector2){1324,284}, // sprite frame position
         1, 1, // amount of animated frames, number of frame lines
         262, 289, // width, height
-        0.6, 0, // scale, rotation
+        gp_perX(16) / 262, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1219,7 +1302,7 @@ void gp_initResources(Resources *res) {
         (Vector2){1583,282}, // sprite frame position
         9, 1, // amount of animated frames, number of frame lines
         330, 293, // width, height
-        0.5, 0, // scale, rotation
+        gp_perX(16) / 330, 0, // scale, rotation
         true, true, (Vector2){0,0}, 8 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1230,7 +1313,7 @@ void gp_initResources(Resources *res) {
         (Vector2){1584,0}, // sprite frame position
         9, 1, // amount of animated frames, number of frame lines
         195, 158, // width, height
-        0.5, 0, // scale, rotation
+        gp_perX(11) / 195, 0, // scale, rotation
         true, true, (Vector2){0,0}, 9 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1241,7 +1324,7 @@ void gp_initResources(Resources *res) {
         (Vector2){1362,616}, // sprite frame position
         1, 1, // amount of animated frames, number of frame lines
         85, 59, // width, height
-        0.4, 0, // scale, rotation
+        gp_perX(4) / 85, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1252,7 +1335,7 @@ void gp_initResources(Resources *res) {
         (Vector2){1470,616}, // sprite frame position
         1, 1, // amount of animated frames, number of frame lines
         85, 59, // width, height
-        0.4, 0, // scale, rotation
+        gp_perX(4) / 85, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1274,7 +1357,7 @@ void gp_initResources(Resources *res) {
         (Vector2){1160,720}, // sprite frame position
         11, 1, // amount of animated frames, number of frame lines
         60, 106, // width, height
-        2.5, 0, // scale, rotation
+        gp_perX(8) / 60, 0, // scale, rotation
         false, true, (Vector2){0,0}, 8 // animate, loop animation, loop position options, frame speed
     );
     
@@ -1457,16 +1540,17 @@ void gp_initResourceScreens(Asset *asset, SpritePack sprite, Vector2 pos, int wi
 // Function initializing player initial levels position
 void gp_initPositions(LevelPosition *levelPos) {
     
-    /*game.levelPos.level_1 = (Vector2){20, GetScreenHeight() / 2};
-    game.levelPos.level_2 = (Vector2){20, GetScreenHeight() / 2};
-    game.levelPos.level_3 = (Vector2){45, 0};*/
+    Vector2 defaultPos = (Vector2){
+        gp_perX(5),
+        gp_perY(40)
+    };
     
-    levelPos->level_1 = (Vector2){20, GetScreenHeight() / 2};
-    levelPos->level_2 = (Vector2){20, GetScreenHeight() / 2};
-    levelPos->level_3 = (Vector2){45, 0};
-    levelPos->level_4 = (Vector2){20, screenHeight / 2};
-    levelPos->level_bonus = (Vector2){205, 390};
-    levelPos->level_5 = (Vector2){50, screenHeight / 2};
+    levelPos->level_1 = defaultPos;
+    levelPos->level_2 = defaultPos;
+    levelPos->level_3 = (Vector2){gp_perX(5), gp_perY(25)};
+    levelPos->level_4 = defaultPos;
+    levelPos->level_5 = defaultPos;
+    levelPos->level_bonus = (Vector2){gp_perX(30), gp_perY(60)};
 }
 
 // Function initializing screen/text effect objects

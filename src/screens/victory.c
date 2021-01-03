@@ -10,16 +10,16 @@
 
 // Function reading user inputs
 void VictoryRead(Player *player) {
-	
+
     if (IsKeyPressed(KEY_ENTER)) {
         
-		PrintDebug("Pressed ENTER, returning to the menu!");
+        PrintDebug("Victory => Menu");
         
         gp_initPlayer(player);
         
         game.levelPassed = MENU;
-		game.gameScreen = MENU;
-	}
+        game.gameScreen = MENU;
+    }
 }
 
 // Function drawing the victory screen
@@ -38,24 +38,19 @@ void VictoryDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
         gp_resetFx(textBounceFx);
         
         textBounceFx->duration = 2;
-        textBounceFx->scaleBase = 90;
-        textBounceFx->scaleFinal = textBounceFx->scaleBase + 10;
+        textBounceFx->scaleBase = gp_perX(10);
+        textBounceFx->scaleFinal = textBounceFx->scaleBase + gp_perX(1.25);
         textBounceFx->scale = textBounceFx->scaleBase;
         textBounceFx->color = RAYWHITE;
     }
     
     VictoryRead(player);
     
-	BeginDrawing();
+    BeginDrawing();
 
-	ClearBackground(RAYWHITE);
-
-    /*DrawTextureEx(
-        res.backgrounds.victory,
-        (Vector2){0, 0},
-        0.0f, 0.85f, WHITE
-    );*/
+    ClearBackground(RAYWHITE);
     
+    // Draw background
     gp_drawImage(&res.backgrounds.victory, res.backgrounds.victory.scale);
     
     // Draw title
@@ -68,12 +63,12 @@ void VictoryDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
     // Draw sub-title
     gp_drawText(
         "Solin destroyed the GobLean!", res.fonts.pixellari,
-        (Vector2){0, GetScreenHeight() / 2 + 60},
-        25, CENTER_X, RAYWHITE
+        (Vector2){0, gp_perY(60)},
+        gp_perX(2.4), CENTER_X, RAYWHITE
     );
     
     // Drawing the fade in effect
     gp_drawFade(fadeFx);
 
-	EndDrawing();
+    EndDrawing();
 }

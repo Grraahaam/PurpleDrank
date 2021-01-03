@@ -22,8 +22,8 @@ void lb_readCollisions(Player *player, Asset *portal, Asset *gelano) {
         
         // Change the barrel, to a broken one
         barrel = res.items.barrel_broken;
-        barrel.position = (Vector2){425, 290};
-        barrel.scale = 1.3f;
+        barrel.position = (Vector2){gp_perX(53), gp_perY(64)};
+        barrel.scale = gp_perX(5) / res.items.barrel_broken.width;
         barrel.version = 1;
 
         if(!player->gelano) {
@@ -90,65 +90,74 @@ void LevelBonusInit(Player *player) {
 
     /** CUSTOM ****************************************************************************/
         
-    // Create floor and walls rectangle physics body
+    // Left wall
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(16),
+        .y = gp_perY(0)
+    }, gp_perX(0.5), gp_perY(100));
     
-	PhysicsBody floor_left = CreatePhysicsBodyRectangle((Vector2){ 205, 390 }, 110, 40, 10);
-    PhysicsBody floor_middle = CreatePhysicsBodyRectangle((Vector2){ 420, 360 }, 270, 100, 10);
-    PhysicsBody floor_right = CreatePhysicsBodyRectangle((Vector2){ 650, 390 }, 110, 40, 10);
-
-    PhysicsBody wall_left = CreatePhysicsBodyRectangle(
-        (Vector2){ 130, screenHeight/2 },
-        10, screenHeight*2, 10
-    );
-    PhysicsBody wall_right = CreatePhysicsBodyRectangle(
-        (Vector2){ 730, screenHeight/2 },
-        10, screenHeight*2, 10
-    );
+    // Right wall
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(88),
+        .y = 0
+    }, gp_perX(0.5), gp_perY(100));
     
-	floor_left->enabled = false;
-	floor_middle->enabled = false;
-	floor_right->enabled = false;
+    //Floor left
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(18),
+        .y = gp_perY(82)
+    }, gp_perX(14), gp_perY(8));
     
-    wall_left->enabled = false;
-    wall_right->enabled = false;
-
+    // Floor middle
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(35),
+        .y = gp_perY(68)
+    }, gp_perX(36), gp_perY(20));
+    
+    // Floor right
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(73.5),
+        .y = gp_perY(82)
+    }, gp_perX(13), gp_perY(8));
+    
     for(int i = 0; i < 6; i++) {
         
         lean[i] = res.items.lean;
-        lean[i].scale = 0.18;
+        lean[i].scale = gp_perX(1.8) / res.items.lean.width;;
         lean[i].disabled = (player->lean > 2) ? true : false;
     }
     
-    lean[0].position = (Vector2){340, 150};
-    lean[1].position = (Vector2){340, 200};
-    lean[2].position = (Vector2){340, 250};
-    lean[3].position = (Vector2){500, 150};
-    lean[4].position = (Vector2){500, 200};
-    lean[5].position = (Vector2){500, 250};
+    lean[0].position = (Vector2){gp_perX(42.5), gp_perY(33)};
+    lean[1].position = (Vector2){gp_perX(42.5), gp_perY(42)};
+    lean[2].position = (Vector2){gp_perX(42.5), gp_perY(52)};
+    lean[3].position = (Vector2){gp_perX(62.5), gp_perY(33)};
+    lean[4].position = (Vector2){gp_perX(62.5), gp_perY(42)};
+    lean[5].position = (Vector2){gp_perX(62.5), gp_perY(52)};
     
     res.items.gelano.disabled = (player->gelano) ? false : true;
-    res.items.gelano.scale = (player->gelano) ? 0.8 : 1;
+    res.items.gelano.scale = (player->gelano) ?
+        gp_perX(2) / res.items.gelano.width :
+        gp_perX(4) / res.items.gelano.width;
     res.items.gelano.position = (player->gelano) ?
         (Vector2){
-            GetScreenWidth() - res.items.gelano.width * res.items.gelano.scale - 5,
-            res.items.gelano.height * res.items.gelano.scale + 5
+            GetScreenWidth() - res.items.gelano.width * res.items.gelano.scale - gp_perX(1),
+            res.items.gelano.height * res.items.gelano.scale + gp_perY(1)
         } :
-        (Vector2){418, 150};
+        (Vector2){gp_perX(52), gp_perY(33)};
 
     barrel = (player->gelano) ? res.items.barrel_broken : res.items.barrel_full;
-    barrel.scale = 1.3;
-    barrel.position = (Vector2){425, 290};
+    barrel.scale = gp_perX(5) / res.items.barrel_full.width;
+    barrel.position = (Vector2){gp_perX(53), gp_perY(64)};
     barrel.version = (player->gelano) ? 1 : 0;
 
     portal = res.items.portal;
-    portal.scale = 0.8f;
-    portal.position = (Vector2){650, 280};
+    portal.scale = gp_perX(4) / res.items.portal.width;
+    portal.position = (Vector2){gp_perX(84), gp_perY(67)};
 
     /************************************************************************************/
-    // Set default position
-    player->asset.position = game.levelPos.level_bonus;
-        
-    gp_initializeBody(player);
+    
+    // Initialize player's body and default position
+    gp_initializeBody(player, game.levelPos.level_bonus);
 }
 
 void LevelBonusDraw(Player *player, ScreenFX *screenFx) {

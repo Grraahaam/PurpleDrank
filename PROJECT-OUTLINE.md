@@ -25,14 +25,14 @@ The development is organized over several units listed below from the most manda
 
 ```
 
-Creating the base structure and giving developers the tools to get their jobs done. (*This functionality is sometimes closely linked with the Fct.4*)
+Creating the base structure and giving developers the tools to get their jobs done. (*This functionality is sometimes closely linked with the Unit-4*)
 
-- Developers can communicate with others (discord)
-- A developer can share a working directory (gitlab)
+- Developers can communicate with others (Discord)
+- A developer can share a working directory (GitLab)
 - Tests programmes can be completed and executed.
 - Everyone can refer to documentation.
 - A realize by merging contribution could be generated.
-- A solution for Unit Test is operational.
+- A debug mode is implemented to speed up issue tracking.
 - Make sure that the whole project is coherent (both design and code)
 
 ## Unit-2 Background and assets design
@@ -61,9 +61,9 @@ PurpleDrank is a "Die and Retry" game. In this purpose, levels should be designe
 
 - Create levels with increasing difficulty.
 - Add traps and ennemies so that player can die.
-- Add physics body to import gravity on jump and player moves.
+- Add physics body to interact with the gravity (jump and player movements).
 - Add bonuses and powers so that player can beat ennemies
-- Create levels that can be finished (even for the hardcore last one)
+- Create levels that can be finished (even for the hardest ones)
 
 ## Unit-4 Refactoring
 
@@ -76,7 +76,7 @@ PurpleDrank is a "Die and Retry" game. In this purpose, levels should be designe
 Make sure that the whole code respect the same chart and the same organisation.
 
 
-- Each screen had its own file (levels, gameover, menu...).
+- Each screen had its own file (structured within documented directories).
 - Make sure variables and structures definitions/uses follows the good pratices.
 - Create structures to get an object oriented programming.
 - Split repetitive operations into functions to optimize the developement and reduce overall code complexity
@@ -93,8 +93,9 @@ This functionality focus on the possibility for the user to access all levels an
 
 - The game starts on a menu screen with different possibilities.
 - The game's screens aims to follow the team's artistic direction.
-- Player can custom his own key binding but also his own character to play Solean.
+- Player can customize his own key binding but also his own character (Solean) to play the game.
 - Make sure the player can get informations about the game's key shortcuts
+- Make the positioning relative to improve screen scalability (fullscreen, adaptive screen)
 
 ## Unit-6 Immersion & Diversity
 
@@ -105,7 +106,7 @@ This functionality focus on the possibility for the user to access all levels an
 
 This functionality focus on the addition of immersion and diversity to our game.
 
-- Player can play to mini-games if they have already done the Story levels.
-- Player can play with music in the background.
+- Player can play to mini-games if they succeeded the Story mode.
+- Music is played in the background, for improved immersion.
 - Sound effect are applied to the game's events (fire, ennemy hit, portal, ...)
 
