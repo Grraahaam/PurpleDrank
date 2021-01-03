@@ -93,12 +93,7 @@ void l2_readCollisions(Player *player) {
         
         // If launchpad activated
         if(player->can_move && IsKeyPressed(KEY_SPACE)) {
-            
-<<<<<<< HEAD
-            player->body->velocity.y = -1 * gp_perY(.4);
-=======
             player->body->velocity.y = -1 * gp_perY(.42);
->>>>>>> feat/graham
             player->body->velocity.x = gp_perX(.15);
             
             res.items.launchpad.frame.animate = true;
