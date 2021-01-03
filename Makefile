@@ -1,27 +1,33 @@
-all: config
+
+# Build game binaries
+all:
 	@make -C src
 
-config:
-	cp conf/config.default conf/config
+# Adding binary file and desktop related icons/launcher
+install:
+	cp -f PurpleDrank /usr/games/purpledrank
+	
+	mkdir -p /usr/share/PurpleDrank
+	
+	cp -rf res/* /usr/share/PurpleDrank
+	
+	cp -f conf/purpledrank.desktop ~/.local/share/applications
+	
+	update-desktop-database ~/.local/share/applications
 
-unix:
-	@echo "generate Bath config"
-	@echo "# Configuration for make" > conf/config
-	@echo "CC=gcc" >> conf/config
-	@echo "CFLAGS=-std=c99 -Wall -Wextra -lraylib -lm" >> conf/config
-	@echo "LIBS=-lraylib -lm" >> conf/config
-	@echo "OS=`uname`" >> conf/config
+# Removing binary file and desktop related icons/launcher
+uninstall:
+	rm -rf /usr/games/purpledrank
+	
+	rm -rf /usr/share/PurpleDrank
+	
+	rm -rf ~/.local/share/applications/purpledrank.desktop
+	update-desktop-database ~/.local/share/applications
 
-windows:
-	@echo "generate PowerShell config"
-	@echo # Configuration for make > config
-	@echo "OS=Windows" >> conf/config
-	@echo "CC=gcc" >> conf/config
-	@echo "CFLAGS=-std=c99 -Wall -Wextra -lraylib -lm" >> conf/config
-	@echo "LIBS=-lraylib -lm" >> conf/config
-
+# Clean up *.o files
 clean:
 	@make -C src clean
 
+# Clean up *.o files and game binary
 purge:
 	@make -C src purge

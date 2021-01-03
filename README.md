@@ -1,11 +1,13 @@
-# Documentation
+[![Dev Badge](https://img.shields.io/badge/DEV-PurpleTeam-9400D3?style=for-the-badge&logo=discord&logoColor=9400D3)](https://discord.com/login)
 
-Purple Drank documentation
+# PurpleDrank
+A *rage-proof*, and *pixel-perfect* jump game, powered by Raylib framework.
+The main character is a remake of Sonic, named Solin, refering to the *Lean* which is the in-game resource.
 
-For contribution instructions, please read the README in `/src`
+![PurpleDrank Splashscreen](./res/backgrounds/splash.png "PurpleDrank")
 
-# Story
-
+## Story :fr:
+>>>>>>> dev/alpha
 *Solin et son Ekip*
 
 Le monde de Lealle est attaqué par un virus mortel, la fièvre Ebolean, causée par le Gob-Lean lorsqu'il se fit quitter par sa copean. Cette rage se fit ressenti lors d'orages violets, les purple rain, rendant le monde accroc à cette substance qu'est la lean.
@@ -14,40 +16,53 @@ Dans le monde chaotique de Lealle, vous aiderez Solin et son Ekip, à vaincre le
 
 **Récupérer un maximum de seaux de Cristalean afin de pouvoir vaincre le Gob-Lean!**
 
-# Build
+## Installation :joystick:
+To install and play this game, please run the following:
+```
+sudo apt install -y git
+git clone http://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank.git PurpleDrank
+cd PurpleDrank && make
+./PurpleDrank
 
-At the project's root level, type : `make`
-And to run, type : `./solin`
+# To install permanently
+sudo make install
 
-The first Makefile generate the compiling flags configuration, and the src/Makefile define the links between files and build the executable
+# To uninstall, removing all game files
+sudo make uninstall
+```
 
-If you are adding a new file to the project, add its name to the `/src/Makefile` following line:
+## Gameflow
+PurpleDrank's adventure mode is made of **5 levels** and **1 bonus stage**. A boss can be met in the third and fifth levels. Don't worry if you do not succeed, you're maybe not good enough yet ;)
 
-* `solin: main.o menu.o [filename].o`
+PurpleDrank also includes minigames to train your ability for the adventure mode.
 
-It will be found automatically, if it is in `src` or `src/screens` directories. No need to write the full path
+## Controls
+The default game controls are listed below, we wanted to go pro and present a customizable controls screen, but you know, kids, family...
 
-# Structure
+| Keys | Description |
+|:-:|-|
+| `ESC` | Exit the game |
+| `ENTER` | Confirm selection and skip screens/dialogs |
+| `LEFT`<br>`UP`<br>`RIGHT`  | Controls player's movements |
+| `SPACE` | Interact with the launchpad/Use the JetLean |
+| `R` | Player "super" mode (ball, faster) |
+| `Q` | Throw lean (when possible) |
+| `W` | Enable the JetLean (when possible) |
+| `E` | Generate portals (when possible) |
+| `G` | Enable Gelano mode (to stop ice-slipping) |
+| `F1` | Return to the menu (game resets) |
+| `F3` | Toggle debug mode |
 
-*The structure tries to follow git/dev best practices*
+## Contribution :pencil2:
+For contribution instructions, please read this [documentation](src/README.md)
 
-* `/lib`
-    * Contains external libraries (e.g. raylib)
+To see the overall features we worked on and those we're implementing, check the [TODO](TODO.md)
 
-* `/src`
-    * Contains our source code and header file (*.c and *.h)
+To see the list of the contributors and their assignements, read the [PROJECT-OUTLINE.md](PROJECT-OUTLINE.md)
 
-* `/src/lib`
-    * Contains library used for the game
+The game tries to follow [16:9 viewport ratio](https://en.wikipedia.org/wiki/16:9). Currently using **1024x576** ratio, the in-game's dimensions are relative to the any ratio, we choosed a static one instead of fullscreen mode for better support (our fullscreen auto-scale methods doesn't work with all of our beta-testers)
 
-* `/test`
-    * Contains ALL the tests, keep them separate HERE
+## Credits
+**@** The Purple Team 
 
-* `/scripts`
-    * Automatization scripts, for custom operations not including Makefile which is at the project's root level
-
-* `/res`
-    * Contains all the static ressources, as images and sounds
-
-* `/doc`
-    * Contains all the documentation and useful tips
+(*The project is open source, licensed under [MIT License](https://en.wikipedia.org/wiki/MIT_License)*)

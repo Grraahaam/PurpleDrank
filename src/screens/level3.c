@@ -1,200 +1,502 @@
 #include <stdio.h>
 #include <raylib.h>
-
-#ifndef PHYSAC_IMPLEMENTATION
-#define PHYSAC_IMPLEMENTATION
-#endif
-#ifndef PHYSAC_NO_THREADS
-#define PHYSAC_NO_THREADS
-#endif
+#include <unistd.h>
+#include <pthread.h>
 
 #include "../lib/physac.h"
 #include "../lib/defines.c"
 #include "../globals.h"
-#include "../screens/level3.h"
+#include "../gameplay.h"
 
-float vitesse = VELOCITY*0.4;
-bool boule = true, right = true, victory = false, dead = false, canMove = false, desactivate = false, lean_activate = false, lean_right = false, lean_left = false, destroy = true, start = true, lancer = false, lance_mainD = true, lance_mainG = true;
-int time_spikes = 0, time_start = 0, time_killed = 0, time_kill = 0, car_killed = 0, goblean_hurt = 0;
-float leanX, leanY, mainGx, mainGy, mainDx, mainDy;
+#include "level3.h"
 
+//pthread_t thread_id;
 
-/*bool Fallen_Spikes(Rectangle *rect_piques, Rectangle *rect_solin) {
-	if(CheckCollisionRecs(*rect_solin, *rect_piques)){
-		if(time_spikes == 0){
-			imgPlayer = solinDead;
-			canMove = false;
-			time_spikes++;
-		}
-		else{
-			time_spikes++;
-		}
-	}
-	if(time_spikes>30){
-	time_spikes = 0;
-	return true;
-	}
-	else return false;
-}*/
+Enemy gob, dark_solin;
+Asset lean, gob_dying, fire, damage;
 
-void LeanAvance() { 
-	if(lean_right) leanX += 5.0f;
-	if(lean_left) leanX -= 5.0f;
-}
+Texture2D portal;
 
-
-void LaunchLean(Player *player_Struct, PhysicsBody *body) {
-	if(player_Struct->nb_lean > 0 && destroy && !lean_activate){
-		leanX = (*body)->position.x;
-       	leanY = (*body)->position.y;
-        	lean = lean_launched;
-        	player_Struct->nb_lean --;
-        	lean_activate = true;
-        	if(right) lean_right = true;
-        	else lean_left = true;
-	}
-}
-
-
-
-void LevelThreeCheck_Event(Player *player_Struct, PhysicsBody *body, Rectangle *rect_goblean, Rectangle *rect_skate, Rectangle *rect_solin, Rectangle *rect_lean, Rectangle *rect_car_top, Rectangle *rect_car_left, Rectangle *rect_car_right) {
-	
-	/*if ( Fallen_Spikes(rect_piques, rect_solin) ) {
-		(*body)->position.x = 40;
-		(*body)->position.y = screenHeight/2;
-		player_Struct->health_point -= 1 ;
-		imgPlayer = solinPlayer;
-		canMove = true;
-		reset_lean(player_Struct);
-
-		// Check if player is dead
-		if(player_Struct->health_point <= 0) {
-			// Reset 3 lives and show Game over screen
-			player_Struct->health_point = 3;
-			dead = true;
-			game.gameScreen = GAME_OVER;
-		}
-	}
-	else if ( LevelTwoEnd(player_Struct, rect_tp, rect_solin) ) {
-		victory = true;
-		game.gameScreen = SUCCESS;
-	}*/
-}
-
-void LevelThreeRead(Player *player_Struct, PhysicsBody *body, Rectangle *rect_goblean, Rectangle *rect_skate, Rectangle *rect_solin, Rectangle *rect_lean, Rectangle *rect_car_top, Rectangle *rect_car_left, Rectangle *rect_car_right) {
-	// Horizontal movement input
-    if (IsKeyDown(KEY_RIGHT) && canMove) {
-        (*body)->velocity.x = vitesse;
-        if (!boule && !right){
-            imgPlayer = solinPlayer;
-        }
-        right = true;
-    }        
-    else if (IsKeyDown(KEY_LEFT) && canMove) {
-        (*body)->velocity.x = -vitesse;
-	if (!boule && right){
-            imgPlayer = solinReverse;
-        }
-        right = false;
-    }
-    else if (IsKeyPressed(KEY_DOWN) && !boule) {
-    	imgPlayer = solinBall;
-        vitesse = vitesse*3;
-        boule = true;
-    }
+Damage l3_collisionLean(Asset *lean, Asset *fire, Enemy *gob, Enemy *dark_solin) {
     
-    else if (IsKeyPressed(KEY_DOWN) && boule && vitesse > 0.5 ) {
-        if(right) imgPlayer = solinPlayer;
-        else imgPlayer = solinReverse;
-        vitesse = vitesse/3;
-        boule = false;
-    }
-
-	// Vertical movement input checking if player physics body is grounded
-    if (IsKeyDown(KEY_UP) && (*body)->isGrounded && canMove) {
-		(*body)->velocity.y = -VELOCITY*3;
-    }
-	
-     
-	//LevelTwoCheck_Event(player_Struct, body, rect_piques, rect_tp, rect_solin, rect_lean1, rect_lean2, rect_lean3);
+    // Lean hit a gob
+    if(gp_collisionAssets(lean, &gob->asset)) return GOB;
+    
+    //Lean hit the Dark solin
+    if(gp_collisionAssets(lean, &dark_solin->asset)) return BOSS;
+    
+    // Lean hit the fire
+    if(gp_collisionAssets(lean, fire) && !fire->disabled) return FIRE;
+    
+    // Lean hit nothing
+    return NONE;
 }
 
-void LevelThreeDraw(Player *player_Struct) {
-
-    PrintDebug("Drawing Level 2");
-	
- 	SetConfigFlags(FLAG_MSAA_4X_HINT);
-
-     // Re/set default player image
-	imgPlayer = solinPlayer;
-	goblean_ennemy = gobleanAlive;
-	goblean_mainG = mainG_empty;
-	goblean_mainD = mainD_empty;
-	lean = lean_destroyed;
-	teleportation = teleportation_OK;
-	car_ennemy = car_new;
-
-	//Re/set the victory switch (otherwise when gameover + retry = infinite loop)
-	victory = false;
-	dead = false;
-
-	// Create floor and walls rectangle physics body
-    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ 435, 380 }, 730, 190, 10);
-    PhysicsBody platform = CreatePhysicsBodyRectangle((Vector2){ 35, 330 }, 70, 240, 10);
-    PhysicsBody wallLeft = CreatePhysicsBodyRectangle((Vector2){ -5, screenHeight/2 }, 10, screenHeight*2, 10);
-    PhysicsBody wallRight = CreatePhysicsBodyRectangle((Vector2){ screenWidth + 5, screenHeight/2 }, 10, screenHeight*2, 10);
-    PhysicsBody car = CreatePhysicsBodyRectangle((Vector2){ 1000, 260}, 140, 50, 10);
-    PhysicsBody goblean = CreatePhysicsBodyRectangle((Vector2){ 1000, 180}, 120, 210, 10);
+Damage l3_collisionPlayer(Player *player, Enemy *gob, Enemy *dark_solin, Asset *fire) {
     
+    // Define player hitbox
+    Rectangle player_hitbox = {
+        .x = player->asset.position.x - player->asset.scale * player->asset.width / 2,
+        .y = player->asset.position.y - player->asset.scale * player->asset.height / 2,
+        .width = player->asset.scale * player->asset.width, .height = player->asset.scale * player->asset.height
+    };
+    
+    // Player hit a gob (TOP)
+    if(CheckCollisionRecs(
+        // Player
+        player_hitbox,
+        // Gob top
+        (Rectangle){
+            .x = gob->asset.position.x - gob->asset.swidth / 2 + 20,
+            .y = gob->asset.position.y - gob->asset.sheight / 2,
+            .width = gob->asset.swidth - 40, .height = 30
 
-	// Disable dynamics to floor and walls physics bodies
-    floor->enabled = false;
-    platform->enabled = false;
-    wallLeft->enabled = false;
-    wallRight->enabled = false;
-    car-> enabled = false;
-    goblean -> enabled = false;
+        })) return GOB;
+    
+    // Player hit a gob (RIGHT/LEFT)
+    if(CheckCollisionRecs(
+        // Player
+        player_hitbox,
+        // Gob left
+        (Rectangle){
+            .x = gob->asset.position.x - gob->asset.swidth / 2 + 5,
+            .y = gob->asset.position.y - gob->asset.sheight / 2 + 30,
+            .width = gob->asset.swidth - 10, .height = gob->asset.sheight - 30
 
-    // Create movement physics body
-    PhysicsBody body = CreatePhysicsBodyRectangle((Vector2){ 40, screenHeight/2 }, 50, 60, 1);
-    body->freezeOrient = true;      // Constrain body rotation to avoid little collision torque amounts
-	
-	while (!victory && !dead && !WindowShouldClose()) {   // Detect window close button, ESC key or victory
-		
-		RunPhysicsStep();
-		LeanAvance();
-		Rectangle rect_solin = { body -> position.x - 30, body -> position.y - 30, 60, 60 };
-		Rectangle rect_lean = { leanX, leanY - 20, 25, 40 };
+        })) return PLAYER;
+    
+    // Player hit by dark solin (BOSS)
+    if(gp_collisionAssets(&player->asset, &dark_solin->asset)) return PLAYER;
+
+    // Player hit by fire
+    if(gp_collisionAssets(&player->asset, fire) && !fire->disabled) return PLAYER;
+    
+    // Player hit by nothing
+    return NONE;
+}
+
+void l3_resetGob(Asset *asset) {
+    
+    // Reset the gob to the initial position (right border + gob width + margin)
+    asset->position.x = GetScreenWidth() + asset->swidth + 20;
+}
+
+// Function showing an explosion animation on given asset (+ sound fx)
+void l3_playDamage(Asset *ast) {
+    
+    PlaySound(res.sounds.explosion);
+    
+    damage.position.x = ast->position.x;
+    damage.position.y = ast->position.y;
+    damage.frame.current = 0;
+    damage.disabled = false;
+    damage.frame.animate = true;
+}
+
+void l3_throwLean(Player *player, Asset *lean) {
+
+    // Only throw if lean left in inventory and no lean in the air
+	if(player->lean > 0 && lean->disabled){
+
+        // Decrement the lean amount and start throwing from player's position
+        --player->lean;
+        lean->position = player->asset.position;
         
-		Rectangle rect_car_top = { car-> position.x - 60, car-> position.y - 30, 120, 10 };  
-		Rectangle rect_car_left = { car-> position.x - 80, car-> position.y, 10, 20 };      
-		Rectangle rect_car_right = { car-> position.x + 70, car-> position.y, 10, 20 }; 
-		
-		Rectangle rect_goblean = { goblean-> position.x - 60, goblean-> position.y - 100, 120, 160 };
-		Rectangle rect_skate = { goblean-> position.x - 95, goblean-> position.y + 62, 180, 40 };
-		
-		LevelThreeRead(player_Struct, &body, &rect_goblean, &rect_skate, &rect_solin, &rect_lean, &rect_car_top, &rect_car_left, &rect_car_right);
-		
-		BeginDrawing();
+        // Set the lean's inital size
+        lean->swidth = lean->width * lean->scale;
+        lean->sheight = lean->height * lean->scale;
 
-		DrawTextureEx(background_lvl3, (Vector2){0, 0}, 0.0f, 0.85f, WHITE); 
-        	DrawTextureEx(imgPlayer, (Vector2){ body -> position.x - 40, body -> position.y - 30}, 0.0f, 0.15f, WHITE);
-		DrawTextureEx(solin_head, (Vector2){10, 20}, 0.0f, 0.25f, WHITE);
-            	DrawTextureEx(teleportation, (Vector2){5, 125}, 0.0f, 0.1f, WHITE);
-            	DrawTextureEx(inventory_lean, (Vector2){30, 60}, 0.0f, 0.08f, WHITE);
-            	DrawText(TextFormat("%d", player_Struct->nb_lean), 90, 70, 30, WHITE);
-            	DrawTextureEx(lean, (Vector2){leanX, leanY - 20}, 0.0f, 0.08f, WHITE); 
-            	DrawTextureEx(car_ennemy, (Vector2){ car-> position.x - 75, car-> position.y - 40 }, 0.0f, 0.1f, WHITE ); 
-            	DrawTextureEx(goblean_ennemy, (Vector2){ goblean-> position.x - 115, goblean-> position.y - 110 }, 0.0f, 0.2f, WHITE );   
-            	//DrawText(TextFormat("%f", body->position.x), 10, 85, 30, WHITE);
-		//DrawText(TextFormat("%f", body->position.y), 10, 55, 30, RED);
-		DrawText(TextFormat("%d", player_Struct->health_point), 90, 25, 30, WHITE);
-        	DrawFPS(screenWidth - 90, screenHeight - 30);
-		EndDrawing();
-	}
+        // Set the throwed lean's direction
+        lean->direction = player->asset.direction == RIGHT ? RIGHT : LEFT;
+        
+        // Enable drawing
+        lean->disabled = false;
+    }
 }
 
+void l3_destroyLean(Asset *lean) {
+    
+    // Destroy throwed lean
+    lean->disabled = true;
+    lean->position = (Vector2){0,0};
+}
 
+void l3_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Asset *fire, Enemy *gob, Enemy *dark_solin) {
+    
+    // If gob or dark solin hit by a throwed lean
+    switch(dtype) {
+        
+        // TODO: PLAY SOUND EFFECT ON HIT + SPRITE HIT FRAME
+        
+        case GOB: {
+            
+            // Decrement the amount of gob to spawn
+            --gob->amount;
+            
+            gob_dying.disabled = false;
+            gob_dying.position = (Vector2){
+                gob->asset.position.x,
+                gob->asset.position.y + gp_perY(.5)
+            };
+            gob_dying.frame.animate = true;
+            
+            // Increasing the gob's velocity each time one disappear or is killed (max. speed limit)
+            if(gob->asset.speed < gp_perX(2)) {
+                
+                gob->asset.speed += gp_perX(.1);
+                gob->asset.frame.speed += 3;
+            }
+            
+            // If lean throwed, destroy it
+            if(actor == LEAN) {
+                
+                l3_destroyLean(lean);
+                
+                damage.type = GOB;
+                l3_playDamage(&gob->asset);
+            }
+            
+            // Reset gob inital position
+            l3_resetGob(&gob->asset);
+            
+        } break;
+        
+        case BOSS: {
+            
+            // Decrement dark solin's lives
+            --dark_solin->lives;
+            
+            // If lean throwed, destroy it
+            if(actor == LEAN) l3_destroyLean(lean);
+            
+            damage.type = BOSS;
+            l3_playDamage(&dark_solin->asset);
+            
+        } break;
+        
+        case FIRE: {
+            
+            // If lean throwed, destroy it
+            if(actor == LEAN) {
+                
+                l3_destroyLean(lean);
+            
+                damage.type = FIRE;
+                l3_playDamage(fire);
+                
+                fire->disabled = true;
+            }
+            
+        } break;
+        
+        case PLAYER: {
+            
+            // Decrement player's lives
+            --player->lives;
+            
+            // Replace player
+            player->body->position = game.levelPos.level_3;
+            
+        } break;
 
+        // Default action
+        default : break;
+    }
+}
 
+void l3_readCollisions(Player *player, Asset *lean, Asset *fire, Enemy *gob, Enemy *dark_solin) {
+    
+    // Read and process collision damage type
+    l3_readDamage(l3_collisionLean(lean, fire, gob, dark_solin), LEAN, player, lean, fire, gob, dark_solin);
+    l3_readDamage(l3_collisionPlayer(player, gob, dark_solin, fire), PLAYER, player, lean, fire, gob, dark_solin);
+}
 
+void LevelThreeRead(Player *player, Asset *lean, Asset *fire, Enemy *gob, Enemy *dark_solin) {
+    
+    gp_readPlayer(player);
+    l3_readCollisions(player, lean, fire, gob, dark_solin);
+    
+    // If ended level
+    if(dark_solin->lives <= 0) {
+        
+        dark_solin->asset.disabled = true;
+        
+        game.levelPassed = LEVEL_3;
+        game.gameScreen = LEVEL_4;
+    
+    } else {
+    
+        // Throw lean
+        if(IsKeyPressed(KEY_Q)) l3_throwLean(player, lean);
+        
+        // If still gob enemies to kill
+        if(gob->amount > 0) {
+            
+            // Gob moving to left until they go through the left border
+            gob->asset.position.x -= gob->asset.speed;
+        
+        } else {
+         
+            
+            // If dark solin still alive (translate back and forth infinitely on X axis)
+            if(dark_solin->lives > 0) {
+                
+                if(dark_solin->asset.direction == LEFT) {
+                    
+                    dark_solin->asset.position.x -= dark_solin->asset.speed;
+                    
+                    // If dark solin reached the middle and is facing left
+                    if(dark_solin->asset.position.x < (GetScreenWidth() / 2 + dark_solin->asset.swidth)) {
+                    
+                        fire->disabled = false;
+                        fire->frame.animate = true;  
+                        
+                        // Invert direction
+                        dark_solin->asset.direction = RIGHT;
+                    }
+                    
+                } else {
+                    
+                    dark_solin->asset.position.x += dark_solin->asset.speed;
+                    
+                    // If dark solin reached the right side and is facing right (right - dark_solin width - margin)
+                    if(dark_solin->asset.position.x > (GetScreenWidth() - dark_solin->asset.swidth + 20)){
+                    
+                        fire->disabled = true;
+                        fire->frame.animate = false;                    
+                        
+                        // Invert direction
+                        dark_solin->asset.direction = LEFT;
+                    }
+                }
+            }
+        }
+        
+        // Handle damage, clean it when done and follow boss when moving (explosion animation)
+        if(damage.frame.current >= 9) damage.disabled = true;
+        if(!damage.disabled && damage.type == BOSS) {
+            
+            damage.position.x = dark_solin->asset.position.x;
+            damage.position.y = dark_solin->asset.position.y;
+        }
+        
+        // If there's a lean being throwed
+        if(!lean->disabled) {
+            
+            if(lean->direction == RIGHT) lean->position.x += lean->speed;
+            else lean->position.x -= lean->speed;
+        }
+        
+        // Destroy lean if outside the screen
+        if(gp_isOutScreen(lean) && !lean->disabled) {
+            
+            PrintDebug("Lean destroyed");
+            l3_destroyLean(lean);
+        }
+        
+        // Destroy gob if outside the screen
+        if(gp_isOutScreen(&gob->asset)) {
+
+            PrintDebug("Gob destroyed");
+            
+            // Reset the gob inital position
+            l3_resetGob(&gob->asset);
+            
+            // Increasing the gob's velocity each time one disappear or is killed
+            if(gob->asset.speed < gp_perX(2)) {
+                
+                gob->asset.speed += gp_perX(.1);
+                gob->asset.frame.speed += 3;
+            }
+        }
+        
+        // Stop and reset dying gob animation if reached 
+        if(gob_dying.frame.current >= gob_dying.frame.amount - 1) {
+            
+            gob_dying.disabled = true;
+            gob_dying.frame.animate = false;
+            gob_dying.frame.current = 0;
+        }
+    }
+}
+    
+void LevelThreeInit(Player *player) {
+    
+    ResetPhysics();
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
+    
+    PrintDebug(TextFormat("Initializing: %s", screenNames[game.gameScreen]));
+    
+    gp_resetNotification();
+    
+    //TODO: IMPLEMENT THREAD FUNCTION TO TIMEOUT LEVEL LOADING AND DEATH TIMEOUT
+    
+    gp_resetPlayer(player);
+    
+    /** CUSTOM ****************************************************************************/
+    
+    // Help a little when debugging
+    if(DEBUG) {
+        
+        player->lives = 20;
+        player->lean = 50;
+    }
+    
+    // Initialize Lean object (to throw)
+    lean = res.items.lean;
+    lean.scale = gp_perX(1.5) / res.items.lean.width;
+    lean.speed = gp_perX(.5);
+    lean.position = (Vector2){0,0};
+    lean.disabled = true;
+    
+    // Initialize gob asset
+    gob.asset = res.items.gob_walking;
+    gob.asset.speed = gp_perX(.1);
+    gob.amount = 4;
+    
+    gob.asset.position = (Vector2){
+        .x = GetScreenWidth() + gob.asset.swidth + 20,
+        .y = gp_perY(63) - gob.asset.sheight / 2
+    };
+    
+    // Initialize dying gob
+    gob_dying = res.items.gob_dying;
+    gob_dying.disabled = true;
+    
+    // Initialize Dark solin asset
+    dark_solin.asset = res.items.dark_sonic;
+    dark_solin.asset.speed = gp_perX(.2);
+    dark_solin.asset.direction = LEFT;
+    dark_solin.lives = 3;
+    
+    dark_solin.asset.position = (Vector2){
+        .x = GetScreenWidth() + dark_solin.asset.swidth + 20,
+        .y = gp_perY(40)
+    };
+    
+    fire = res.items.fire_columns;
+    fire.disabled = true;
+    fire.position = (Vector2){
+        .x = gp_perX(50),
+        .y = gp_perY(63) - fire.sheight / 2
+    };
+    
+    damage = res.items.damage;
+    damage.disabled = true;
+    damage.scale = gp_perX(12) / res.items.damage.width;
+    
+    // Left wall
+    gp_createPhyRec((Vector2){
+        .x = gp_perX(-1),
+        .y = gp_perY(0)
+    }, gp_perX(0.5), gp_perY(100));
+    
+    // Right wall
+    gp_createPhyRec((Vector2){
+        .x = GetScreenWidth() + gp_perX(1),
+        .y = 0
+    }, gp_perX(0.5), gp_perY(100));
+    
+    // Main floor
+    gp_createPhyRec((Vector2){
+        .x = 0,
+        .y = gp_perY(63)
+    }, gp_perX(100), gp_perY(20));
+    
+    // Platform
+    gp_createPhyRec((Vector2){
+        .x = 0,
+        .y = gp_perY(30.5)
+    }, gp_perX(8.5), gp_perY(15));
+    
+    /************************************************************************************/
+    
+    // Initialize player's body and default position
+    gp_initializeBody(player, game.levelPos.level_3);
+}
+
+void LevelThreeDraw(Player *player, ScreenFX *screenFx) {
+
+     // Initialize the level only if not loaded
+    if(game.screenLoaded != LEVEL_3) {
+        
+        LevelThreeInit(player);
+        PrintDebug(TextFormat("Drawing: %s", screenNames[game.gameScreen]));
+        
+        //pthread_create(thread_id, NULL, unlockPlayer, NULL);
+        //pthread_join(thread_id, NULL);
+        //res.items.portal.disabled = true;
+            
+        // Update game informations
+        game.screenLoaded = LEVEL_3;
+        game.levelPassed = LEVEL_2;
+        
+        // Set default fade properties
+        gp_resetFx(screenFx);
+    }
+    
+    // Read user input and interact
+    LevelThreeRead(player, &lean, &fire, &gob, &dark_solin);
+    
+    RunPhysicsStep();
+    BeginDrawing();
+    
+    ClearBackground(BLACK);
+
+    // Draw level's background
+    gp_drawImage(&res.backgrounds.level3, res.backgrounds.level3.scale);
+    
+    /** CUSTOM ****************************************************************************/
+    
+    // Draw lean, gob and dark solin
+    gp_drawAsset(&res.items.portal, (Vector2){
+        gp_perX(1.5), gp_perY(23)},
+        gp_perX(2) / res.items.portal.width
+    );
+    
+    gp_drawAsset(&lean, lean.position, lean.scale);
+    
+    gp_drawAsset(&gob.asset, gob.asset.position, gob.asset.scale);
+    gp_drawAsset(&gob_dying, gob_dying.position, gob_dying.scale);
+    
+    gp_drawAsset(&dark_solin.asset, dark_solin.asset.position, dark_solin.asset.scale);
+    
+    gp_drawAsset(&fire, fire.position, fire.scale);
+    
+    gp_drawAsset(&damage, damage.position, damage.scale);
+    
+    // HITBOXES debug boxes
+    /*DrawRectangleLinesEx(
+        (Rectangle){
+        .x = gob.asset.position.x - gob.asset.swidth / 2 + 20,
+        .y = gob.asset.position.y - gob.asset.sheight / 2,
+        .width = gob.asset.swidth - 40, .height = 30
+    }, 2, GREEN);
+    
+    DrawRectangleLinesEx(
+        (Rectangle){
+        .x = gob.asset.position.x - gob.asset.swidth / 2,
+        .y = gob.asset.position.y - gob.asset.sheight / 2 + 30,
+        .width = gob.asset.swidth, .height = gob.asset.sheight - 30
+    }, 2, PINK);
+    
+    gp_drawText(
+        (char*)TextFormat("Dark solin lives : %d / 3", dark_solin.lives),
+        res.fonts.pixellari, (Vector2){0, 70},
+        20, CENTER_X, DARKGRAY
+    );
+    */
+
+    /**************************************************************************************/
+    
+    // Player's info board (lifes, lean, level) and notification
+    gp_drawBoard(player);
+    
+    // Draw player
+    gp_drawAsset(&player->asset, player->asset.position, player->asset.scale);
+    
+    // Drawing the fade in effect
+    gp_drawFade(screenFx);
+    
+    EndDrawing();
+}

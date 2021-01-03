@@ -1,0 +1,84 @@
+
+splash:
+x 0
+y 0
+w 950
+h 540
+
+menu:
+x 0
+y 550
+w 950
+h 540
+
+controls:
+x 0
+y 1100
+w 950
+h 540
+
+victory:
+x 0
+y 1650
+w 950
+h 540
+
+gameover:
+x 0
+y 2200
+w 950
+h 540
+
+credits:
+x 961
+y 0
+w 1280
+h 720
+
+select:
+x 961
+y 730
+w 1280
+h 720
+
+level3:
+x 1126
+y 1600
+w 950
+h 534
+
+level5:
+x 1126
+y 2200
+w 950
+h 534
+
+special:
+x 2251
+y 0
+w 950
+h 540
+
+level1:
+x 2251
+y 550
+w 952
+h 536
+
+level2:
+x 2251
+y 1100
+w 950
+h 534
+
+level_bonus:
+x 2251
+y 1644
+w 950
+h 534
+
+level4:
+x 2251
+y 2200
+w 950
+h 534
