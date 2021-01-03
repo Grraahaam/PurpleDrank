@@ -13,7 +13,7 @@ void ControlsRead() {
 
     if (IsKeyPressed(KEY_ENTER)) {
         
-        PrintDebug("Pressed ENTER, returning to the menu!");
+        PrintDebug("Controls => Menu");
         
         game.levelPassed = MENU;
         game.gameScreen = MENU;
@@ -37,21 +37,25 @@ void ControlsDraw(ScreenFX *screenFx) {
     
     ControlsRead();
     
-	BeginDrawing();
+    BeginDrawing();
 
-	ClearBackground(RAYWHITE);
+    ClearBackground(RAYWHITE);
 
-    DrawTextureEx(
-        res.backgrounds.controls,
-        (Vector2){0, 0},
-        0.0f, 0.85f, WHITE
-    );
+    // Draw background
+    gp_drawImage(&res.backgrounds.controls, res.backgrounds.controls.scale);
     
-    // Draw test
+    // Draw text
     gp_drawText(
         "Controls are coming!", res.fonts.pixellari,
         (Vector2){0, 0},
-        30, CENTER, DARKGRAY
+        gp_perX(3), CENTER, DARKGRAY
+    );
+    
+    // Draw text
+    gp_drawText(
+        "Milan is working on it", res.fonts.pixellari,
+        (Vector2){0, gp_perY(54)},
+        gp_perX(1.7), CENTER_X, DARKGRAY
     );
     
     // Drawing the fade in effect

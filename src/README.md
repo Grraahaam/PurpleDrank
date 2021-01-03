@@ -22,6 +22,22 @@ OR in game toggling by pressing <F3>
 
 ```
 
+# Structure :heavy_check_mark:
+*The structure tries to follow git/dev best practices*
+
+* `/lib`
+    * Contains external libraries (e.g. raylib)
+* `/src`
+    * Contains our source code and header file (*.c and *.h)
+* `/src/lib`
+    * Contains libraries used for the game and the game's `#define`
+* `/test`
+    * Contains ALL the tests, keep them separate THERE
+* `/scripts`
+    * Automatization scripts, for custom operations (raylib installation, environment setup)
+* `/res`
+    * Contains all the static ressources, as images and sounds
+
 # Keys files/directories
 
 `main.c`
@@ -62,8 +78,8 @@ Please try to keep consistency in the file structure, and not create test files 
 This version is a **CLEAN, WORKING and STABLE** version. If you wish to provide any improvements and modifications, respect the following :
 
 * Please create a **new branch**, from the current one
-	* `git checkout -b [YOUR_BRANCH]`
-		* e.g. `git checkout -b your_name`
+	* `git checkout -b [YOUR_BRANCH] [BASE_BRANCH]`
+		* e.g. `git checkout -b feat/foo master`
 		* `git branch` to see which branch you're working on`
 
 * Develop your feature, make your improvements

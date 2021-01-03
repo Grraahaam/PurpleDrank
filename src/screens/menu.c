@@ -14,8 +14,14 @@ char* btnStr[] = {"Play game", "Select player", "Mini-games", "Controls", "Credi
 GameScreen screens[] = {LEVEL_1, SELECT_PLAYER, MINIGAMES, CONTROLS, CREDITS};
 
 // Function drawing the menu buttons
-void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
-    
+void menu_drawButtons(ScreenFX *screenFx) {
+
+    float size_big = gp_perX(4.5);
+    float size_small = gp_perX(2.4);
+
+    float margin_top = gp_perY(45);
+    float margin_button = gp_perY(1);
+
     for(int i = 0; i < 6; i++) {
         
         Vector2 textSize;
@@ -28,7 +34,7 @@ void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
             align = CENTER_X;
             textPosition = (Vector2){
                 0,
-                GetScreenHeight() / 2 + 10 + i * (40 + 5)
+                margin_top + i * (size_big + margin_button)
             };
             
         // Reduced buttons
@@ -39,7 +45,7 @@ void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
                 align = CUSTOM;
                 textSize = MeasureTextEx(
                     res.fonts.pixellari, btnStr[i],
-                    18, 0
+                    size_small, 0
                 );
                 
                 if(i == 3)
@@ -49,7 +55,7 @@ void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
                 
                 textPosition = (Vector2){
                     GetScreenWidth() / 2 + textSize.x,
-                    GetScreenHeight() / 2 + 10 + 3 * (40 + 5)
+                    margin_top + 3 * (size_big + margin_button)
                 };
                 
             } else {
@@ -57,7 +63,7 @@ void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
                 align = CENTER_X;
                 textPosition = (Vector2){
                     0,
-                    GetScreenHeight() / 2 + 10 + 3 * (40 + 5) + (18 + 5)
+                    margin_top + 3 * (size_big + margin_button) + (size_small + gp_perY(.5))
                 };
             }
         }
@@ -67,15 +73,15 @@ void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
             
             if(i < 3) {
                 
-                screenFx->scaleBase = 35;
-                screenFx->scaleFinal = screenFx->scaleBase + 5;
+                screenFx->scaleBase = size_big; //35;
+                screenFx->scaleFinal = screenFx->scaleBase + gp_perX(.5);
                 
                 if(screenFx->scale < screenFx->scaleBase) screenFx->scale = screenFx->scaleBase;
             
             } else {
                 
-                screenFx->scaleBase = 18;
-                screenFx->scaleFinal = screenFx->scaleBase + 2;
+                screenFx->scaleBase = size_small; //18;
+                screenFx->scaleFinal = screenFx->scaleBase + gp_perX(.2);
                 
                 if(screenFx->scale > screenFx->scaleFinal) screenFx->scale = screenFx->scaleFinal;
             }
@@ -93,7 +99,7 @@ void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
                 
                 gp_drawText(
                     btnStr[i], res.fonts.pixellari,
-                    textPosition, 35,
+                    textPosition, size_big,
                     align, DARKGRAY
                 );
             
@@ -101,7 +107,7 @@ void menu_drawButtons(ScreenFX *screenFx/*, ScreenFX *screenFxSmall*/) {
                 
                 gp_drawText(
                     btnStr[i], res.fonts.pixellari,
-                    textPosition, 18,
+                    textPosition, size_small,
                     align, DARKGRAY
                 );
             }
@@ -135,7 +141,7 @@ void MenuRead() {
 }
 
 // Function drawing the menu screen
-void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
+void MenuDraw(Player *player, ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
     
     // Initialize the level only if not loaded
     if(game.screenLoaded != MENU) {
@@ -157,7 +163,7 @@ void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
         
         textBounceFx->duration = 2;
         textBounceFx->scaleBase = 35;
-        textBounceFx->scaleFinal = textBounceFx->scaleBase; + 5;
+        textBounceFx->scaleFinal = textBounceFx->scaleBase;
         textBounceFx->scale = textBounceFx->scaleBase;
         textBounceFx->color = BLACK;
         
@@ -173,6 +179,9 @@ void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
             
             crossFadeFx->color = (Color){242, 215, 255, 255};
         }
+        
+        // Re-initialize player
+        gp_initPlayer(player);
     }
     
     // Only read user input when the animation is done
@@ -197,7 +206,10 @@ void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
             
             gp_drawAsset(
                 &res.items.player_idle,
-                (Vector2){40, GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - 9},
+                (Vector2){
+                    gp_perX(6.5),
+                    GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - gp_perY(7.3)
+                },
                 res.items.player_idle.scale
             );
         }
@@ -205,11 +217,7 @@ void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
     } else {
         
         // Draw MENU background
-        DrawTextureEx(
-            res.backgrounds.menu.screen,
-            (Vector2){0, 0},
-            0.0f, res.backgrounds.menu.scale, WHITE
-        );
+        gp_drawImage(&res.backgrounds.menu, res.backgrounds.menu.scale);
         
         // Draw the menu buttons
         menu_drawButtons(textBounceFx);
@@ -217,7 +225,10 @@ void MenuDraw(ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
         // Draw the IDLE player animation
         gp_drawAsset(
             &res.items.player_idle,
-            (Vector2){40, GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - 6},
+            (Vector2){
+                gp_perX(6.5),
+                GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - gp_perY(7.3)
+            },
             res.items.player_idle.scale
         );
         

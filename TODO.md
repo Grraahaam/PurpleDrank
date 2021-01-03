@@ -1,25 +1,35 @@
 
+# Achievement rate
+
+The 1.0 version is achieved at around **80%**!
+
+```
+total tasks: ~ 47
+remaining tasks: ~ 9
+```
+
 # TODO
 
 - [ ] **keyboard binding**
-    - [ ] bind a key to return to the menu
+    - [x] bind a key to return to the menu
     - [ ] create a custom key binding menu
-- [ ] **positioning & dimensioning**
-    - [ ] create a function returning the pixel value of each percent of width/height (positioning purposes)
-    - [ ] convert fixed positions to responsive ones where possible
+- [x] **positioning & dimensioning**
+    - [x] create a function returning the pixel value of each percent of width/height (positioning purposes)
+    - [x] convert fixed positions to responsive ones where possible
 - [ ] **sounds**
     - [ ] implement game music
-    - [ ] implement sound effect on actions (jump, super, portal, hit, damaged)
-- [ ] **sprites**
+    - [x] implement sound effect on actions (jump, super, portal, hit, damaged)
+- [x] **sprites**
 	- [x] clean up "gob walkking"
-	- [ ] group menu screens into a single spritecheet?
+	- [x] group menu screens into a single spritecheet
 - [ ] **screens**
 	- [x] remove text on screen images
-	- [ ] set corresponding text and instructions (with effect) on non-game screens
+	- [x] set corresponding text and instructions (with effect) on non-game screens
 	- [x] harmonize screens with the game artistic direction?
-	- [ ] implement player selection screen
+	- [x] implement player selection screen
 	- [ ] implement controls explanantion screen
-	- [ ] set up automatic image ratio scaling to fit the whole window
+	- [x] set up automatic image ratio scaling to fit the whole window
+	- [ ] handle fullscreen toggling
 - [x] **menu**
 	- [x] create a menu navigation box
 		- [x] *play game*
@@ -33,13 +43,11 @@
 	- [x] implement screen fading effects
 	- [x] implement external font drawing
 	- [x] implement out-of-screen asset detection
-        - [ ] centralize this call for the player in gp_readPlayer()
 	- [x] implement static/moving asset frame animation
 	- [ ] set timeout at each level start where the player can't move (fading time, 2s)
-- [ ] **level 1**
+- [x] **level 1**
 	- [x] level design
 	- [x] level assets and physic bodies definition
-	- [ ] apply movements on the platform to increase difficulty?
 - [x] **level 2**
 	- [x] level design
 	- [x] level assets and physic bodies definition
@@ -50,23 +58,23 @@
         - [x] don't decrement gob amount if not killed
         - [x] set gobs maximum speed limit
 	- [ ] replace "Dark Solean lifes" with a lives progress bar with the dark solean's head
-	- [ ] add fire launched by dark solin
+	- [x] add fire launched by dark solin
 	- [ ] make the portal disappear after fade effect timeout
-- [ ] **level 4**
+- [x] **level 4**
 	- [x] level design
 	- [x] level assets and physic bodies definition
-	- [ ] alter player's movements on ice
-- [ ] **level bonus**
+	- [x] alter player's movements on ice
+- [x] **level bonus**
 	- [x] level design
 	- [x] level assets and physic bodies definition
-	- [ ] ...
-- [ ] **level 5** (boss ultimate battle, goblean)
-	- [ ] level design
-	- [ ] level assets and physic bodies definition
-	- [ ] thread for goblean battle ?
-- [ ] **installation**
-	- [ ] create a purpledrank.desktop file (/usr/share/applications/purpledrank.desktop)
-	- [ ] create icons (or single SVG) and link it (/usr/share/icons/hicolor/scalable/icon.svg)
-	- [ ] create an uninstall script to remove the above files
+	- [x] process asset/bonus collisions
+- [x] **level 5** (boss ultimate battle, goblean)
+	- [x] level design
+	- [x] level assets and physic bodies definition
+	- [x] set up different boss attacks
+- [x] **installation**
+	- [x] create a purpledrank.desktop file (/usr/share/applications/purpledrank.desktop)
+	- [x] create icons (or single SVG) and link it (/usr/share/icons/hicolor/scalable/icon.svg)
+	- [x] create an uninstall script to remove the above files
 - [x] `project-outline.md`
 	- [x] edit it to match our project's main components and units
