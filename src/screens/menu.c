@@ -16,11 +16,11 @@ GameScreen screens[] = {LEVEL_1, SELECT_PLAYER, MINIGAMES, CONTROLS, CREDITS};
 // Function drawing the menu buttons
 void menu_drawButtons(ScreenFX *screenFx) {
 
-    float size_big = gp_perX(4.2);
-    float size_small = gp_perX(2.3);
+    float size_big = gp_perX(4.5);
+    float size_small = gp_perX(2.4);
 
-    float margin_top = gp_perY(52);
-    float margin_button = gp_perY(.8);
+    float margin_top = gp_perY(45);
+    float margin_button = gp_perY(1);
 
     for(int i = 0; i < 6; i++) {
         
@@ -207,8 +207,8 @@ void MenuDraw(Player *player, ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
             gp_drawAsset(
                 &res.items.player_idle,
                 (Vector2){
-                    gp_perX(5.5),
-                    GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - gp_perY(3.5)
+                    gp_perX(6.5),
+                    GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - gp_perY(7.3)
                 },
                 res.items.player_idle.scale
             );
@@ -226,8 +226,8 @@ void MenuDraw(Player *player, ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
         gp_drawAsset(
             &res.items.player_idle,
             (Vector2){
-                gp_perX(5.5),
-                GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - gp_perY(3.5)
+                gp_perX(6.5),
+                GetScreenHeight() - res.items.player_idle.scale * res.items.player_idle.height - gp_perY(7.3)
             },
             res.items.player_idle.scale
         );

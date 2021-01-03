@@ -43,6 +43,8 @@ Damage l5_collisionPlayer(Player *player, Enemy *goblean, Asset *skate, Asset *l
     
     if(gp_collisionAssets(&player->asset, left_hand) && !left_hand->disabled) return PLAYER;
     if(gp_collisionAssets(&player->asset, right_hand) && !right_hand->disabled) return PLAYER;
+    
+    return NONE;
 }
 
 void l5_throwLean(Player *player, Asset *lean) {

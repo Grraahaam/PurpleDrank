@@ -31,7 +31,6 @@ void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, Scree
 void LoadResources(void);
 void LoadFonts();
 void UnloadResources(void);
-void PrintDebug(char *str);
 void ToggleDebugRead();
 char *getcwd(char *buf, size_t size);
 int GetDir();

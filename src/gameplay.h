@@ -2,6 +2,8 @@
 #ifndef GAMEPLAY_H_
     
     #define GAMEPLAY_H_
+    
+    void PrintDebug(char *str);
 
     void gp_drawBoard(Player *player);
     void gp_drawNotification();
