@@ -3,7 +3,6 @@
     
     #define LEVEL1_H_
 
-    bool l1_collisionHole(Player *player);
     bool l1_collisionRightWall(Player *player);
 
     void l1_readCollisions(Player *player);

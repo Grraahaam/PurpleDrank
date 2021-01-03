@@ -22,10 +22,12 @@ char* screenNames[] = {
     "MINIGAMES",
     "VICTORY",
     "GAMEOVER",
+    "SPECIAL",
     "LEVEL: 1",
     "LEVEL: 2",
     "LEVEL: 3",
     "LEVEL: 4",
+    "LEVEL: 5",
     "LEVEL: BONUS"
 };
 
@@ -38,16 +40,18 @@ typedef enum GameScreen {
     MINIGAMES,
     VICTORY,
     GAMEOVER,
+    GS_SPECIAL,
     LEVEL_1,
     LEVEL_2,
     LEVEL_3,
     LEVEL_4,
+    LEVEL_5,
     LEVEL_BONUS
 } GameScreen;
 
 typedef enum {RIGHT, LEFT} Direction;
 typedef enum {CENTER_X, CENTER_Y, CENTER, CUSTOM} TextAlign;
-typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN} Damage;
+typedef enum {ZERO, PLAYER, GOB, BOSS, LEAN, SKATE, HAND, FIRE} Damage;
 
 typedef struct Notification {
 	char* message;
@@ -62,6 +66,7 @@ typedef struct LevelPosition {
     Vector2 level_2;
     Vector2 level_3;
     Vector2 level_4;
+    Vector2 level_5;
     Vector2 level_bonus;
 } LevelPosition;
 
@@ -88,7 +93,8 @@ typedef enum FramePack {
 typedef enum SpritePack {
 	SP_PLAYER,
     SP_ASSETS,
-    SP_ANIMATION
+    SP_ANIMATION,
+    SP_SCREENS
 } SpritePack;
 
 typedef struct Frame {
@@ -113,12 +119,14 @@ typedef struct Frame {
     Vector2 loopPos; // Defines where the loop should restart (which line (y) and frame (x), not coordinates)
 } Frame;
 
-// Define minimal asset structure
+// Define minimal asset structure (works for pretty much every game asset, items, screens)
 typedef struct Asset {
     SpritePack sprite;
     Vector2 position;
     Frame frame;
     Direction direction;
+    Damage type;
+    Color color;
     
     float scale;
     float width;
@@ -160,29 +168,53 @@ typedef struct ResImage {
     Texture2D screen;
     Color color;
     float scale;
+    bool custom_scale;
 } ResImage;
 
 // Main structure with nested struct, to access game properties anywhere, at anytime later
 typedef struct ResourcesBackgrounds {
     ResImage splash;
     ResImage menu;
-    Texture2D controls;
-    Texture2D credits;
-    Texture2D select;
-    Texture2D minigames;
-    Texture2D gameover;
-    Texture2D victory;
-    Texture2D level1;
-    Texture2D level2;
-    Texture2D level3;
-    Texture2D level4;
-    Texture2D levelBonus;
+    ResImage controls;
+    ResImage credits;
+    ResImage select;
+    ResImage minigames;
+    ResImage gameover;
+    ResImage victory;
+    ResImage special;
+    ResImage level1;
+    ResImage level2;
+    ResImage level3;
+    ResImage level4;
+    ResImage level5;
+    ResImage level_bonus;
 } ResourcesBackgrounds;
+
+/*
+typedef struct ResourcesBackgrounds {
+    Asset splash;
+    Asset menu;
+    Asset controls;
+    Asset credits;
+    Asset select;
+    Asset minigames;
+    Asset gameover;
+    Asset victory;
+    Asset special;
+    Asset level1;
+    Asset level2;
+    Asset level3;
+    Asset level4;
+    Asset level5;
+    Asset level_bonus;
+} ResourcesBackgrounds;
+*/
 
 typedef struct ResourcesSprites {
     Texture2D player;
     Texture2D assets;
     Texture2D animations;
+    Texture2D screens;
 } ResourcesSprites;
 
 typedef struct ResourcesItems {
@@ -197,9 +229,17 @@ typedef struct ResourcesItems {
     Asset dark_sonic;
     Asset damage;
     Asset fireball;
+    Asset goblean_skate;
+    Asset goblean_flip;
+    Asset skate_flip;
+    Asset left_hand;
+    Asset right_hand;
+    Asset fire_columns;
     
     Asset kb_arrows;
     Asset kb_spacebar;
+    
+    Asset lifebar;
     
     Asset player_idle;
     Asset player_anim_flip;
@@ -246,6 +286,11 @@ typedef struct ResourcesFX {
     ScreenFX bounceText;
 } ResourcesFX;
 
+typedef struct ResourcesSounds {
+    Sound explosion;
+    Sound goblean;
+} ResourcesSounds;
+
 typedef struct Resources {
     ResourcesBackgrounds backgrounds;
     ResourcesSprites     sprites;
@@ -253,9 +298,10 @@ typedef struct Resources {
     ResourcesMusics      songs;
     ResourcesFonts       fonts;
     ResourcesFX          fx;
+    ResourcesSounds      sounds;
 } Resources;
 
-// Initialize the two main global game variables
+// Initialize the two main global game variables (globally available)
 Game game;
 Resources res;
 

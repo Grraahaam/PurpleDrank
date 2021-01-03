@@ -11,9 +11,11 @@
 char* subTitles[] = {
     "Do you know how to use a keyboard?",
     "Are you good at something?",
-    "Why do you play this game?",
+    "Why do you even play this game?",
     "Shame on you, stop trying!",
-    "Come on, quit the game!"
+    "Come on, quit the game!",
+    "Maybe Monopoly is more suitable for you?",
+    "I really thought you were gonna make it... looser"
 };
 
 char* subtitle;
@@ -21,15 +23,15 @@ char* subtitle;
 // Function reading user ENTER input
 void GameoverRead(Player *player) {
 
-	if (IsKeyPressed(KEY_ENTER)) {
+    if (IsKeyPressed(KEY_ENTER)) {
         
-		PrintDebug("Pressed ENTER, returning to the menu!");
+        PrintDebug("Gameover => Menu");
         
-        gp_resetPlayer(player);
+        gp_initPlayer(player);
         
         game.levelPassed = MENU;
-		game.gameScreen = MENU;
-	}
+        game.gameScreen = MENU;
+    }
 }
 
 // Function drawing the menu screen
@@ -48,12 +50,12 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
         gp_resetFx(textBounceFx);
         
         textBounceFx->duration = 2;
-        textBounceFx->scaleBase = 90;
-        textBounceFx->scaleFinal = textBounceFx->scaleBase + 10;
+        textBounceFx->scaleBase = gp_perX(10);
+        textBounceFx->scaleFinal = textBounceFx->scaleBase + gp_perX(1.25);
         textBounceFx->scale = textBounceFx->scaleBase;
         textBounceFx->color = RAYWHITE;
         
-        subtitle = subTitles[rand() % 4];
+        subtitle = subTitles[rand() % 7];
     }
     
     GameoverRead(player);
@@ -61,12 +63,9 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
-
-    DrawTextureEx(
-        res.backgrounds.gameover,
-        (Vector2){0, 0},
-        0.0f, 0.85f, WHITE
-    );
+    
+    // Draw background
+    gp_drawImage(&res.backgrounds.gameover, res.backgrounds.gameover.scale);
     
     // Draw title
     gp_drawBounceText(
@@ -78,8 +77,8 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
     // Draw sub-title
     gp_drawText(
         subtitle, res.fonts.pixellari,
-        (Vector2){0, GetScreenHeight() / 2 + 60},
-        25, CENTER_X, RAYWHITE
+        (Vector2){0, gp_perY(60)},
+        gp_perX(2.4), CENTER_X, RAYWHITE
     );
     
     // Drawing the fade in effect

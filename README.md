@@ -30,28 +30,34 @@ sudo make install
 sudo make uninstall
 ```
 
+## Gameflow
+PurpleDrank's adventure mode is made of **5 levels** and **1 bonus stage**. A boss can be met in the third and fifth levels. Don't worry if you do not succeed, you're maybe not good enough yet ;)
+
+PurpleDrank also includes minigames to train your ability for the adventure mode.
+
+## Controls
+The default game controls are listed below, we wanted to go pro and present a customizable controls screen, but you know, kids, family...
+
+| Keys | Description |
+|:-:|-|
+| `ESC` | Exit the game |
+| `ENTER` | Confirm selection and skip screens/dialogs |
+| `LEFT`<br>`UP`<br>`RIGHT`  | Controls player's movements |
+| `SPACE` | Interact with the launchpad/Use the JetLean |
+| `R` | Player "super" mode (ball, faster) |
+| `Q` | Throw lean (when possible) |
+| `W` | Enable the JetLean (when possible) |
+| `E` | Generate portals (when possible) |
+| `G` | Enable Gelano mode (to stop ice-slipping) |
+| `F1` | Return to the menu (game resets) |
+| `F3` | Toggle debug mode |
+
 ## Contribution :pencil2:
-For contribution instructions, please read this [documentation](https://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank/blob/feat/graham/src/README.md)
+For contribution instructions, please read this [documentation](src/README.md)
 
-To see the overall features we worked on and those we're implementing, check the [TODO](https://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank/blob/feat/graham/TODO.md)
+To see the overall features we worked on and those we're implementing, check the [TODO](TODO.md)
 
-To see the list of the contributors and their assignements, read the [PROJECT-OUTLINE.md](https://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank/blob/feat/graham/PROJECT-OUTLINE.md)
-
-## Structure :heavy_check_mark:
-*The structure tries to follow git/dev best practices*
-
-* `/lib`
-    * Contains external libraries (e.g. raylib)
-* `/src`
-    * Contains our source code and header file (*.c and *.h)
-* `/src/lib`
-    * Contains libraries used for the game and the game's `#define`
-* `/test`
-    * Contains ALL the tests, keep them separate THERE
-* `/scripts`
-    * Automatization scripts, for custom operations (raylib installation, environment setup)
-* `/res`
-    * Contains all the static ressources, as images and sounds
+To see the list of the contributors and their assignements, read the [PROJECT-OUTLINE.md](PROJECT-OUTLINE.md)
 
 ## Credits
 **@** The Purple Team 
