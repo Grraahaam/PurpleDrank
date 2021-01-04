@@ -13,10 +13,10 @@
 Asset portal, barrel, lean[6];
 
 // Function checking player's collisions with other physic bodies or items
-void lb_readCollisions(Player *player, Asset *portal, Asset *gelano) {
+void lb_readCollisions(Player *player, Asset *portal, Asset *gelano, Asset *portal_bonus, Asset *extraLife) {
 
-    // Player hit the barrel to enable Gelano
-    if(gp_collisionAssets(&player->asset, &barrel) && barrel.version != 1 && !player->gelano) {
+    // Player hit the barrel to enable power
+    if(gp_collisionAssets(&player->asset, &barrel) && barrel.version != 1 && !player->gelano && !player->portal && !player->extraLife) {
 
         PrintDebug("Hit barrel");
         
@@ -25,16 +25,31 @@ void lb_readCollisions(Player *player, Asset *portal, Asset *gelano) {
         barrel.position = (Vector2){gp_perX(53), gp_perY(64)};
         barrel.scale = gp_perX(5) / res.items.barrel_broken.width;
         barrel.version = 1;
+        
+        int power = rand() % 3;
+        
+        PrintDebug(TextFormat("Random: %d", power));
 
-        if(!player->gelano) {
+        if(!player->gelano && power == 0) {
+            PrintDebug("Gelano");
             
             gelano->disabled = false;
+        }
+        if(!player->portal && power == 1) {
+            PrintDebug("Portal");
+            
+            portal_bonus->disabled = false;
+        }
+        if(!player->extraLife && power == 2) {
+            PrintDebug("Extra Life");
+            
+            extraLife->disabled = false;
         }
     }
     
     // Player hit the Gelano box when active
     if(gp_collisionAssets(&player->asset, gelano) &&
-       barrel.version == 1 && !player->gelano) {
+       barrel.version == 1 && !player->gelano && !gelano->disabled) {
         
         PrintDebug("Getting Gelano");
 
@@ -48,12 +63,42 @@ void lb_readCollisions(Player *player, Asset *portal, Asset *gelano) {
         };
     }
     
+    // Player hit the portal box when active
+    if(gp_collisionAssets(&player->asset, portal_bonus) &&
+       barrel.version == 1 && !player->portal && !portal_bonus->disabled) {
+        
+        PrintDebug("Getting Portal Bonus");
+
+        player->portal = true;
+        portal_bonus->scale = 0.5;
+        /*res.items.gelano.swidth = res.items.gelano.width * res.items.gelano.scale;
+        res.items.gelano.sheight = res.items.gelano.height * res.items.gelano.scale;*/
+        portal_bonus->position = (Vector2){
+            GetScreenWidth() - portal_bonus->width * portal_bonus->scale - 5,
+            portal_bonus->height * portal_bonus->scale + 5
+        };
+    }
+    
+    // Player hit the power box when active
+    if(gp_collisionAssets(&player->asset, extraLife) &&
+       barrel.version == 1 && !player->extraLife && !extraLife->disabled) {
+        
+        PrintDebug("Getting extraLife");
+
+        player->extraLife = true;
+        ++player->lives;
+        extraLife->disabled = true;
+    }
+    
     // Player reached the portal
     if(gp_collisionAssets(&player->asset, portal)) {
+            
+        PlaySound(res.sounds.portal);
             
         // Update its info board, and switch level
         game.levelPassed = LEVEL_BONUS;
         game.gameScreen = LEVEL_4;
+        player->bonus_level_visited = true;
     }
     
     // Check lean collisions
@@ -65,14 +110,15 @@ void lb_readCollisions(Player *player, Asset *portal, Asset *gelano) {
             
             ++player->lean;
             lean[i].disabled = true;
+            PlaySound(res.sounds.drink);
         }
     }
 }
 
-void LevelBonusRead(Player *player, Asset *portal, Asset *gelano) {
+void LevelBonusRead(Player *player, Asset *portal, Asset *gelano, Asset *portal_bonus, Asset *extraLife) {
     
     gp_readPlayer(player);
-    lb_readCollisions(player, portal, gelano);
+    lb_readCollisions(player, portal, gelano, portal_bonus, extraLife);
 }
     
 void LevelBonusInit(Player *player) {
@@ -124,7 +170,7 @@ void LevelBonusInit(Player *player) {
         
         lean[i] = res.items.lean;
         lean[i].scale = gp_perX(1.8) / res.items.lean.width;;
-        lean[i].disabled = (player->lean > 2) ? true : false;
+        lean[i].disabled = false;
     }
     
     lean[0].position = (Vector2){gp_perX(42.5), gp_perY(33)};
@@ -148,11 +194,33 @@ void LevelBonusInit(Player *player) {
     barrel = (player->gelano) ? res.items.barrel_broken : res.items.barrel_full;
     barrel.scale = gp_perX(5) / res.items.barrel_full.width;
     barrel.position = (Vector2){gp_perX(53), gp_perY(64)};
-    barrel.version = (player->gelano) ? 1 : 0;
+    barrel.version = 0;
 
     portal = res.items.portal;
     portal.scale = gp_perX(4) / res.items.portal.width;
     portal.position = (Vector2){gp_perX(84), gp_perY(67)};
+    
+    res.items.portal_bonus.disabled = (player->portal) ? false : true;
+    res.items.portal_bonus.scale = (player->portal) ?
+        gp_perX(1) / res.items.portal_bonus.width :
+        gp_perX(2) / res.items.portal_bonus.width;
+    res.items.portal_bonus.position = (player->portal) ?
+        (Vector2){
+            GetScreenWidth() - res.items.portal_bonus.width * res.items.portal_bonus.scale - gp_perX(1),
+            res.items.portal_bonus.height * res.items.portal_bonus.scale + gp_perY(1)
+        } :
+        (Vector2){gp_perX(52), gp_perY(33)};
+        
+    res.items.extraLife.disabled = (player->extraLife) ? false : true;
+    res.items.extraLife.scale = (player->extraLife) ?
+        gp_perX(8) / res.items.extraLife.width :
+        gp_perX(6.4) / res.items.extraLife.width;
+    res.items.extraLife.position = (player->extraLife) ?
+        (Vector2){
+            GetScreenWidth() - res.items.extraLife.width * res.items.extraLife.scale - gp_perX(1),
+            res.items.extraLife.height * res.items.extraLife.scale + gp_perY(1)
+        } :
+        (Vector2){gp_perX(52), gp_perY(33)};
 
     /************************************************************************************/
     
@@ -176,7 +244,7 @@ void LevelBonusDraw(Player *player, ScreenFX *screenFx) {
     }
 
     // Read user input and interact
-    LevelBonusRead(player, &portal, &res.items.gelano);
+    LevelBonusRead(player, &portal, &res.items.gelano, &res.items.portal_bonus, &res.items.extraLife);
     
     RunPhysicsStep();
     BeginDrawing();
@@ -194,6 +262,8 @@ void LevelBonusDraw(Player *player, ScreenFX *screenFx) {
 	gp_drawAsset(&barrel, barrel.position, barrel.scale);
 
 	gp_drawAsset(&res.items.gelano, res.items.gelano.position, res.items.gelano.scale);
+	gp_drawAsset(&res.items.portal_bonus, res.items.portal_bonus.position, res.items.portal_bonus.scale);
+	gp_drawAsset(&res.items.extraLife, res.items.extraLife.position, res.items.extraLife.scale);
 
     // Draw the leans
     for(int i = 0; i < 6; i++) {

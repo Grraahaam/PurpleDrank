@@ -139,6 +139,7 @@ typedef struct Asset {
     int version; // if several color/version of a same asset (Last is version_count - 1 array-like))
     int version_count;
     bool disabled;
+    bool used;
 } Asset;
 
 typedef struct Enemy {
@@ -159,9 +160,13 @@ typedef struct Player {
     bool can_move;
     
     bool gelano;
+    bool portal;
+    bool extraLife;
     bool jetLean;
     bool slip;
     bool portalPowerUsed;
+    int powerTimes;
+    bool bonus_level_visited;
 } Player;
 
 typedef struct ResImage {
@@ -219,10 +224,12 @@ typedef struct ResourcesSprites {
 
 typedef struct ResourcesItems {
     Asset player_head;
+    Asset extraLife;
     Asset lean;
     Asset spikes;
     Asset launchpad;
     Asset portal;
+    Asset portal_bonus;
     Asset mouse;
     Asset gob_walking;
     Asset gob_dying;
@@ -254,6 +261,10 @@ typedef struct ResourcesItems {
 
 typedef struct ResourcesMusics {
     Music song_main;
+    Music song_liam;
+    Music song_character;
+    Music song_credits;
+    Music song_controls;
 } ResourcesMusics;
 
 typedef struct ResourcesFonts {
@@ -289,6 +300,18 @@ typedef struct ResourcesFX {
 typedef struct ResourcesSounds {
     Sound explosion;
     Sound goblean;
+    Sound level_change;
+    Sound fall;
+    Sound launch_game;
+    Sound monster;
+    Sound jump;
+    Sound lean;
+    Sound drink;
+    Sound launchpad;
+    Sound fire;
+    Sound portal;
+    Sound gameover;
+    Sound victory;
 } ResourcesSounds;
 
 typedef struct Resources {

@@ -313,9 +313,13 @@ void gp_initPlayer(Player *player) {
     player->super           = false;
     player->can_move        = true;
     player->gelano          = false;
+    player->portal          = false;
+    player->extraLife	     = false;
     player->jetLean         = false;
     player->slip            = false;
     player->portalPowerUsed = false;
+    player->powerTimes      = 0;
+    player->bonus_level_visited = false;
     
     // Set gravity force Default is { 0.0f, 9.81f }
     SetPhysicsGravity(0.0f, 6.8f);
@@ -595,18 +599,20 @@ void gp_readPlayer(Player *player) {
         // Apply ice simulation
         if(player->slip) {
             
-            if(IsKeyUp(KEY_LEFT) && player->body->isGrounded)
-                player->body->position.x += gp_perX(.7);
+            if(player->asset.direction == LEFT)
+                player->body->position.x -= gp_perX(0.2);
             
-            if(IsKeyUp(KEY_RIGHT) && player->body->isGrounded)
-                player->body->position.x -= gp_perX(.7);
+            if(player->asset.direction == RIGHT)
+                player->body->position.x += gp_perX(0.2);
         }
         
         // Moving on Y axis, when player jump, and its physic body is grounded (placed at the top for improved input detection)
         if(IsKeyDown(KEY_UP) && player->body->isGrounded) {
+        
+            PlaySound(res.sounds.jump);
             
             // Invert Y axis velocity to simulate a jump
-            if(game.gameScreen == LEVEL_BONUS)
+            if(game.gameScreen == LEVEL_BONUS || game.gameScreen == LEVEL_5)
                 player->body->velocity.y = -1 * gp_perY(.24);
             else
                 player->body->velocity.y = -1 * gp_perY(.2);
@@ -624,7 +630,7 @@ void gp_readPlayer(Player *player) {
                     player->asset.frame.pack = SUPER;
                     player->body->velocity.x = player->slip ?
                     // Adapt if player's is slipping
-                    player->asset.speed * 2.8 : player->asset.speed * 2;
+                    player->asset.speed * 2 : player->asset.speed * 2;
                     player->super = true;
                 
                 } else {
@@ -632,7 +638,7 @@ void gp_readPlayer(Player *player) {
                     // Set player's speed and select the corresponding sprite cheet pack
                     player->body->velocity.x = player->slip ?
                         // Adapt if player's is slipping
-                        player->asset.speed * 2 : player->asset.speed;
+                        player->asset.speed : player->asset.speed;
                     player->asset.frame.pack = FORWARD;
                     player->super = false;
                 }
@@ -646,7 +652,7 @@ void gp_readPlayer(Player *player) {
                     player->asset.frame.pack = SUPER;
                     player->body->velocity.x = player->slip ?
                         // Adapt if player's is slipping
-                        -player->asset.speed * 2.8 : -player->asset.speed * 2;
+                        -player->asset.speed * 2 : -player->asset.speed * 2;
                     player->super = true;
                 
                 } else {
@@ -654,7 +660,7 @@ void gp_readPlayer(Player *player) {
                     // Set player's speed and select the corresponding sprite cheet pack
                     player->body->velocity.x = player->slip ?
                         // Adapt if player's is slipping
-                        -player->asset.speed * 2 : -player->asset.speed;
+                        -player->asset.speed * 1 : -player->asset.speed;
                     player->asset.frame.pack = BACKWARD;
                     player->super = false;
                 }
@@ -1063,6 +1069,17 @@ void gp_initResources(Resources *res) {
         1, 0, // scale, rotation
         false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
     );
+    
+    // Extra Life Bonus
+    gp_initResourcesAssets(
+        &res->items.extraLife,
+        SP_ASSETS,
+        (Vector2){270,424}, // sprite frame position
+        1, 1, // amount of animated frames, number of frame lines
+        233, 129, // width, height
+        1, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 0 // animate, loop animation, loop position options, frame speed
+    );
 
     // Lean
     gp_initResourcesAssets(
@@ -1106,6 +1123,17 @@ void gp_initResources(Resources *res) {
         54, 168, // width, height
         1, 0, // scale, rotation
         true, true, (Vector2){0,0}, 10 // animate, loop animation, loop position options, frame speed
+    );
+    
+    // Portal (non-animated)
+    gp_initResourcesAssets(
+        &res->items.portal_bonus,
+        SP_ASSETS,
+        (Vector2){0,404}, // sprite frame position
+        5, 1, // amount of animated frames, number of frame lines
+        54, 168, // width, height
+        1, 0, // scale, rotation
+        false, false, (Vector2){0,0}, 10 // animate, loop animation, loop position options, frame speed
     );
     
     // Mouse (credits to Guilaume, teacher)
@@ -1357,7 +1385,7 @@ void gp_initResources(Resources *res) {
         (Vector2){1160,720}, // sprite frame position
         11, 1, // amount of animated frames, number of frame lines
         60, 106, // width, height
-        gp_perX(8) / 60, 0, // scale, rotation
+        gp_perX(15) / 60, 0, // scale, rotation
         false, true, (Vector2){0,0}, 8 // animate, loop animation, loop position options, frame speed
     );
     
