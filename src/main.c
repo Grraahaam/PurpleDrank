@@ -115,13 +115,11 @@ int main(int argc, char *argv[]) {
         //game.gameScreen = LEVEL_1;
         //game.gameScreen = LEVEL_2;
         //game.gameScreen = LEVEL_3;
-        game.gameScreen = LEVEL_4;
+        //game.gameScreen = LEVEL_4;
         //game.gameScreen = LEVEL_5;
         //game.gameScreen = LEVEL_BONUS;
-        //player.can_move = true;
         player.lives = 50;
         player.lean = 50;
-        //player.portal = true;
     }
 
     // Main game loop (Detect window close button or ESC key)
@@ -136,6 +134,20 @@ int main(int argc, char *argv[]) {
 
         // Returning to the menu and re-initializing player object
         if(IsKeyPressed(KEY_F1)) game.gameScreen = MENU;
+        
+        // Happy X-Mas!
+        if((IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) && IsKeyDown(KEY_L) && IsKeyDown(KEY_E) && (IsKeyDown(KEY_A) || IsKeyDown(KEY_Q)) && IsKeyDown(KEY_N)) {
+            
+            if(player.lean <= 0) player.lean += 20;
+            PrintDebug("Cheat LEAN");
+        }
+        
+        // And happy new year!
+        else if((IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) && IsKeyDown(KEY_E) && IsKeyDown(KEY_K) && IsKeyDown(KEY_I) && IsKeyDown(KEY_P)) {
+            
+            if(player.lives <= 1) player.lives += 5;
+            PrintDebug("Cheat LIVES");
+        }
         
         // Show corresponding screen (with corresponding effects)
         UpdateScreen(&player, &res.fx.fade, &res.fx.crossFade, &res.fx.bounceText);
@@ -162,74 +174,50 @@ void LoadResources() {
 
     res.backgrounds.splash.screen = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/splash.png"));
     res.backgrounds.splash.color  = BLACK;
-    //res.backgrounds.splash.scale  = 0.85f;
     res.backgrounds.splash.custom_scale  = true;
     res.backgrounds.splash.scale  = gp_autoScaleImg(&res.backgrounds.splash);
     
     res.backgrounds.menu.screen = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/menu.png"));
     res.backgrounds.menu.color  = (Color){242, 215, 255, 255};
-    //res.backgrounds.menu.scale  = 0.85f;
+    res.backgrounds.menu.scale  = gp_autoScaleImg(&res.backgrounds.menu);
     
     res.backgrounds.controls.screen    = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/controls.png"));
-    //res.backgrounds.controls.scale     = 0.85f;
-    
     res.backgrounds.credits.screen     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/credits.png"));
-    //res.backgrounds.credits.scale      = 0.65f;
-    
     res.backgrounds.minigames.screen   = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/minigames.png"));
-    //res.backgrounds.minigames.scale    = 0.85f;
-    
     res.backgrounds.select.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/select.png"));
-    //res.backgrounds.select.scale       = 0.65f;
-    
     res.backgrounds.gameover.screen    = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/gameover.png"));
-    //res.backgrounds.gameover.scale     = 0.85f;
-    
     res.backgrounds.victory.screen     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/victory.png"));
-    //res.backgrounds.victory.scale      = 0.85f;
-    
     res.backgrounds.level1.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level1.png"));
-    //res.backgrounds.level1.scale       = 0.85f;
-    
     res.backgrounds.level2.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level2.png"));
-    //res.backgrounds.level2.scale       = 0.85f;
-    
     res.backgrounds.level3.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level3.png"));
-    //res.backgrounds.level3.scale       = 0.85f;
-    
     res.backgrounds.level4.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level4.png"));
-    //res.backgrounds.level4.scale       = 0.85f;
-    
     res.backgrounds.level5.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level5.png"));
-    //res.backgrounds.level5.scale       = 0.85f;
-    
     res.backgrounds.level_bonus.screen = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/level_bonus.png"));
-    //res.backgrounds.level_bonus.scale  = 0.85f;
     
     res.sprites.player     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "player/spritecheet_player.png"));
     res.sprites.animations = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "player/spritecheet_animation.png"));
     res.sprites.assets     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "assets/spritecheet_assets.png"));
     //res.sprites.screens     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/spritecheet_screens.png"));
 
-    res.songs.song_liam = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_liam.mp3"));
+    res.songs.song_liam      = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_liam.mp3"));
     res.songs.song_character = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/character_select.mp3"));
-    res.songs.song_credits = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/credits.mp3"));
-    res.songs.song_controls = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/controls.mp3"));
+    res.songs.song_credits   = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/credits.mp3"));
+    res.songs.song_controls  = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/controls.mp3"));
     
-    res.sounds.explosion = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/explosion.mp3"));
-    res.sounds.goblean = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/goblean.mp3"));
+    res.sounds.explosion    = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/explosion.mp3"));
+    res.sounds.goblean      = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/goblean.mp3"));
     res.sounds.level_change = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/changement_lvl.mp3"));
-    res.sounds.fall = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/chute.mp3"));
-    res.sounds.launch_game = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/lancement_jeu.mp3"));
-    res.sounds.monster = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/monstre.mp3"));
-    res.sounds.jump = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/jump.mp3"));
-    res.sounds.lean = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/blaster.mp3"));
-    res.sounds.drink = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/drinking.mp3"));
-    res.sounds.launchpad = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/spring.mp3"));
-    res.sounds.fire = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/fire.mp3"));
-    res.sounds.portal = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/portal.mp3"));
-    res.sounds.gameover = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/gameover.mp3"));
-    res.sounds.victory = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/victory.mp3"));
+    res.sounds.fall         = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/chute.mp3"));
+    res.sounds.launch_game  = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/lancement_jeu.mp3"));
+    res.sounds.monster      = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/monstre.mp3"));
+    res.sounds.jump         = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/jump.mp3"));
+    res.sounds.lean         = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/blaster.mp3"));
+    res.sounds.drink        = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/drinking.mp3"));
+    res.sounds.launchpad    = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/spring.mp3"));
+    res.sounds.fire         = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/fire.mp3"));
+    res.sounds.portal       = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/portal.mp3"));
+    res.sounds.gameover     = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/gameover.mp3"));
+    res.sounds.victory      = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/victory.mp3"));
     
     SetSoundVolume(res.sounds.explosion, 5.0f);
     SetSoundVolume(res.sounds.jump, 2.0f);

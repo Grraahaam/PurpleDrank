@@ -127,8 +127,6 @@ void l3_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Asse
     // If gob or dark solin hit by a throwed lean
     switch(dtype) {
         
-        // TODO: PLAY SOUND EFFECT ON HIT + SPRITE HIT FRAME
-        
         case GOB: {
             
             // Decrement the amount of gob to spawn
@@ -341,13 +339,6 @@ void LevelThreeInit(Player *player) {
     gp_resetPlayer(player);
     
     /** CUSTOM ****************************************************************************/
-    
-    // Help a little when debugging
-    if(DEBUG) {
-        
-        player->lives = 20;
-        player->lean = 50;
-    }
     
     // Initialize Lean object (to throw)
     lean = res.items.lean;

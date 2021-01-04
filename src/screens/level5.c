@@ -370,13 +370,6 @@ void LevelFiveInit(Player *player) {
     
     /** CUSTOM ****************************************************************************/
     
-    // Help a little when debugging
-    if(DEBUG) {
-        
-        player->lives = 20;
-        player->lean = 50;
-    }
-    
     // Edit gravity to jump over the HANDS (not enough to avoid SKATE to force player to use lean to destroy it)
     SetPhysicsGravity(0.0f, 6.0f);
     
