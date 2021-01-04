@@ -42,7 +42,7 @@ void MinigamesDraw(ScreenFX *screenFx) {
 	ClearBackground(BLACK);
 
     // Draw background
-    gp_drawImage(&res.backgrounds.controls, res.backgrounds.controls.scale);
+    gp_drawImage(&res.backgrounds.minigames, res.backgrounds.minigames.scale);
     
     // Draw text
     gp_drawText(

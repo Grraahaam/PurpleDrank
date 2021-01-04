@@ -77,7 +77,9 @@ void l2_readCollisions(Player *player) {
         // If player have enough lean
         if(player->lean >= 3) {
             
-            PrintDebug("Teleporting to level 2");
+            PrintDebug("Teleporting to level 3");
+            
+            PlaySound(res.sounds.level_change);
                 
             // Block player's movements
             player->can_move = false;
@@ -96,13 +98,15 @@ void l2_readCollisions(Player *player) {
             player->body->velocity.y = -1 * gp_perY(.42);
             player->body->velocity.x = gp_perX(.15);
             
+            PlaySound(res.sounds.launchpad);            
             res.items.launchpad.frame.animate = true;
         }
     }
     
     // Player pick up the lean buckets
     if(l2_collisionLean(player)) {
-        
+    
+        PlaySound(res.sounds.drink);
         ++player->lean;
     }
 }

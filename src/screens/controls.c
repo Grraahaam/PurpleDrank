@@ -46,16 +46,16 @@ void ControlsDraw(ScreenFX *screenFx) {
     
     // Draw text
     gp_drawText(
-        "Controls are coming!", res.fonts.pixellari,
-        (Vector2){0, 0},
-        gp_perX(3), CENTER, DARKGRAY
+        "Controls", res.fonts.pixellari,
+        (Vector2){0, gp_perY(5)},
+        gp_perX(8), CENTER_X, DARKGRAY
     );
     
     // Draw text
     gp_drawText(
-        "Milan is working on it", res.fonts.pixellari,
-        (Vector2){0, gp_perY(54)},
-        gp_perX(1.7), CENTER_X, DARKGRAY
+        "FOR QWERTY KEYBORD", res.fonts.pixellari,
+        (Vector2){0, gp_perY(18)},
+        gp_perX(2), CENTER_X, DARKGRAY
     );
     
     // Drawing the fade in effect

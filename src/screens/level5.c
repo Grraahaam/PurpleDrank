@@ -65,6 +65,8 @@ void l5_throwLean(Player *player, Asset *lean) {
         
         // Enable drawing
         lean->disabled = false;
+        
+        PlaySound(res.sounds.lean);
     }
 }
 
@@ -118,7 +120,7 @@ void l5_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Enem
             if(actor == LEAN) l5_destroyLean(lean);
             
             damage.type = BOSS;
-            l5_playDamage(&goblean->asset);
+            l5_playDamage(lean);
             
         } break;
         

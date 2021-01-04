@@ -29,7 +29,8 @@ bool l1_collisionRightWall(Player *player) {
 void l1_readCollisions(Player *player) {
 
     if (l1_collisionRightWall(player)) {
-        
+    
+    	PlaySound(res.sounds.level_change);    
         // Update its info board, and switch level
         game.levelPassed = LEVEL_1;
         game.gameScreen = LEVEL_2;

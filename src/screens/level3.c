@@ -111,6 +111,7 @@ void l3_throwLean(Player *player, Asset *lean) {
         
         // Enable drawing
         lean->disabled = false;
+        PlaySound(res.sounds.lean);
     }
 }
 
@@ -132,6 +133,8 @@ void l3_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Asse
             
             // Decrement the amount of gob to spawn
             --gob->amount;
+            
+            if(gob->amount > 0) PlaySound(res.sounds.monster);
             
             gob_dying.disabled = false;
             gob_dying.position = (Vector2){
@@ -170,7 +173,7 @@ void l3_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Asse
             if(actor == LEAN) l3_destroyLean(lean);
             
             damage.type = BOSS;
-            l3_playDamage(&dark_solin->asset);
+            l3_playDamage(lean);
             
         } break;
         
@@ -182,9 +185,7 @@ void l3_readDamage(Damage dtype, Damage actor, Player *player, Asset *lean, Asse
                 l3_destroyLean(lean);
             
                 damage.type = FIRE;
-                l3_playDamage(fire);
                 
-                fire->disabled = true;
             }
             
         } break;
@@ -221,6 +222,8 @@ void LevelThreeRead(Player *player, Asset *lean, Asset *fire, Enemy *gob, Enemy 
         
         dark_solin->asset.disabled = true;
         
+        PlaySound(res.sounds.level_change);
+        
         game.levelPassed = LEVEL_3;
         game.gameScreen = LEVEL_4;
     
@@ -248,6 +251,7 @@ void LevelThreeRead(Player *player, Asset *lean, Asset *fire, Enemy *gob, Enemy 
                     // If dark solin reached the middle and is facing left
                     if(dark_solin->asset.position.x < (GetScreenWidth() / 2 + dark_solin->asset.swidth)) {
                     
+                    	 PlaySound(res.sounds.fire);
                         fire->disabled = false;
                         fire->frame.animate = true;  
                         
@@ -262,6 +266,7 @@ void LevelThreeRead(Player *player, Asset *lean, Asset *fire, Enemy *gob, Enemy 
                     // If dark solin reached the right side and is facing right (right - dark_solin width - margin)
                     if(dark_solin->asset.position.x > (GetScreenWidth() - dark_solin->asset.swidth + 20)){
                     
+                    	 StopSound(res.sounds.fire);
                         fire->disabled = true;
                         fire->frame.animate = false;                    
                         
@@ -324,6 +329,8 @@ void LevelThreeInit(Player *player) {
     
     ResetPhysics();
     SetConfigFlags(FLAG_MSAA_4X_HINT);
+    
+    PlaySound(res.sounds.monster);
     
     PrintDebug(TextFormat("Initializing: %s", screenNames[game.gameScreen]));
     
