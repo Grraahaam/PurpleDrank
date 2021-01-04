@@ -49,8 +49,8 @@ int main(int argc, char *argv[]) {
     else RESOURCES_DIR = "res";
         
     // Defining screen size variables (not fullscreen)
-    //screenWidth = SCREEN_WIDTH;
-    //screenHeight = SCREEN_HEIGHT;
+    screenWidth = SCREEN_WIDTH;
+    screenHeight = SCREEN_HEIGHT;
 
     // Set the game window fullscreen
     //SetConfigFlags(FLAG_FULLSCREEN_MODE);
@@ -115,9 +115,13 @@ int main(int argc, char *argv[]) {
         //game.gameScreen = LEVEL_1;
         //game.gameScreen = LEVEL_2;
         //game.gameScreen = LEVEL_3;
-        //game.gameScreen = LEVEL_4;
+        game.gameScreen = LEVEL_4;
         //game.gameScreen = LEVEL_5;
         //game.gameScreen = LEVEL_BONUS;
+        //player.can_move = true;
+        player.lives = 50;
+        player.lean = 50;
+        //player.portal = true;
     }
 
     // Main game loop (Detect window close button or ESC key)
@@ -172,7 +176,7 @@ void LoadResources() {
     res.backgrounds.credits.screen     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/credits.png"));
     //res.backgrounds.credits.scale      = 0.65f;
     
-    res.backgrounds.minigames.screen   = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/controls.png"));
+    res.backgrounds.minigames.screen   = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/minigames.png"));
     //res.backgrounds.minigames.scale    = 0.85f;
     
     res.backgrounds.select.screen      = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/select.png"));
@@ -207,12 +211,31 @@ void LoadResources() {
     res.sprites.assets     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "assets/spritecheet_assets.png"));
     //res.sprites.screens     = LoadTexture(TextFormat("%s/%s", RESOURCES_DIR, "backgrounds/spritecheet_screens.png"));
 
-    res.songs.song_main = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_main.mp3"));
+    res.songs.song_liam = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/song_liam.mp3"));
+    res.songs.song_character = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/character_select.mp3"));
+    res.songs.song_credits = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/credits.mp3"));
+    res.songs.song_controls = LoadMusicStream(TextFormat("%s/%s", RESOURCES_DIR, "songs/controls.mp3"));
     
     res.sounds.explosion = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/explosion.mp3"));
     res.sounds.goblean = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/goblean.mp3"));
+    res.sounds.level_change = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/changement_lvl.mp3"));
+    res.sounds.fall = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/chute.mp3"));
+    res.sounds.launch_game = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/lancement_jeu.mp3"));
+    res.sounds.monster = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/monstre.mp3"));
+    res.sounds.jump = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/jump.mp3"));
+    res.sounds.lean = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/blaster.mp3"));
+    res.sounds.drink = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/drinking.mp3"));
+    res.sounds.launchpad = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/spring.mp3"));
+    res.sounds.fire = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/fire.mp3"));
+    res.sounds.portal = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/portal.mp3"));
+    res.sounds.gameover = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/gameover.mp3"));
+    res.sounds.victory = LoadSound(TextFormat("%s/%s", RESOURCES_DIR, "audio/victory.mp3"));
     
     SetSoundVolume(res.sounds.explosion, 5.0f);
+    SetSoundVolume(res.sounds.jump, 2.0f);
+    SetSoundVolume(res.sounds.launch_game, 0.8f);
+    SetSoundVolume(res.sounds.drink, 5.0f);
+    SetMusicVolume(res.songs.song_liam, .2f);
 }
 
 // Function loading the given font path into the resource struct
@@ -260,11 +283,26 @@ void UnloadResources() {
     UnloadTexture(res.sprites.screens);
 
     UnloadFont(res.fonts.pixellari);
-
-    StopMusicStream(res.songs.song_main);
+    
+    StopMusicStream(res.songs.song_character);
+    StopMusicStream(res.songs.song_liam);
+    StopMusicStream(res.songs.song_credits);
+    StopMusicStream(res.songs.song_controls);
     
     UnloadSound(res.sounds.explosion);
     UnloadSound(res.sounds.goblean);
+    UnloadSound(res.sounds.level_change);
+    UnloadSound(res.sounds.fall);
+    UnloadSound(res.sounds.launch_game);
+    UnloadSound(res.sounds.monster);
+    UnloadSound(res.sounds.jump);
+    UnloadSound(res.sounds.lean);
+    UnloadSound(res.sounds.drink);
+    UnloadSound(res.sounds.fire);
+    UnloadSound(res.sounds.launchpad);
+    UnloadSound(res.sounds.portal);
+    UnloadSound(res.sounds.gameover);
+    UnloadSound(res.sounds.victory);
 }
 
 // Function managing the screen
@@ -282,14 +320,26 @@ void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, Scree
         
         case CONTROLS: {
             ControlsDraw(fadeFx);
+            if(!IsMusicPlaying(res.songs.song_controls)){
+        	PlayMusicStream(res.songs.song_controls);
+            }
+            UpdateMusicStream(res.songs.song_controls);
         } break;
         
         case CREDITS: {
             CreditsDraw(fadeFx);
+            if(!IsMusicPlaying(res.songs.song_credits)){
+        	PlayMusicStream(res.songs.song_credits);
+            }
+            UpdateMusicStream(res.songs.song_credits);
         } break;
         
         case SELECT_PLAYER: {
             SelectDraw(player, fadeFx);
+            if(!IsMusicPlaying(res.songs.song_character)){
+        	PlayMusicStream(res.songs.song_character);
+            }
+            UpdateMusicStream(res.songs.song_character);
         } break;
         
         case MINIGAMES: {
@@ -298,26 +348,35 @@ void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, Scree
 
         case LEVEL_1: {
             LevelOneDraw(player, fadeFx);
+            if(!IsMusicPlaying(res.songs.song_liam)){
+        	PlayMusicStream(res.songs.song_liam);
+            }
+            UpdateMusicStream(res.songs.song_liam);
         } break;
 
         case LEVEL_2: {
             LevelTwoDraw(player, fadeFx);
+            UpdateMusicStream(res.songs.song_liam);
         } break;
 
         case LEVEL_3: {
             LevelThreeDraw(player, fadeFx);
+            UpdateMusicStream(res.songs.song_liam);
         } break;
 
         case LEVEL_4: {
             LevelFourDraw(player, fadeFx);
+            UpdateMusicStream(res.songs.song_liam);
         } break;
 
         case LEVEL_BONUS: {
             LevelBonusDraw(player, fadeFx);
+            UpdateMusicStream(res.songs.song_liam);
         } break;
         
         case LEVEL_5: {
             LevelFiveDraw(player, fadeFx);
+            UpdateMusicStream(res.songs.song_liam);
         } break;
 
         case VICTORY: {

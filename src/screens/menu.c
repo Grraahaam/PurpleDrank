@@ -169,14 +169,15 @@ void MenuDraw(Player *player, ScreenFX *crossFadeFx, ScreenFX *textBounceFx) {
         
         // If game just launched
         if(game.levelPassed == NULL) {
-        
+          
+            PlaySound(res.sounds.launch_game);
             crossFadeFx->duration = 6;
             crossFadeFx->timeout = 3;
             crossFadeFx->scale = res.backgrounds.splash.scale;
         
         // If game already started and returning to the menu
         } else {
-            
+        	         
             crossFadeFx->color = (Color){242, 215, 255, 255};
         }
         

@@ -23,6 +23,7 @@ char* subtitle;
 // Function reading user ENTER input
 void GameoverRead(Player *player) {
 
+
     if (IsKeyPressed(KEY_ENTER)) {
         
         PrintDebug("Gameover => Menu");
@@ -39,6 +40,8 @@ void GameoverDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
 
     // Initialize the level only if not loaded
     if(game.screenLoaded != GAMEOVER) {
+    
+    	PlaySound(res.sounds.gameover);
         
         // Update game informations
         game.screenLoaded = GAMEOVER;

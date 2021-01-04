@@ -8,12 +8,13 @@ install:
 	cp -f PurpleDrank /usr/games/purpledrank
 	
 	mkdir -p /usr/share/PurpleDrank
+	mkdir -p ~/.local/share/applications
 	
 	cp -rf res/* /usr/share/PurpleDrank
 	
-	cp -f conf/purpledrank.desktop ~/.local/share/applications
+	cp -f conf/purpledrank.desktop /usr/share/applications
 	
-	update-desktop-database ~/.local/share/applications
+	update-desktop-database /usr/share/applications
 
 # Removing binary file and desktop related icons/launcher
 uninstall:
@@ -21,8 +22,8 @@ uninstall:
 	
 	rm -rf /usr/share/PurpleDrank
 	
-	rm -rf ~/.local/share/applications/purpledrank.desktop
-	update-desktop-database ~/.local/share/applications
+	rm -rf /usr/share/applications/purpledrank.desktop
+	update-desktop-database /usr/share/applications
 
 # Clean up *.o files
 clean:

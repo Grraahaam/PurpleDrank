@@ -27,6 +27,8 @@ void VictoryDraw(Player *player, ScreenFX *fadeFx, ScreenFX *textBounceFx) {
 
     // Initialize the level only if not loaded
     if(game.screenLoaded != VICTORY) {
+    
+    	PlaySound(res.sounds.victory);
         
         // Update game informations
         game.screenLoaded = VICTORY;
