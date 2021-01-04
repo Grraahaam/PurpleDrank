@@ -48,8 +48,7 @@ The default game controls are listed below, we wanted to go pro and present a cu
 | `R` | Player "super" mode (ball, faster) |
 | `Q` | Throw lean (when possible) |
 | `W` | Enable the JetLean (when possible) |
-| `E` | Generate portals (when possible) |
-| `G` | Enable Gelano mode (to stop ice-slipping) |
+| `E` | Generate portals (when possible) OR enable Gelano mode (to stop ice-slipping) |
 | `F1` | Return to the menu (game resets) |
 | `F3` | Toggle debug mode |
 
