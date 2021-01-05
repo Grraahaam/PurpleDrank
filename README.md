@@ -15,11 +15,21 @@ Dans le monde chaotique de Lealle, vous aiderez Solin et son Ekip, à vaincre le
 
 **Récupérer un maximum de seaux de Cristalean afin de pouvoir vaincre le Gob-Lean!**
 
+## Gameflow
+PurpleDrank's adventure mode is made of **5 levels** and **1 bonus stage**. A boss can be met in the third and fifth levels. Don't worry if you do not succeed, you're maybe not good enough yet ;)
+
+PurpleDrank also includes minigames to train your ability for the adventure mode.
+
 ## Installation :joystick:
 To install and play this game, please run the following:
-```
-sudo apt install -y git
+```bash
+# Install git and make
+sudo apt install -y git build-essential
+
+# Fetch the game's project
 git clone http://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank.git PurpleDrank
+
+# Build it
 cd PurpleDrank && make
 ./PurpleDrank
 
@@ -30,27 +40,22 @@ sudo make install
 sudo make uninstall
 ```
 
-## Gameflow
-PurpleDrank's adventure mode is made of **5 levels** and **1 bonus stage**. A boss can be met in the third and fifth levels. Don't worry if you do not succeed, you're maybe not good enough yet ;)
-
-PurpleDrank also includes minigames to train your ability for the adventure mode.
-
-## Controls
+## Controls :keyboard:
 **QWERTY layout**
 The default game controls are listed below, we wanted to go pro and present a customizable controls screen, but you know, kids, family...
 
 | Keys | Description |
 |:-:|-|
-| `ESC` | Exit the game |
-| `ENTER` | Confirm selection and skip screens/dialogs |
-| `LEFT`<br>`UP`<br>`RIGHT`  | Controls player's movements |
-| `SPACE` | Interact with the launchpad/Use the JetLean |
-| `R` | Player "super" mode (ball, faster) |
-| `Q` | Throw lean (when possible) |
-| `W` | Enable the JetLean (when possible) |
-| `E` | Generate portals (when possible) OR enable Gelano mode (to stop ice-slipping) |
-| `F1` | Return to the menu (game resets) |
-| `F3` | Toggle debug mode |
+| <kbd>ESC</kbd> | Exit the game |
+| <kbd>ENTER</kbd> | Confirm selection and skip screens/dialogs |
+| <div style="display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;"><div style="display: block"><kbd>↑</kbd></div><div style="display: block"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div></div>  | Controls player's movements |
+| <kbd>SPACE</kbd> | Interact with the launchpad/Use the JetLean |
+| <kbd>R</kbd> | Player "super" mode (ball, faster) |
+| <kbd>Q</kbd> | Throw lean (when possible) |
+| <kbd>W</kbd> | Enable the JetLean (when possible) |
+| <kbd>E</kbd> | Generate portals (when possible) OR enable Gelano mode (to stop ice-slipping) |
+| <kbd>F1</kbd> | Return to the menu (game resets) |
+| <kbd>F3</kbd> | Toggle debug mode |
 
 ## Contribution :pencil2:
 For contribution instructions, please read this [documentation](src/README.md)
