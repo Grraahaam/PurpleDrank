@@ -23,7 +23,7 @@ PurpleDrank also includes minigames to train your ability for the adventure mode
 ## Installation :joystick:
 To install and play this game, please run the following:
 ```bash
-# Install git and make
+# Install git, make, gcc
 sudo apt install -y git build-essential
 
 # Fetch the game's project
@@ -33,7 +33,7 @@ git clone http://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank
 cd PurpleDrank && make
 ./PurpleDrank
 
-# To install permanently
+# To install permanently (access via launcher)
 sudo make install
 
 # To uninstall, removing all game files
@@ -41,8 +41,9 @@ sudo make uninstall
 ```
 
 ## Controls :keyboard:
-**QWERTY layout**
 The default game controls are listed below, we wanted to go pro and present a customizable controls screen, but you know, kids, family...
+
+Alternative for both <kbd>QWERTY</kbd> and <kbd>AZERTY</kbd> keyboard layouts
 
 | Keys | Description |
 |:-:|-|
@@ -51,8 +52,8 @@ The default game controls are listed below, we wanted to go pro and present a cu
 | <div style="display: flex; flex-flow: column nowrap; justify-content: center; align-items: center;"><div style="display: block"><kbd>↑</kbd></div><div style="display: block"><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div></div>  | Controls player's movements |
 | <kbd>SPACE</kbd> | Interact with the launchpad/Use the JetLean |
 | <kbd>R</kbd> | Player "super" mode (ball, faster) |
-| <kbd>Q</kbd> | Throw lean (when possible) |
-| <kbd>W</kbd> | Enable the JetLean (when possible) |
+| <kbd>Q</kbd> or <kbd>A</kbd> | Throw lean (when possible) |
+| <kbd>W</kbd> or <kbd>Z</kbd> | Enable the JetLean (when possible) |
 | <kbd>E</kbd> | Generate portals (when possible) OR enable Gelano mode (to stop ice-slipping) |
 | <kbd>F1</kbd> | Return to the menu (game resets) |
 | <kbd>F3</kbd> | Toggle debug mode |

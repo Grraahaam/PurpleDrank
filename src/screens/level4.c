@@ -192,7 +192,7 @@ void LevelFourInit(Player *player) {
     // Roof
     gp_createPhyRec((Vector2){
         .x = 0,
-        .y = gp_perY(-20)
+        .y = gp_perY(-30)
     }, gp_perX(100), gp_perY(5));
     
     // Floor 1

@@ -294,7 +294,7 @@ void LevelFiveRead(Player *player, Enemy *goblean, Asset *lean, Asset *skate, As
         for(int i = 0; i < 2; i++) {
         
             if(!leans[i].disabled) {
-                if(leans[i].position.y < gp_perY(81)) {
+                if(leans[i].position.y < gp_perY(80)) {
                     leans[i].position.x -= gp_perX(1.25);
                     leans[i].position.y += gp_perY(1.1);
                 }

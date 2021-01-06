@@ -47,15 +47,15 @@ void ControlsDraw(ScreenFX *screenFx) {
     // Draw text
     gp_drawText(
         "Controls", res.fonts.pixellari,
-        (Vector2){0, gp_perY(5)},
-        gp_perX(8), CENTER_X, DARKGRAY
+        (Vector2){0, gp_perY(4)},
+        gp_perX(5), CENTER_X, BLACK
     );
     
     // Draw text
     gp_drawText(
-        "FOR QWERTY KEYBORD", res.fonts.pixellari,
-        (Vector2){0, gp_perY(18)},
-        gp_perX(2), CENTER_X, DARKGRAY
+        "layout", res.fonts.pixellari,
+        (Vector2){0, gp_perY(11)},
+        gp_perX(3), CENTER_X, BLACK
     );
     
     // Drawing the fade in effect

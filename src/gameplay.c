@@ -7,6 +7,8 @@
 #include "gameplay.h"
 
 
+/******* DRAWING ********/
+
 // Drawing player's info board
 void gp_drawBoard(Player *player) {
     
@@ -195,218 +197,6 @@ void gp_drawBodyLines() {
     }
 }
 
-// Reset game notification and reset default color
-void gp_resetNotification() {
-    
-    game.notification.message = "";
-    game.notification.color = WHITE;
-}
-
-// Check if given assets are outside the screen (to stop/reset their process)
-bool gp_isOutScreen(Asset *ast) {
-    
-    //for(int i = 0; i < n; i++) {
-        
-        // Check if position is outside the initial screen dimensions + their own width/height + a X,Y margin
-    
-        // Define current dimensions
-        int swidth = ast->width * ast->scale;
-        int sheight = ast->height * ast->scale;
-    
-        if(ast->position.x < 0 - swidth - gp_perX(5) ||
-            ast->position.x > GetScreenWidth() + swidth + gp_perX(5) ||
-            ast->position.y < 0 - sheight - gp_perX(5) ||
-            ast->position.y > GetScreenHeight() + sheight
-        
-        //) return ast->type;
-        ) return true;
-    //}
-    
-    //return NONE;
-    else return false;
-}
-
-// Return the collision status between two assets (auto-adapt according to asset's rotation)
-bool gp_collisionAssets(Asset *ast1, Asset *ast2) {
-    
-    int ast1_width, ast1_height, ast2_width, ast2_height;
-    
-    //TODO: Support for negative rotation value
-    
-    // Switch width and height according to the assets' rotation
-    if((ast1->rotation >= 45 && ast1->rotation < 134) ||
-        (ast1->rotation >= 225 && ast1->rotation < 315)) {
-     
-        ast1_width = ast1->height;
-        ast1_height = ast1->width;
-        
-    } else {
-        
-        ast1_width = ast1->width;
-        ast1_height = ast1->height;
-    }
-    
-    if((ast2->rotation >= 45 && ast2->rotation < 134) ||
-        (ast2->rotation >= 225 && ast2->rotation < 315)) {
-     
-        ast2_width = ast2->height;
-        ast2_height = ast2->width;
-        
-    } else {
-        
-        ast2_width = ast2->width;
-        ast2_height = ast2->height;
-    }
-    
-    // Check the collision
-    return CheckCollisionRecs(
-        // Asset 1
-        (Rectangle){
-            .x = ast1->position.x - (ast1->scale * ast1_width / 2),
-            .y = ast1->position.y - (ast1->scale * ast1_height / 2),
-            .width = ast1->scale * ast1_width, .height = ast1->scale * ast1_height
-        },
-        // Asset 2
-        (Rectangle){
-            .x = ast2->position.x - (ast2->scale * ast2_width / 2),
-            .y = ast2->position.y - (ast2->scale * ast2_height / 2),
-            .width = ast2->scale * ast2_width, .height = ast2->scale * ast2_height
-        }
-    );
-}
-
-// Function reseting the player's default properties
-void gp_initPlayer(Player *player) {
-    
-    player->asset.frame.loop    = true;
-    player->asset.frame.pack    = FORWARD;
-    player->asset.frame.speed   = SPRITE_FRAME_SPEED;
-    player->asset.frame.amount  = 9;
-    player->asset.frame.lines   = 7;
-    player->asset.frame.counter = 0;
-    player->asset.frame.current = 0;
-    player->asset.frame.x       = 0;
-    player->asset.frame.xinit   = 0;
-    player->asset.frame.y       = 0;
-    player->asset.frame.yinit   = 0;
-    player->asset.frame.loopPos.x = 0;
-    
-    player->asset.version_count = 3;
-    
-    player->asset.position  = game.levelPos.level_1;
-    player->asset.sprite    = SP_PLAYER;
-    player->asset.direction = RIGHT;
-    player->asset.speed     = VELOCITY * gp_perX(.05);
-    player->asset.density   = 10;
-    player->asset.rotation  = 0;
-    player->asset.width     = res.sprites.player.width / player->asset.frame.amount;
-    player->asset.height    = (res.sprites.player.height / player->asset.version_count) / player->asset.frame.lines;
-    player->asset.scale     = gp_perX(5) / player->asset.width; //1.4
-    player->asset.swidth    = (float)player->asset.width * player->asset.scale;
-    player->asset.sheight   = (float)player->asset.height * player->asset.scale;
-    
-    player->body            = NULL;
-    
-    player->lives           = GAME_DEFAULT_LIVES;
-    player->lean            = GAME_DEFAULT_LEAN;
-    player->dead            = false;
-    player->super           = false;
-    player->can_move        = true;
-    player->gelano          = false;
-    player->portal          = false;
-    player->extraLife	     = false;
-    player->jetLean         = false;
-    player->slip            = false;
-    player->portalPowerUsed = false;
-    player->powerTimes      = 0;
-    player->bonus_level_visited = false;
-    
-    // Set gravity force Default is { 0.0f, 9.81f }
-    SetPhysicsGravity(0.0f, 6.8f);
-}
-
-void gp_resetPlayer(Player *player) {
-    
-    player->asset.speed     = VELOCITY * gp_perX(.05);
-    player->asset.density   = 10;
-    player->asset.rotation  = 0;
-    player->dead            = false;
-    player->can_move        = true;
-    player->slip            = false;
-    
-    SetPhysicsGravity(0.0f, 6.8f);
-}
-
-// Function initializing an asset body
-void gp_initializeBody(Player *player, Vector2 pos) {
-    
-    // Initialize player's body
-    player->body = CreatePhysicsBodyRectangle(
-        pos,
-        player->asset.swidth,
-        player->asset.sheight,
-        player->asset.density
-    );
-    
-    // Constrain body rotation to avoid little collision torque amounts
-    player->body->freezeOrient = true;
-}
-
-// Function returning a fixed physic body (rectangle)
-void gp_createPhyRec(Vector2 pos, float width, float height) {
-    
-    PhysicsBody body = CreatePhysicsBodyRectangle(
-        (Vector2){
-            .x = pos.x + width / 2,
-            .y = pos.y + height / 2
-        }, width, height, 0
-    ); body->enabled = false;
-    
-    //return body;
-}
-
-// Function returning a fixed physic body (polygon)
-void gp_createPhyPoly(Vector2 pos, float radius, int sides) {
-    
-    PhysicsBody body = CreatePhysicsBodyPolygon(
-        (Vector2){
-            .x = pos.x + radius / 2,
-            .y = pos.y + radius / 2
-        }, radius, sides, 0
-    ); body->enabled = false;
-    
-    //return body;
-}
-
-// Function defining physic bodies around the game screen with some margin
-void gp_initializeGameBorders() {
-    
-    /*PhysicsBody border_bottom = CreatePhysicsBodyRectangle(
-        (Vector2){
-            GetScreenWidth()/2 + 50,
-            GetScreenHeight() + 50
-        },
-        GetScreenWidth() + 100, 10, 10
-    ); border_bottom->enabled = false;
-     
-    
-    PhysicsBody border_left = CreatePhysicsBodyRectangle(
-        (Vector2){
-            GetScreenWidth()/2,
-            290
-        },
-        GetScreenWidth(), 10, 10
-    ); border_left->enabled = false;
-     
-    PhysicsBody border_right = CreatePhysicsBodyRectangle(
-        (Vector2){
-            GetScreenWidth()/2,
-            290
-        },
-        GetScreenWidth(), 10, 10
-    ); border_right->enabled = false;*/
-}
-
 // Function drawing asset according to their properties
 void gp_drawAsset(Asset *asset, Vector2 position, float scale) {
     
@@ -510,10 +300,12 @@ void gp_drawAssetLines(Asset *asset, Vector2 position, float scale) {
     }, 1, RED);
 }
 
-void gp_animateAsset(Asset *asset) {
+//Function drawing a screen image and auto-center it (on X,Y)
+void gp_drawImage(ResImage *img, float scale) {
     
-    Texture2D sprite;
-    switch(asset->sprite) {
+    // Screen spritecheet process NOT WORKING YET
+    /*Texture2D sprite;
+    switch(img->sprite) {
         
         case SP_PLAYER: {
             sprite = res.sprites.player;
@@ -527,67 +319,269 @@ void gp_animateAsset(Asset *asset) {
             sprite = res.sprites.animations;
         } break;
         
+        case SP_SCREENS: {
+            sprite = res.sprites.screens;
+        } break;
+        
         default: {
             sprite = res.sprites.assets;
         } break;
     }
     
-    // Incrementing the frame counter to display the sprite from the current pack
-    ++asset->frame.counter;
+    PrintDebug(TextFormat("Frame X: %i", (int)img->frame.x));
+    PrintDebug(TextFormat("Frame Y: %i", (int)img->frame.y));
+    
+    PrintDebug(TextFormat("Screen width: %i", img->width));
+    PrintDebug(TextFormat("Screen height: %i", img->height));
+    
+    PrintDebug(TextFormat("Screen scale: %.2f", img->scale));
+    
+    PrintDebug(TextFormat("ScreenWidth: %i", GetScreenWidth()));
+    PrintDebug(TextFormat("Delta: %.2f", GetScreenWidth() - img->width * scale));
+    PrintDebug(TextFormat("Delta split: %i", (int)(GetScreenWidth() - img->width * scale) / 2));
+    
+    DrawTexturePro(sprite,
+        // Select corresponding frame from original spritecheet
+        (Rectangle){
+            .x = (int)img->frame.x, .y = (int)img->frame.y,
+            .width = img->width, .height = img->height
+        },
+        // Draw its scaled version at the matching position
+        (Rectangle){
+            .x = (GetScreenWidth() - img->width * scale) / 2,
+            .y = (GetScreenHeight() - img->height * scale) / 2,
+            .width = img->width * scale,
+            .height = img->height * scale
+        },
+        (Vector2){0,0}, 0, WHITE
+    );*/
+    
+    // Autoscale
+    if(!img->custom_scale) {
+        
+        // Auto fit width
+        scale = (float)GetScreenWidth() / (float)img->screen.width;
 
-    // Show <frame.speed> frame (sprite) per second
-    if (asset->frame.counter >= (GAME_FPS / asset->frame.speed)) {
-        
-        // If reached maximum frame per second, reset counter and increment sprite frame position
-        asset->frame.counter = 0;
-        ++asset->frame.current;
-        
-        // Handle animations only
-        if(asset->sprite == SP_ANIMATION) {
-            
-            ++asset->frame.line_frame;
-            
-            // Automatically move to the next line if reached the end of the current one (if animation is on more than one line, except for player spritecheet which is handled in gp_readPlayer())
-            if((asset->width * asset->frame.line_frame) / sprite.width >= 1 ||
-                sprite.width - (asset->width * asset->frame.line_frame) < asset->width
-            ) {
-            
-                asset->frame.line_frame = 0;
-                
-                if(asset->frame.line < asset->frame.lines)
-                    ++asset->frame.line;
-            }
-        }
-
-        // If reached the end of the sprite cheet line, reset to the first
-        if (asset->frame.current > asset->frame.amount - 1) {
-            
-            // If the spritecheet should loop
-            if(asset->frame.loop) {
-                
-                asset->frame.current = asset->frame.loopPos.x;
-                asset->frame.line_frame = asset->frame.current;
-                
-                asset->frame.line = asset->frame.loopPos.y;
-            
-            // Stop the animation
-            } else {
-                
-                asset->frame.animate = false;
-                --asset->frame.current;
-            }
-        }
-        
-        // Assign new frame position
-        asset->frame.x = (float)asset->frame.current * asset->width + asset->frame.xinit;
-        
-        asset->frame.y = (float)asset->frame.line * asset->height;
-        asset->frame.y += (float)(asset->frame.lines * asset->version) * asset->height;
-        asset->frame.y += asset->frame.yinit;
+        // Auto fit height
+        scale = GetScreenHeight() - img->screen.height * scale >= 0 ?
+            (float)GetScreenHeight() / (float)img->screen.height :
+            scale;
     }
+        
+    DrawTextureEx(
+        img->screen,
+        (Vector2){
+            (int)(GetScreenWidth() - img->screen.width * scale) / 2,
+            (int)(GetScreenHeight() - img->screen.height * scale) / 2
+        },
+        0, scale, WHITE
+    );
 }
 
-// Read player movement inputs
+/******* UTILS ********/
+
+// Reset game notification and reset default color
+void gp_resetNotification() {
+    
+    game.notification.message = "";
+    game.notification.color = WHITE;
+}
+
+// Function returning a fixed physic body (rectangle)
+void gp_createPhyRec(Vector2 pos, float width, float height) {
+    
+    PhysicsBody body = CreatePhysicsBodyRectangle(
+        (Vector2){
+            .x = pos.x + width / 2,
+            .y = pos.y + height / 2
+        }, width, height, 0
+    ); body->enabled = false;
+    
+    //return body;
+}
+
+// Function returning a fixed physic body (polygon)
+void gp_createPhyPoly(Vector2 pos, float radius, int sides) {
+    
+    PhysicsBody body = CreatePhysicsBodyPolygon(
+        (Vector2){
+            .x = pos.x + radius / 2,
+            .y = pos.y + radius / 2
+        }, radius, sides, 0
+    ); body->enabled = false;
+    
+    //return body;
+}
+
+// Function defining physic bodies around the game screen with some margin
+void gp_initializeGameBorders() {
+    
+    /*PhysicsBody border_bottom = CreatePhysicsBodyRectangle(
+        (Vector2){
+            GetScreenWidth()/2 + 50,
+            GetScreenHeight() + 50
+        },
+        GetScreenWidth() + 100, 10, 10
+    ); border_bottom->enabled = false;
+     
+    
+    PhysicsBody border_left = CreatePhysicsBodyRectangle(
+        (Vector2){
+            GetScreenWidth()/2,
+            290
+        },
+        GetScreenWidth(), 10, 10
+    ); border_left->enabled = false;
+     
+    PhysicsBody border_right = CreatePhysicsBodyRectangle(
+        (Vector2){
+            GetScreenWidth()/2,
+            290
+        },
+        GetScreenWidth(), 10, 10
+    ); border_right->enabled = false;*/
+}
+
+/******* COLLISIONS ********/
+
+// Check if given assets are outside the screen (to stop/reset their process)
+bool gp_isOutScreen(Asset *ast) {
+    
+    //for(int i = 0; i < n; i++) {
+        
+        // Check if position is outside the initial screen dimensions + their own width/height + a X,Y margin
+    
+        // Define current dimensions
+        int swidth = ast->width * ast->scale;
+        int sheight = ast->height * ast->scale;
+    
+        if(ast->position.x < 0 - swidth - gp_perX(30) ||
+            ast->position.x > GetScreenWidth() + swidth + gp_perX(30) ||
+            ast->position.y < 0 - sheight - gp_perY(30) ||
+            ast->position.y > GetScreenHeight() + sheight + gp_perY(30)
+        
+        //) return ast->type;
+        ) return true;
+    //}
+    
+    //return NONE;
+    else return false;
+}
+
+// Return the collision status between two assets (auto-adapt according to asset's rotation)
+bool gp_collisionAssets(Asset *ast1, Asset *ast2) {
+    
+    int ast1_width, ast1_height, ast2_width, ast2_height;
+    
+    //TODO: Support for negative rotation value
+    
+    // Switch width and height according to the assets' rotation
+    if((ast1->rotation >= 45 && ast1->rotation < 134) ||
+        (ast1->rotation >= 225 && ast1->rotation < 315)) {
+     
+        ast1_width = ast1->height;
+        ast1_height = ast1->width;
+        
+    } else {
+        
+        ast1_width = ast1->width;
+        ast1_height = ast1->height;
+    }
+    
+    if((ast2->rotation >= 45 && ast2->rotation < 134) ||
+        (ast2->rotation >= 225 && ast2->rotation < 315)) {
+     
+        ast2_width = ast2->height;
+        ast2_height = ast2->width;
+        
+    } else {
+        
+        ast2_width = ast2->width;
+        ast2_height = ast2->height;
+    }
+    
+    // Check the collision
+    return CheckCollisionRecs(
+        // Asset 1
+        (Rectangle){
+            .x = ast1->position.x - (ast1->scale * ast1_width / 2),
+            .y = ast1->position.y - (ast1->scale * ast1_height / 2),
+            .width = ast1->scale * ast1_width, .height = ast1->scale * ast1_height
+        },
+        // Asset 2
+        (Rectangle){
+            .x = ast2->position.x - (ast2->scale * ast2_width / 2),
+            .y = ast2->position.y - (ast2->scale * ast2_height / 2),
+            .width = ast2->scale * ast2_width, .height = ast2->scale * ast2_height
+        }
+    );
+}
+
+/******* PLAYER ********/
+
+// Function reseting the player's default properties
+void gp_initPlayer(Player *player) {
+    
+    player->asset.frame.loop    = true;
+    player->asset.frame.pack    = FORWARD;
+    player->asset.frame.speed   = SPRITE_FRAME_SPEED;
+    player->asset.frame.amount  = 9;
+    player->asset.frame.lines   = 7;
+    player->asset.frame.counter = 0;
+    player->asset.frame.current = 0;
+    player->asset.frame.x       = 0;
+    player->asset.frame.xinit   = 0;
+    player->asset.frame.y       = 0;
+    player->asset.frame.yinit   = 0;
+    player->asset.frame.loopPos.x = 0;
+    
+    player->asset.version_count = 3;
+    
+    player->asset.position  = game.levelPos.level_1;
+    player->asset.sprite    = SP_PLAYER;
+    player->asset.direction = RIGHT;
+    player->asset.speed     = VELOCITY * gp_perX(.05);
+    player->asset.density   = 10;
+    player->asset.rotation  = 0;
+    player->asset.width     = res.sprites.player.width / player->asset.frame.amount;
+    player->asset.height    = (res.sprites.player.height / player->asset.version_count) / player->asset.frame.lines;
+    player->asset.scale     = gp_perX(5) / player->asset.width; //1.4
+    player->asset.swidth    = (float)player->asset.width * player->asset.scale;
+    player->asset.sheight   = (float)player->asset.height * player->asset.scale;
+    
+    player->body            = NULL;
+    
+    player->lives           = GAME_DEFAULT_LIVES;
+    player->lean            = GAME_DEFAULT_LEAN;
+    player->dead            = false;
+    player->super           = false;
+    player->can_move        = true;
+    player->gelano          = false;
+    player->portal          = false;
+    player->extraLife	     = false;
+    player->jetLean         = false;
+    player->slip            = false;
+    player->portalPowerUsed = false;
+    player->powerTimes      = 0;
+    player->bonus_level_visited = false;
+    
+    // Set gravity force Default is { 0.0f, 9.81f }
+    SetPhysicsGravity(0.0f, 6.8f);
+}
+
+void gp_resetPlayer(Player *player) {
+    
+    player->asset.speed     = VELOCITY * gp_perX(.05);
+    player->asset.density   = 10;
+    player->asset.rotation  = 0;
+    player->dead            = false;
+    player->can_move        = true;
+    player->slip            = false;
+    
+    SetPhysicsGravity(0.0f, 6.8f);
+}
+
+// Read player movement inputs and control its interactions
 void gp_readPlayer(Player *player) {
 
     
@@ -600,10 +594,10 @@ void gp_readPlayer(Player *player) {
         if(player->slip) {
             
             if(player->asset.direction == LEFT)
-                player->body->position.x -= gp_perX(0.2);
+                player->body->position.x -= gp_perX(0.1);
             
             if(player->asset.direction == RIGHT)
-                player->body->position.x += gp_perX(0.2);
+                player->body->position.x += gp_perX(0.1);
         }
         
         // Moving on Y axis, when player jump, and its physic body is grounded (placed at the top for improved input detection)
@@ -755,6 +749,101 @@ void gp_readPlayer(Player *player) {
     if(DEBUG) gp_editAsset(&player->asset);
 }
 
+// Function initializing an asset body
+void gp_initializeBody(Player *player, Vector2 pos) {
+    
+    // Initialize player's body
+    player->body = CreatePhysicsBodyRectangle(
+        pos,
+        player->asset.swidth,
+        player->asset.sheight,
+        player->asset.density
+    );
+    
+    // Constrain body rotation to avoid little collision torque amounts
+    player->body->freezeOrient = true;
+}
+
+/******* ASSET CONTROL ********/
+
+// Animate an asset with its matching sprites
+void gp_animateAsset(Asset *asset) {
+    
+    Texture2D sprite;
+    switch(asset->sprite) {
+        
+        case SP_PLAYER: {
+            sprite = res.sprites.player;
+        } break;
+        
+        case SP_ASSETS: {
+            sprite = res.sprites.assets;
+        } break;
+        
+        case SP_ANIMATION: {
+            sprite = res.sprites.animations;
+        } break;
+        
+        default: {
+            sprite = res.sprites.assets;
+        } break;
+    }
+    
+    // Incrementing the frame counter to display the sprite from the current pack
+    ++asset->frame.counter;
+
+    // Show <frame.speed> frame (sprite) per second
+    if (asset->frame.counter >= (GAME_FPS / asset->frame.speed)) {
+        
+        // If reached maximum frame per second, reset counter and increment sprite frame position
+        asset->frame.counter = 0;
+        ++asset->frame.current;
+        
+        // Handle animations only
+        if(asset->sprite == SP_ANIMATION) {
+            
+            ++asset->frame.line_frame;
+            
+            // Automatically move to the next line if reached the end of the current one (if animation is on more than one line, except for player spritecheet which is handled in gp_readPlayer())
+            if((asset->width * asset->frame.line_frame) / sprite.width >= 1 ||
+                sprite.width - (asset->width * asset->frame.line_frame) < asset->width
+            ) {
+            
+                asset->frame.line_frame = 0;
+                
+                if(asset->frame.line < asset->frame.lines)
+                    ++asset->frame.line;
+            }
+        }
+
+        // If reached the end of the sprite cheet line, reset to the first
+        if (asset->frame.current > asset->frame.amount - 1) {
+            
+            // If the spritecheet should loop
+            if(asset->frame.loop) {
+                
+                asset->frame.current = asset->frame.loopPos.x;
+                asset->frame.line_frame = asset->frame.current;
+                
+                asset->frame.line = asset->frame.loopPos.y;
+            
+            // Stop the animation
+            } else {
+                
+                asset->frame.animate = false;
+                --asset->frame.current;
+            }
+        }
+        
+        // Assign new frame position
+        asset->frame.x = (float)asset->frame.current * asset->width + asset->frame.xinit;
+        
+        asset->frame.y = (float)asset->frame.line * asset->height;
+        asset->frame.y += (float)(asset->frame.lines * asset->version) * asset->height;
+        asset->frame.y += asset->frame.yinit;
+    }
+}
+
 // Debugging function to live edit assets properties (support speed and scale)
 void gp_editAsset(Asset *asset) {
     
@@ -772,83 +861,7 @@ void gp_editAsset(Asset *asset) {
     else if(IsKeyPressed(KEY_KP_DIVIDE)) asset->speed -= VELOCITY * 0.1;
 }
 
-//Function drawing a screen image and auto-center it (on X,Y)
-void gp_drawImage(ResImage *img, float scale) {
-    
-    // Screen spritecheet process NOT WORKING YET
-    /*Texture2D sprite;
-    switch(img->sprite) {
-        
-        case SP_PLAYER: {
-            sprite = res.sprites.player;
-        } break;
-        
-        case SP_ASSETS: {
-            sprite = res.sprites.assets;
-        } break;
-        
-        case SP_ANIMATION: {
-            sprite = res.sprites.animations;
-        } break;
-        
-        case SP_SCREENS: {
-            sprite = res.sprites.screens;
-        } break;
-        
-        default: {
-            sprite = res.sprites.assets;
-        } break;
-    }
-    
-    PrintDebug(TextFormat("Frame X: %i", (int)img->frame.x));
-    PrintDebug(TextFormat("Frame Y: %i", (int)img->frame.y));
-    
-    PrintDebug(TextFormat("Screen width: %i", img->width));
-    PrintDebug(TextFormat("Screen height: %i", img->height));
-    
-    PrintDebug(TextFormat("Screen scale: %.2f", img->scale));
-    
-    PrintDebug(TextFormat("ScreenWidth: %i", GetScreenWidth()));
-    PrintDebug(TextFormat("Delta: %.2f", GetScreenWidth() - img->width * scale));
-    PrintDebug(TextFormat("Delta split: %i", (int)(GetScreenWidth() - img->width * scale) / 2));
-    
-    DrawTexturePro(sprite,
-        // Select corresponding frame from original spritecheet
-        (Rectangle){
-            .x = (int)img->frame.x, .y = (int)img->frame.y,
-            .width = img->width, .height = img->height
-        },
-        // Draw its scaled version at the matching position
-        (Rectangle){
-            .x = (GetScreenWidth() - img->width * scale) / 2,
-            .y = (GetScreenHeight() - img->height * scale) / 2,
-            .width = img->width * scale,
-            .height = img->height * scale
-        },
-        (Vector2){0,0}, 0, WHITE
-    );*/
-    
-    // Autoscale
-    if(!img->custom_scale) {
-        
-        // Auto fit width
-        scale = (float)GetScreenWidth() / (float)img->screen.width;
-
-        // Auto fit height
-        scale = GetScreenHeight() - img->screen.height * scale >= 0 ?
-            (float)GetScreenHeight() / (float)img->screen.height :
-            scale;
-    }
-        
-    DrawTextureEx(
-        img->screen,
-        (Vector2){
-            (int)(GetScreenWidth() - img->screen.width * scale) / 2,
-            (int)(GetScreenHeight() - img->screen.height * scale) / 2
-        },
-        0, scale, WHITE
-    );
-}
+/******* DIMENSION CONTROL ********/
 
 // Function returning a scaling rate to fit the given image to the screen
 float gp_autoScaleImg(ResImage *img) {
@@ -878,6 +891,9 @@ float gp_perY(float percent) {
     return (float)GetScreenHeight() / 100 * percent;
 }
 
+/******* FX ********/
+
+// Function drawing a cross-fade effect between two images
 void gp_drawCrossFade(ResImage *imgAbove, ResImage *imgBelow, ScreenFX *screenFx) {
     
     int subDuration = (int)(screenFx->duration / 5) * GAME_FPS;
@@ -1001,7 +1017,7 @@ void gp_drawFade(ScreenFX *screenFx) {
     }
 }
 
-
+// Function playing bouncing text animation
 void gp_drawBounceText(char *str, Font font, Vector2 position, TextAlign align, ScreenFX *screenFx) {
     
     // Define the animation total number of frames and split it (animation bacl-and-forth)
@@ -1051,6 +1067,8 @@ void gp_resetFx(ScreenFX *screenFx) {
     screenFx->invert = false;
     screenFx->enabled = true;
 }
+
+/******* INITIALIZERS ********/
 
 // Function initializing resources from their position on the corresponding spritecheet
 void gp_initResources(Resources *res) {

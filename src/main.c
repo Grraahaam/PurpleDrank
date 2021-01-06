@@ -66,8 +66,13 @@ int main(int argc, char *argv[]) {
 
     // Init the window and hide the cursor within it
     PrintDebug("Launching window!");
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_NAME);
-    //InitWindow(GetScreenWidth(), GetScreenHeight(), GAME_NAME);
+    
+        // Static sized window
+        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_NAME);
+    
+        // Dynamic sized window (still issues when tested on different screen dimensions)
+        //InitWindow(GetScreenWidth(), GetScreenHeight(), GAME_NAME);
+    
     HideCursor();
     
     // Set the game window fullscreen by default
@@ -110,6 +115,7 @@ int main(int argc, char *argv[]) {
         //game.gameScreen = MENU;
         //game.gameScreen = SELECT_PLAYER;
         //game.gameScreen = CREDITS;
+        game.gameScreen = CONTROLS;
         //game.gameScreen = VICTORY;
         //game.gameScreen = GAMEOVER;
         //game.gameScreen = LEVEL_1;
@@ -118,8 +124,8 @@ int main(int argc, char *argv[]) {
         //game.gameScreen = LEVEL_4;
         //game.gameScreen = LEVEL_5;
         //game.gameScreen = LEVEL_BONUS;
-        player.lives = 50;
-        player.lean = 50;
+        //player.lives = 50;
+        //player.lean = 50;
     }
 
     // Main game loop (Detect window close button or ESC key)
@@ -139,14 +145,12 @@ int main(int argc, char *argv[]) {
         if((IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) && IsKeyDown(KEY_L) && IsKeyDown(KEY_E) && (IsKeyDown(KEY_A) || IsKeyDown(KEY_Q)) && IsKeyDown(KEY_N)) {
             
             if(player.lean <= 0) player.lean += 20;
-            PrintDebug("Cheat LEAN");
         }
         
         // And happy new year!
         else if((IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) && IsKeyDown(KEY_E) && IsKeyDown(KEY_K) && IsKeyDown(KEY_I) && IsKeyDown(KEY_P)) {
             
             if(player.lives <= 1) player.lives += 5;
-            PrintDebug("Cheat LIVES");
         }
         
         // Show corresponding screen (with corresponding effects)

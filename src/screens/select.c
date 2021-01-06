@@ -121,13 +121,13 @@ void SelectDraw(Player *player, ScreenFX *screenFx) {
     // Draw title
     gp_drawText(
         "Player", res.fonts.pixellari,
-        (Vector2){0, gp_perX(4)},
+        (Vector2){0, gp_perY(4)},
         gp_perX(5), CENTER_X, BLACK
     );
     
     gp_drawText(
         "selection", res.fonts.pixellari,
-        (Vector2){0, gp_perX(9)},
+        (Vector2){0, gp_perY(12.5)},
         gp_perX(3), CENTER_X, BLACK
     );
     

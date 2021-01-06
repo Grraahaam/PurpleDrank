@@ -16,8 +16,8 @@ remaining tasks: ~ 9
 - [x] **positioning & dimensioning**
     - [x] create a function returning the pixel value of each percent of width/height (positioning purposes)
     - [x] convert fixed positions to responsive ones where possible
-- [ ] **sounds**
-    - [ ] implement game music
+- [x] **sounds**
+    - [x] implement game music
     - [x] implement sound effect on actions (jump, super, portal, hit, damaged)
 - [x] **sprites**
 	- [x] clean up "gob walkking"
@@ -27,7 +27,7 @@ remaining tasks: ~ 9
 	- [x] set corresponding text and instructions (with effect) on non-game screens
 	- [x] harmonize screens with the game artistic direction?
 	- [x] implement player selection screen
-	- [ ] implement controls explanantion screen
+	- [x] implement controls explanantion screen
 	- [x] set up automatic image ratio scaling to fit the whole window
 	- [ ] handle fullscreen toggling
 - [x] **menu**
@@ -76,5 +76,5 @@ remaining tasks: ~ 9
 	- [x] create a purpledrank.desktop file (/usr/share/applications/purpledrank.desktop)
 	- [x] create icons (or single SVG) and link it (/usr/share/icons/hicolor/scalable/icon.svg)
 	- [x] create an uninstall script to remove the above files
-- [x] `project-outline.md`
+- [x] **project-outline.md**
 	- [x] edit it to match our project's main components and units
