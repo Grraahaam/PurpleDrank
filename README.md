@@ -4,7 +4,7 @@
 A *rage-proof*, and *pixel-perfect* jump game, powered by Raylib framework.
 The main character is a remake of Sonic, named Solin, refering to the *Lean* which is the in-game resource.
 
-![PurpleDrank Splashscreen](./res/backgrounds/splash.png "PurpleDrank")
+![PurpleDrank Splashscreen](./res/PurpleDrank.gif "PurpleDrank Demo")
 
 ## Story :fr:
 *Solin et son Ekip*
