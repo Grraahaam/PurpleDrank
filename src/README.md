@@ -22,7 +22,7 @@ OR in game toggling by pressing <F3>
 
 ```
 
-# Structure :heavy_check_mark:
+# Structure
 *The structure tries to follow git/dev best practices*
 
 * `/lib`
