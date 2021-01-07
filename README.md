@@ -27,7 +27,7 @@ To install and play this game, please run the following:
 sudo apt install -y git build-essential
 
 # Fetch the game's project
-git clone http://gvipers.imt-lille-douai.fr/fatus/purple-drank-2020/purple-drank.git PurpleDrank
+git clone https://github.com/Grraahaam/PurpleDrank.git PurpleDrank
 
 # Build it
 cd PurpleDrank && make
