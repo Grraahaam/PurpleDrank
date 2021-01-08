@@ -21,10 +21,19 @@ PurpleDrank's adventure mode is made of **5 levels** and **1 bonus stage**. A bo
 PurpleDrank also includes minigames to train your ability for the adventure mode.
 
 ## Installation :joystick:
+*On GNU/Linux debian based*
+
 To install and play this game, please run the following:
 ```bash
-# Install git, make, gcc
-sudo apt install -y git build-essential
+# Install git, make, cmake, gcc, .desktop file utility, and Raylib's requirements
+sudo apt install -y git build-essential desktop-file-utils cmake libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+
+# Install Raylib
+git clone https://github.com/raysan5/raylib.git raylib && cd raylib
+mkdir build && cd build
+cmake -DSHARED=ON -DSTATIC=ON ..
+make && make install
+sudo cp src/libraylib.so* /usr/local/lib/ 
 
 # Fetch the game's project
 git clone https://github.com/Grraahaam/PurpleDrank.git PurpleDrank
