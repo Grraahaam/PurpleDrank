@@ -6,11 +6,14 @@ APP = PurpleDrank
 CC = gcc
 CMULTIDEF = -Wl,--allow-multiple-definition
 
+# Thread fix for Windows
+CTHREAD = -s -static -lopengl32 -lgdi32 -lwinmm
+
 # Output friendly flags
-CFLAGS = -c -std=gnu99 -Wall -Wno-sign-compare -Wno-missing-field-initializers -Wno-unused-function -Wno-unused-parameter -Wno-discarded-qualifiers -Wno-implicit-function-declaration -Wextra $(CMULTIDEF)
+CFLAGS = -c -std=gnu99 -Wall -Wno-sign-compare -Wno-missing-field-initializers -Wno-unused-function -Wno-unused-parameter -Wno-discarded-qualifiers -Wno-implicit-function-declaration -Wextra $(CTHREAD) $(CMULTIDEF)
 
 # Debug friendly flags
 #CFLAGS = -c -std=gnu99 -Wall -Wextra $(CMULTIDEF)
 
 # Define the required libraries
-CLIBS= -lraylib -lpthread -lm $(CMULTIDEF)
+CLIBS = -lraylib -lpthread -lm $(CMULTIDEF)

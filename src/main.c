@@ -26,13 +26,19 @@
 #include "screens/level5.h"
 #include "screens/levelBonus.h"
 
-// Function declarations
+//Windows and Linux definitions are different
+#if defined(_WIN32) || defined(_WIN64)
+    char *getcwd(char *buf, int size);
+#else
+    char *getcwd(char *buf, size_t size);
+#endif
+
+// Function declarations    
 void UpdateScreen(Player *player, ScreenFX *fadeFx, ScreenFX *crossFadeFx, ScreenFX *bounceText);
 void LoadResources(void);
 void LoadFonts();
 void UnloadResources(void);
 void ToggleDebugRead();
-char *getcwd(char *buf, size_t size);
 int GetDir();
 
 int main(int argc, char *argv[]) {
@@ -115,7 +121,7 @@ int main(int argc, char *argv[]) {
         //game.gameScreen = MENU;
         //game.gameScreen = SELECT_PLAYER;
         //game.gameScreen = CREDITS;
-        game.gameScreen = CONTROLS;
+        //game.gameScreen = CONTROLS;
         //game.gameScreen = VICTORY;
         //game.gameScreen = GAMEOVER;
         //game.gameScreen = LEVEL_1;

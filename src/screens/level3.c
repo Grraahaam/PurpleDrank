@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <raylib.h>
 #include <unistd.h>
-#include <pthread.h>
 
 #include "../lib/physac.h"
 #include "../lib/defines.c"
