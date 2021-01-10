@@ -16,4 +16,4 @@ CFLAGS = -c -std=gnu99 -Wall -Wno-sign-compare -Wno-missing-field-initializers -
 #CFLAGS = -c -std=gnu99 -Wall -Wextra $(CMULTIDEF)
 
 # Define the required libraries
-CLIBS = -lraylib -lpthread -lm $(CMULTIDEF)
+CLIBS = -lraylib -lm $(CMULTIDEF)

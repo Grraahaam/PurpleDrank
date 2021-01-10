@@ -28,6 +28,36 @@
 
 //Windows and Linux definitions are different
 #if defined(_WIN32) || defined(_WIN64)
+    typedef void *PVOID;
+    typedef PVOID HANDLE;
+    
+    #include <processthreadapi.h>
+    #include <synchapi.h>
+    #include <handleapi.h>
+    
+    void initPhysicsThreadWindows();
+    void initPhysicsThreadWindows() {
+        HANDLE hThread = CreateThread(
+            NULL,        // Thread attributes
+            0,           // Stack size
+            PhysicsStep, // Thread start address
+            NULL,        // Parameter to pass to the thread
+            0,           // Creation flag
+            NULL         // Thread ID
+        );
+        
+        // Thread creation failed (GetLastError())
+        if(hThread == NULL) {
+            PrintDebug("Thread creation failed");
+        }
+        
+        // Wait for the thread execution completion
+        WaitForSingleObject(hThread, INFINITE);
+        
+        // Thread handler must be closed when no longer needed
+        CloseHandle(hThread);
+    }
+    
     char *getcwd(char *buf, int size);
 #else
     char *getcwd(char *buf, size_t size);
